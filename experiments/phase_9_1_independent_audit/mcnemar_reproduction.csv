@@ -1,0 +1,16 @@
+scenario,contrast_id,condition_A,condition_B,n_both_correct_11,n_both_incorrect_00,n_A_correct_B_incorrect_10,n_B_correct_A_incorrect_01,discordant_pairs,mcnemar_chi2,p_value
+S0,C3_vs_C0,C0_orig,C3_c5lp_scramble,1540,111,1343,70,1413,1145.0700636942674,0.0
+S0,C1_vs_C0,C0_orig,C1_seam_only,1845,103,1038,78,1116,824.086917562724,0.0
+S0,C2_vs_C0,C0_orig,C2_seam_suppressed,1418,114,1465,67,1532,1273.8962140992166,0.0
+S0,C3_vs_C1,C1_seam_only,C3_c5lp_scramble,1481,1012,442,129,571,170.4798598949212,0.0
+S0,C3_vs_C2,C2_seam_suppressed,C3_c5lp_scramble,1402,1371,83,208,291,52.83848797250859,3.6215475063272606e-13
+S1,C3_vs_C0,C0_orig,C3_c5lp_scramble,1487,131,1399,47,1446,1262.2413554633472,0.0
+S1,C1_vs_C0,C0_orig,C1_seam_only,1820,127,1066,51,1117,920.4977618621307,0.0
+S1,C2_vs_C0,C0_orig,C2_seam_suppressed,1508,128,1378,50,1428,1233.1435574229693,0.0
+S1,C3_vs_C1,C1_seam_only,C3_c5lp_scramble,1477,1136,394,57,451,250.32372505543236,0.0
+S1,C3_vs_C2,C2_seam_suppressed,C3_c5lp_scramble,1435,1407,123,99,222,2.3828828828828827,0.12267098143734578
+S2,C3_vs_C0,C0_orig,C3_c5lp_scramble,1606,130,1260,68,1328,1068.13328313253,0.0
+S2,C1_vs_C0,C0_orig,C1_seam_only,1885,110,981,88,1069,744.3068288119738,0.0
+S2,C2_vs_C0,C0_orig,C2_seam_suppressed,1575,123,1291,75,1366,1080.6918008784774,0.0
+S2,C3_vs_C1,C1_seam_only,C3_c5lp_scramble,1597,1014,376,77,453,196.0353200883002,0.0
+S2,C3_vs_C2,C2_seam_suppressed,C3_c5lp_scramble,1542,1282,108,132,240,2.2041666666666666,0.13763825510818306
