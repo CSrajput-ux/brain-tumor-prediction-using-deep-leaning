@@ -1,0 +1,221 @@
+{
+  "audit_phase": "Phase 9.3 \u2014 Publication Package Independent Consistency Audit",
+  "timestamp_utc": "2026-10-17T09:30:00Z",
+  "python_environment": {
+    "executable": "C:/Users/jkgga/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+    "python_version": "3.14.6",
+    "torch_version": "2.15.0.dev20260907+cu126"
+  },
+  "manuscript_package_files": {
+    "manuscript_v1\\README.md": {
+      "sha256": "80c1b685261ba109947e0c49a4c265cac63f22c38b9bf3e10295d81ec20f14c1",
+      "size_bytes": 3774
+    },
+    "manuscript_v1\\abstract.md": {
+      "sha256": "c0483b3cc7a3527decc2f5a4a644079245b82f2135e65d34c6dda684658e8c4f",
+      "size_bytes": 4038
+    },
+    "manuscript_v1\\checksums.json": {
+      "sha256": "d4d9b0292b611038256f5f1290f3fe387ac0e0e7901fc8f94df01c4cc3078e84",
+      "size_bytes": 4755
+    },
+    "manuscript_v1\\claim_evidence_matrix.csv": {
+      "sha256": "cff350641e6d34f877c331d292265a2a87961e73d8b5e1aa3f3d25dae4850a7d",
+      "size_bytes": 2501
+    },
+    "manuscript_v1\\figure_captions.md": {
+      "sha256": "82ca2e396eb82d5e7bc80339f8e01888b99ffa3aa4a19ae37dc009d0ece8ba36",
+      "size_bytes": 7743
+    },
+    "manuscript_v1\\manuscript.docx": {
+      "sha256": "f73ee75299be4d593ca2928d09275efba024a19804efac86f15b29b53894c595",
+      "size_bytes": 52066
+    },
+    "manuscript_v1\\manuscript.md": {
+      "sha256": "ff3b53fa8cbfc6fad5fb2ec251e0e4778803f597ecd05fa3f7b6ce8cb31bac05",
+      "size_bytes": 38322
+    },
+    "manuscript_v1\\manuscript_quality_audit.md": {
+      "sha256": "d536e8ee85a5d0b582bd269f2376ef778128a5b75846df258198efc9e878f5a1",
+      "size_bytes": 3497
+    },
+    "manuscript_v1\\missing_evidence_and_author_questions.md": {
+      "sha256": "467e0692ea00a872387f2d1959cff39c7f0ccda979829aa04fb74fa58400d16c",
+      "size_bytes": 3452
+    },
+    "manuscript_v1\\reference_verification.csv": {
+      "sha256": "2ed40057f24bc8a2514c14f9045f45bb88fcc10b4cfa6b06f1219a6dded44d97",
+      "size_bytes": 3004
+    },
+    "manuscript_v1\\references.bib": {
+      "sha256": "22679143fad6bbfcc65ae1755e716243b1e103cccb707651fbfc388a3630f926",
+      "size_bytes": 6278
+    },
+    "manuscript_v1\\reproducibility_checklist.md": {
+      "sha256": "92298a255fc70738499bcade95810ba1c70e2d6ab96b7b531082c3c61cb0014c",
+      "size_bytes": 4313
+    },
+    "manuscript_v1\\supplementary_methods.md": {
+      "sha256": "1f839a98419c069af4b3b59a28bde6bb82e95c967d01d8ef22e35e4700433683",
+      "size_bytes": 7090
+    },
+    "manuscript_v1\\supplementary_results.md": {
+      "sha256": "1ffdb9daea38cbb7c7a83812b763148618148b80cf97c0467bb99484a0b4bf69",
+      "size_bytes": 5206
+    },
+    "manuscript_v1\\test_results.txt": {
+      "sha256": "82c92ec0e3f2667e52d9dc7be9a1c5748fb53bcd4c65305fc1bdc2254592b7f8",
+      "size_bytes": 16638
+    },
+    "manuscript_v1\\figures\\fig10_cross_validation_stability.pdf": {
+      "sha256": "0cfdc8e5538ab7ea3349e2f0aaa7721d6f95043dd5175ea5cd9b87b6de781eef",
+      "size_bytes": 31939
+    },
+    "manuscript_v1\\figures\\fig10_cross_validation_stability.png": {
+      "sha256": "21bc55223797a31a1dc5781e8dffcee393cf47ffdd88edd18794797bb00a856f",
+      "size_bytes": 132939
+    },
+    "manuscript_v1\\figures\\fig1_dataset_and_masks.pdf": {
+      "sha256": "8c26d27c9998d9d54af0acd79bc6b7d4de65ff590a3c7a32c0bbdc751463cb92",
+      "size_bytes": 1489818
+    },
+    "manuscript_v1\\figures\\fig1_dataset_and_masks.png": {
+      "sha256": "be8767bfb738b5aa3f987d093374992e327aeb78c21ed874599000e57ddc951a",
+      "size_bytes": 1606939
+    },
+    "manuscript_v1\\figures\\fig2_experimental_workflow.pdf": {
+      "sha256": "9f1e8751ba640d6d1ff37b9d4cce6c1cef5f2b9abf7a2d81ed8008d4cb30ebd3",
+      "size_bytes": 38846
+    },
+    "manuscript_v1\\figures\\fig2_experimental_workflow.png": {
+      "sha256": "a5bdcfd94a759298ca47a72358278a4c5c7659af3f7d883fbc4af5dc35858af1",
+      "size_bytes": 279360
+    },
+    "manuscript_v1\\figures\\fig3_intervention_geometry.pdf": {
+      "sha256": "a9a98ca3024f45c1a52bfea61a42b0bee41ee2ba93f1246da42bfae3725f1441",
+      "size_bytes": 1486869
+    },
+    "manuscript_v1\\figures\\fig3_intervention_geometry.png": {
+      "sha256": "d2fa898e80abc470eff147c5aa43c3991264bf911640e0eef7b306b48ec48ac4",
+      "size_bytes": 1455891
+    },
+    "manuscript_v1\\figures\\fig4_baseline_performance.pdf": {
+      "sha256": "52262128d243bad185ea7a1e7c69e5cee774b13d656b051e57a2dce4489c1d13",
+      "size_bytes": 28463
+    },
+    "manuscript_v1\\figures\\fig4_baseline_performance.png": {
+      "sha256": "238a344b27ac5bed6f1fc001d3cd27eb97c32c789f3ff43f3066934dbb89f1f3",
+      "size_bytes": 111499
+    },
+    "manuscript_v1\\figures\\fig5_intervention_macro_f1.pdf": {
+      "sha256": "fac7d1b7ff02854f286f083e12c89139ec03b7c44961f301384d2e11edfc4de4",
+      "size_bytes": 30021
+    },
+    "manuscript_v1\\figures\\fig5_intervention_macro_f1.png": {
+      "sha256": "bcea58e81ce523662907c656f2f5651841f257b6e43a8a7c04aefb60ea998945",
+      "size_bytes": 152262
+    },
+    "manuscript_v1\\figures\\fig6_contrast_forest_plot.pdf": {
+      "sha256": "d86b1686cffe1703bf69647c4a0e9c1cd741a6b460740e29ab3c19d5d9914bc3",
+      "size_bytes": 45150
+    },
+    "manuscript_v1\\figures\\fig6_contrast_forest_plot.png": {
+      "sha256": "b1549f2297adbf20eaf774a4368c4d00b595f4b23d637bde776bccd20425aac5",
+      "size_bytes": 294622
+    },
+    "manuscript_v1\\figures\\fig7_confusion_matrices.pdf": {
+      "sha256": "1c5e63bbe941f55071db119115706a7595ee38382ff53765259041ccfe8c5319",
+      "size_bytes": 27580
+    },
+    "manuscript_v1\\figures\\fig7_confusion_matrices.png": {
+      "sha256": "86482d012b52c6fcd6d682dcecc9a70c1847e0e28d194dec507c4efba59d7709",
+      "size_bytes": 183778
+    },
+    "manuscript_v1\\figures\\fig8_artifact_diagnostics.pdf": {
+      "sha256": "b89f8a1b151839ab49c36437ce75831b826d8a058b224680dbb9b90f1de0df99",
+      "size_bytes": 25353
+    },
+    "manuscript_v1\\figures\\fig8_artifact_diagnostics.png": {
+      "sha256": "b2502ff457f65378741bf5bc4e9eedf4b4cb2638f3a6eec6e41ee86cb0bdb877",
+      "size_bytes": 160147
+    },
+    "manuscript_v1\\figures\\fig9_glioma_prior_collapse.pdf": {
+      "sha256": "0284954029ee108d24388956fbb364042f75ac9596fa7fc3aba58ee39728ca59",
+      "size_bytes": 32005
+    },
+    "manuscript_v1\\figures\\fig9_glioma_prior_collapse.png": {
+      "sha256": "b6067e95e225eb05de62cdcc5dcff1cf1042b8def6e36a85be172f92111e9f22",
+      "size_bytes": 154854
+    },
+    "manuscript_v1\\figure_source\\generate_figures_and_tables.py": {
+      "sha256": "f3ce27942ecf43968812044f7609568053169b68ddac06b7a4ce41b92627d1a8",
+      "size_bytes": 26321
+    },
+    "manuscript_v1\\tables\\table1_dataset_composition.csv": {
+      "sha256": "879c72e68bfdfeb624175659f0eb63e4d10d011e33190fd6643c9c3cc1a5669e",
+      "size_bytes": 379
+    },
+    "manuscript_v1\\tables\\table2_evaluation_scenarios.csv": {
+      "sha256": "c59ae279b06f4274aaaa08ade2df2e979da912b94ae977f510963c05d6acd8a7",
+      "size_bytes": 427
+    },
+    "manuscript_v1\\tables\\table3_model_configuration.csv": {
+      "sha256": "5c7266236a5cdaca41ae5f9d7d76482813b5137248638c94175a7a18f6c758d2",
+      "size_bytes": 695
+    },
+    "manuscript_v1\\tables\\table4_baseline_metrics.csv": {
+      "sha256": "382dd5be570913e291feba32e3327effec35516521e1d892d010ce8049f1090b",
+      "size_bytes": 893
+    },
+    "manuscript_v1\\tables\\table5_intervention_metrics.csv": {
+      "sha256": "4d673a11ad0c6c091d5b35fc4c40e80b011c2646aff288003a1f94f129feb431",
+      "size_bytes": 3058
+    },
+    "manuscript_v1\\tables\\table6_canonical_contrasts.csv": {
+      "sha256": "9292ad3f8c036396f7f430f986a2845195b86d08f08a62fc5173663bde298fd2",
+      "size_bytes": 5697
+    },
+    "manuscript_v1\\tables\\table7_image_diagnostics.csv": {
+      "sha256": "f69f0c4d2d6cb5787a735293f18c9242d0eea7f72c126c804bfe6d6fc19feaa4",
+      "size_bytes": 857
+    },
+    "manuscript_v1\\tables\\table8_claim_evidence_matrix.csv": {
+      "sha256": "cff350641e6d34f877c331d292265a2a87961e73d8b5e1aa3f3d25dae4850a7d",
+      "size_bytes": 2501
+    },
+    "manuscript_v1\\tables\\table_s1_prediction_accounting.csv": {
+      "sha256": "7554d6f902e53800c9750e391a824a9119568731c71ed762065d09758c8d4883",
+      "size_bytes": 10982
+    }
+  },
+  "phase_9_3_audit_files": {
+    "phase_9_3_final_audit\\FINAL_AUDIT_REPORT.md": {
+      "sha256": "8878bf6d9fce52117ebc312f707e0fb21d3153309d4c866b6ddc06b2ad0c2241",
+      "size_bytes": 13699
+    },
+    "phase_9_3_final_audit\\figure_table_integrity.csv": {
+      "sha256": "72ac9868cae5d08e31363a2de75cbe36edccb1feede95d2e82490262081fb6a4",
+      "size_bytes": 5443
+    },
+    "phase_9_3_final_audit\\final_claim_boundaries.md": {
+      "sha256": "5def08cf0c9713597dede2c9c84feae686a96496b560a1fbe388ace9bccdcafd",
+      "size_bytes": 5457
+    },
+    "phase_9_3_final_audit\\generate_audit_assets.py": {
+      "sha256": "0ef102d86d4a5a18120d6bb21f6628b0bf55edbf6d43df6b1eb8ab6e76ba338a",
+      "size_bytes": 13994
+    },
+    "phase_9_3_final_audit\\manuscript_crosscheck.csv": {
+      "sha256": "550652c3c954acc36375f7fe1e37526d671b4f20e442be936d37412375666447",
+      "size_bytes": 5022
+    },
+    "phase_9_3_final_audit\\numerical_reconciliation.csv": {
+      "sha256": "eadb7678c1a429aef0a874c87f2ba3f629e4834da48851a7b76d2cc5b1d552ad",
+      "size_bytes": 2484
+    },
+    "phase_9_3_final_audit\\unresolved_discrepancies.md": {
+      "sha256": "26291091c35cd5a86647e3b81b816c0c49a020070d201ed66efbb8ca52e1b50f",
+      "size_bytes": 6372
+    }
+  }
+}
