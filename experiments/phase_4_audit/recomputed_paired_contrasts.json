@@ -1,0 +1,203 @@
+{
+  "S0": {
+    "macro_f1_orig": 0.9329720205195574,
+    "macro_f1_removed": 0.8173557191208217,
+    "macro_f1_placebo": 0.9222059067916833,
+    "macro_f1_tumor": 0.31140592778258885,
+    "macro_f1_context_shift": 0.9341097882230596,
+    "macro_f1_removed_feathered": 0.8587826663650816,
+    "Delta_removal": {
+      "point": 0.11561630139873569,
+      "ci_95": [
+        0.09417996814195559,
+        0.14055512761998515
+      ]
+    },
+    "Delta_placebo": {
+      "point": 0.01076611372787406,
+      "ci_95": [
+        0.001324561632538379,
+        0.020817357842000186
+      ]
+    },
+    "Net_contrast": {
+      "point": 0.10485018767086163,
+      "ci_95": [
+        0.0809996889372763,
+        0.13137726178041276
+      ],
+      "derived_from_paired_replicates": true
+    },
+    "Delta_context_shift": {
+      "point": -0.0011377677035021572,
+      "ci_95": [
+        -0.009794215817403463,
+        0.007544213067778609
+      ]
+    },
+    "Delta_feathered": {
+      "point": 0.0741893541544758,
+      "ci_95": [
+        0.05546578795562588,
+        0.09531345632642539
+      ]
+    },
+    "Delta_tumor_vs_chance": {
+      "point": -0.02192740555074446,
+      "ci_95": [
+        -0.06215473303186767,
+        0.01754680114629276
+      ]
+    },
+    "mcnemar_contingency_table": {
+      "a_both_correct": 2552,
+      "b_orig_correct_rem_incorrect": 330,
+      "c_orig_incorrect_rem_correct": 26,
+      "d_both_incorrect": 156,
+      "statistic": 257.89044943820227,
+      "raw_p_value": 0.0,
+      "reported_p_value_bounded": 1e-16
+    },
+    "wilcoxon_patient_level": {
+      "total_patients": 233,
+      "discordant_patients": 87,
+      "statistic": 68.0,
+      "raw_p_value": 5.540230715976948e-15,
+      "reported_p_value_bounded": 5.540230715976948e-15
+    }
+  },
+  "S1": {
+    "macro_f1_orig": 0.9331518434436711,
+    "macro_f1_removed": 0.8182064086766303,
+    "macro_f1_placebo": 0.9222359492867982,
+    "macro_f1_tumor": 0.2739369408269238,
+    "macro_f1_context_shift": 0.9319946104859689,
+    "macro_f1_removed_feathered": 0.8643661104182673,
+    "Delta_removal": {
+      "point": 0.11494543476704078,
+      "ci_95": [
+        0.09135649881665495,
+        0.14207134818586503
+      ]
+    },
+    "Delta_placebo": {
+      "point": 0.010915894156872885,
+      "ci_95": [
+        0.002846115830000695,
+        0.020270114840820252
+      ]
+    },
+    "Net_contrast": {
+      "point": 0.10402954061016789,
+      "ci_95": [
+        0.07851920348689972,
+        0.13132947667778866
+      ],
+      "derived_from_paired_replicates": true
+    },
+    "Delta_context_shift": {
+      "point": 0.0011572329577022034,
+      "ci_95": [
+        -0.008203032280783189,
+        0.011040132304294197
+      ]
+    },
+    "Delta_feathered": {
+      "point": 0.0687857330254038,
+      "ci_95": [
+        0.048568115902453426,
+        0.09124646127972409
+      ]
+    },
+    "Delta_tumor_vs_chance": {
+      "point": -0.05939639250640949,
+      "ci_95": [
+        -0.10240002980661979,
+        -0.012501230695748173
+      ]
+    },
+    "mcnemar_contingency_table": {
+      "a_both_correct": 2568,
+      "b_orig_correct_rem_incorrect": 318,
+      "c_orig_incorrect_rem_correct": 25,
+      "d_both_incorrect": 153,
+      "statistic": 248.58309037900875,
+      "raw_p_value": 0.0,
+      "reported_p_value_bounded": 1e-16
+    },
+    "wilcoxon_patient_level": {
+      "total_patients": 233,
+      "discordant_patients": 98,
+      "statistic": 158.5,
+      "raw_p_value": 9.378759472240378e-16,
+      "reported_p_value_bounded": 9.378759472240378e-16
+    }
+  },
+  "S2": {
+    "macro_f1_orig": 0.9272744753915024,
+    "macro_f1_removed": 0.814325748079411,
+    "macro_f1_placebo": 0.9131617681595339,
+    "macro_f1_tumor": 0.2721902499369077,
+    "macro_f1_context_shift": 0.9275239331894959,
+    "macro_f1_removed_feathered": 0.866874482151994,
+    "Delta_removal": {
+      "point": 0.11294872731209138,
+      "ci_95": [
+        0.08795159866712661,
+        0.1404198624422611
+      ]
+    },
+    "Delta_placebo": {
+      "point": 0.014112707231968558,
+      "ci_95": [
+        0.003106134916283596,
+        0.02567058642937073
+      ]
+    },
+    "Net_contrast": {
+      "point": 0.09883602008012282,
+      "ci_95": [
+        0.07530215849984527,
+        0.12385979464051335
+      ],
+      "derived_from_paired_replicates": true
+    },
+    "Delta_context_shift": {
+      "point": -0.0002494577979934576,
+      "ci_95": [
+        -0.010300963727716907,
+        0.010570933654715585
+      ]
+    },
+    "Delta_feathered": {
+      "point": 0.0603999932395084,
+      "ci_95": [
+        0.04213067467549779,
+        0.08087844091086671
+      ]
+    },
+    "Delta_tumor_vs_chance": {
+      "point": -0.0611430833964256,
+      "ci_95": [
+        -0.10368223365348159,
+        -0.01976177558031316
+      ]
+    },
+    "mcnemar_contingency_table": {
+      "a_both_correct": 2512,
+      "b_orig_correct_rem_incorrect": 354,
+      "c_orig_incorrect_rem_correct": 29,
+      "d_both_incorrect": 169,
+      "statistic": 274.08877284595303,
+      "raw_p_value": 0.0,
+      "reported_p_value_bounded": 1e-16
+    },
+    "wilcoxon_patient_level": {
+      "total_patients": 233,
+      "discordant_patients": 99,
+      "statistic": 320.5,
+      "raw_p_value": 5.439320667290238e-14,
+      "reported_p_value_bounded": 5.439320667290238e-14
+    }
+  }
+}

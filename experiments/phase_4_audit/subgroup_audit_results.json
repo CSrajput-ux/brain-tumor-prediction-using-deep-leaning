@@ -1,0 +1,81 @@
+{
+  "class_summary": {
+    "sample_id_count": {
+      "glioma": 1426.0,
+      "meningioma": 708.0,
+      "pituitary": 930.0
+    },
+    "tumor_area_pixels_median": {
+      "glioma": 4812.5,
+      "meningioma": 3987.0,
+      "pituitary": 1731.0
+    },
+    "tumor_area_pixels_mean": {
+      "glioma": 5778.560308555399,
+      "meningioma": 4654.682203389831,
+      "pituitary": 2163.8709677419356
+    },
+    "flipped_removed_sum": {
+      "glioma": 107.0,
+      "meningioma": 220.0,
+      "pituitary": 3.0
+    },
+    "flipped_removed_mean": {
+      "glioma": 0.07503506311360449,
+      "meningioma": 0.3107344632768362,
+      "pituitary": 0.0032258064516129032
+    },
+    "prob_drop_removed_mean": {
+      "glioma": 0.06856961085480934,
+      "meningioma": 0.32671506589733484,
+      "pituitary": 0.0036366127588177803
+    },
+    "prob_drop_removed_std": {
+      "glioma": 0.1996013731685938,
+      "meningioma": 0.31174564279010275,
+      "pituitary": 0.06706564076273337
+    },
+    "prob_drop_feathered_mean": {
+      "glioma": 0.06062896809176192,
+      "meningioma": 0.17438858278135952,
+      "pituitary": 0.0008143412038466027
+    },
+    "prob_drop_placebo_mean": {
+      "glioma": 0.01760640945669843,
+      "meningioma": -0.004170476773970477,
+      "pituitary": 0.024396584597605547
+    }
+  },
+  "patient_slice_count_summary": {
+    "patient_id": {
+      "1-5_slices": 48.0,
+      "6-15_slices": 99.0,
+      "16-30_slices": 81.0,
+      ">30_slices": 5.0
+    },
+    "sample_id": {
+      "1-5_slices": 148.0,
+      "6-15_slices": 1100.0,
+      "16-30_slices": 1641.0,
+      ">30_slices": 175.0
+    },
+    "flipped_removed": {
+      "1-5_slices": 0.24324324324324326,
+      "6-15_slices": 0.15181818181818182,
+      "16-30_slices": 0.07617306520414381,
+      ">30_slices": 0.011428571428571429
+    },
+    "prob_drop_removed": {
+      "1-5_slices": 0.22973866712676855,
+      "6-15_slices": 0.1547366241880809,
+      "16-30_slices": 0.07586299679549052,
+      ">30_slices": 0.021564540096691676
+    },
+    "prob_drop_placebo": {
+      "1-5_slices": 0.005970691438690409,
+      "6-15_slices": 0.004720163522056696,
+      "16-30_slices": 0.023054935703109396,
+      ">30_slices": 0.0053364246232169
+    }
+  }
+}
