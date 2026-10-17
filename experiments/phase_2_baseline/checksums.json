@@ -1,0 +1,262 @@
+{
+  "timestamp_utc": "2026-10-16T21:09:08.752616+00:00",
+  "phase": "2_controlled_baseline_training",
+  "total_artifacts": 51,
+  "artifacts": {
+    "experiments/phase_2_baseline/BASELINE_REPORT.md": {
+      "path": "experiments/phase_2_baseline/BASELINE_REPORT.md",
+      "size_bytes": 10447,
+      "sha256": "121b12eafce2e5208edaabf64fb13de70438b3939b5de00cc7a93d5341f80cd1"
+    },
+    "experiments/phase_2_baseline/config.yaml": {
+      "path": "experiments/phase_2_baseline/config.yaml",
+      "size_bytes": 1203,
+      "sha256": "cadf30c5a2ac1cef5ab4a649241cab88e9514092e3eac7979ee2f7b7d20167f8"
+    },
+    "experiments/phase_2_baseline/fold_metrics.csv": {
+      "path": "experiments/phase_2_baseline/fold_metrics.csv",
+      "size_bytes": 2945,
+      "sha256": "ac779ed931acaad55870001eb9cd2b76330eaf3d5bc97d33d292446e606beea3"
+    },
+    "experiments/phase_2_baseline/metrics.json": {
+      "path": "experiments/phase_2_baseline/metrics.json",
+      "size_bytes": 5496,
+      "sha256": "291432416a93a455af4408285c1938898e308d9d0215142ac54a1c48e511fc0b"
+    },
+    "experiments/phase_2_baseline/pooled_oof_predictions.csv": {
+      "path": "experiments/phase_2_baseline/pooled_oof_predictions.csv",
+      "size_bytes": 1618366,
+      "sha256": "576573581c25bb427225758468996803a9610a17c5ae452cf99281a9115d6ae3"
+    },
+    "experiments/phase_2_baseline/S0/fold_1_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S0/fold_1_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "c740abdeb5a0428f8bf743c824bf259fb065f6aa9718d4827c503e4748441c8b"
+    },
+    "experiments/phase_2_baseline/S0/fold_1_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S0/fold_1_confusion_matrix.json",
+      "size_bytes": 323,
+      "sha256": "9f58b61a00812446dd280c9a8f2c271342a1475d7c27e3d90869424cf627d741"
+    },
+    "experiments/phase_2_baseline/S0/fold_1_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S0/fold_1_test_predictions.csv",
+      "size_bytes": 106730,
+      "sha256": "f10511ed57ccdf90f4cf9cae8b1e4ab5ecd204412983c6e11d0a0342fd80a132"
+    },
+    "experiments/phase_2_baseline/S0/fold_2_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S0/fold_2_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "8e5227a6a529282afecdffa11885d9e2498653c84f3fa1f83437ee48d6fc3dba"
+    },
+    "experiments/phase_2_baseline/S0/fold_2_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S0/fold_2_confusion_matrix.json",
+      "size_bytes": 324,
+      "sha256": "45119e22829126cdaf29cdabd806b524bcb6f70771104683d83b434f2dc888eb"
+    },
+    "experiments/phase_2_baseline/S0/fold_2_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S0/fold_2_test_predictions.csv",
+      "size_bytes": 106388,
+      "sha256": "21b3b9f106282d5f43e7f253c75eee585edb57581ed2533b6ee775306744988c"
+    },
+    "experiments/phase_2_baseline/S0/fold_3_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S0/fold_3_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "db0fdc3b05e0f6c15038bbe2be3296cd0db72c8a428edeaf6de52a754b231ec5"
+    },
+    "experiments/phase_2_baseline/S0/fold_3_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S0/fold_3_confusion_matrix.json",
+      "size_bytes": 320,
+      "sha256": "8c53768cffabc3646f1b5915f042f1cc03df3bb97cc2a78318ca86d9990bd611"
+    },
+    "experiments/phase_2_baseline/S0/fold_3_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S0/fold_3_test_predictions.csv",
+      "size_bytes": 106279,
+      "sha256": "b964f52b8dc8ff46cd44da52aeac14011251361a0e03b61cf4b8996955f9fc8b"
+    },
+    "experiments/phase_2_baseline/S0/fold_4_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S0/fold_4_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "7678d1aa4772b8f4a58350391f3cf18d4e269e37ba5badfd9511948244e830a6"
+    },
+    "experiments/phase_2_baseline/S0/fold_4_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S0/fold_4_confusion_matrix.json",
+      "size_bytes": 323,
+      "sha256": "952b81d972d10ce4e98209ec2979b920d5fbc90f36c4263ecfc5cfc6c71352e0"
+    },
+    "experiments/phase_2_baseline/S0/fold_4_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S0/fold_4_test_predictions.csv",
+      "size_bytes": 106538,
+      "sha256": "72d10c9f66010e3494a9c4b32d3970b53f3107790af0a3930961dbbd059b1f7c"
+    },
+    "experiments/phase_2_baseline/S0/fold_5_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S0/fold_5_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "31780f3ebf1534fc5bd658281314d0d8fc5d75f42d9ce6a2f955fca6d72d3b0f"
+    },
+    "experiments/phase_2_baseline/S0/fold_5_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S0/fold_5_confusion_matrix.json",
+      "size_bytes": 321,
+      "sha256": "1de5a1caf9abd6caa90aa2892bb4b0ac6a8189639442f6018741c2f8b270934e"
+    },
+    "experiments/phase_2_baseline/S0/fold_5_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S0/fold_5_test_predictions.csv",
+      "size_bytes": 107166,
+      "sha256": "82b4caa65959ef18888d1ccc7fcb12824b5d3f463a1ba395b21c34eb74a83d2c"
+    },
+    "experiments/phase_2_baseline/S1/fold_1_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S1/fold_1_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "df565def63acd697d681e391768a5742d996c3192d221e2865cffc9481ca2bdf"
+    },
+    "experiments/phase_2_baseline/S1/fold_1_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S1/fold_1_confusion_matrix.json",
+      "size_bytes": 321,
+      "sha256": "1cf5d0b01ee06204e6c5ac94843b7bb69efb6f712403bebd8dac1de3010959c5"
+    },
+    "experiments/phase_2_baseline/S1/fold_1_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S1/fold_1_test_predictions.csv",
+      "size_bytes": 108731,
+      "sha256": "2c70654ccf205586c46ace5deeefdf7a055dee0aee606a87a7f25294e85ec063"
+    },
+    "experiments/phase_2_baseline/S1/fold_2_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S1/fold_2_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "12d13cfe3c9d7c4ffafd548dcdbb02609047d09dd681f2e4a2aa2bea7527474b"
+    },
+    "experiments/phase_2_baseline/S1/fold_2_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S1/fold_2_confusion_matrix.json",
+      "size_bytes": 322,
+      "sha256": "1933ce56be4f6df1408582002078555ade9801ff020e645a9e9a1cf7a5add9e4"
+    },
+    "experiments/phase_2_baseline/S1/fold_2_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S1/fold_2_test_predictions.csv",
+      "size_bytes": 109190,
+      "sha256": "7e2aa1604d9ecb6dc568c8d100122a1485cfda1d06a9e39d24777b73616964d7"
+    },
+    "experiments/phase_2_baseline/S1/fold_3_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S1/fold_3_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "ea119889ff6f415d1745fd9b33b3e05a223730086af1963002a50c75c879203f"
+    },
+    "experiments/phase_2_baseline/S1/fold_3_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S1/fold_3_confusion_matrix.json",
+      "size_bytes": 323,
+      "sha256": "20fdef933b791106efa8108e5404aa90212be812439df8e137cbdcef65fe10fb"
+    },
+    "experiments/phase_2_baseline/S1/fold_3_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S1/fold_3_test_predictions.csv",
+      "size_bytes": 108368,
+      "sha256": "b80911d6563ad4d7a2e1c55619fa777fba433b2985495c8d72a329f326d180b9"
+    },
+    "experiments/phase_2_baseline/S1/fold_4_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S1/fold_4_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "38c5e3fd9b4e91e71daf543fb9bcadc7913d068329a4b206dfdaacf0a3b3637e"
+    },
+    "experiments/phase_2_baseline/S1/fold_4_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S1/fold_4_confusion_matrix.json",
+      "size_bytes": 322,
+      "sha256": "835ba75b0cc60176db7ed0ab3fb20c9967b06cae7d7eb518550e8eb54c9d97dc"
+    },
+    "experiments/phase_2_baseline/S1/fold_4_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S1/fold_4_test_predictions.csv",
+      "size_bytes": 108939,
+      "sha256": "70b0f25969ec388733e190f6c1c11f0b24d7c2ab59fd235a24a3309183f28e95"
+    },
+    "experiments/phase_2_baseline/S1/fold_5_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S1/fold_5_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "23fa6e1b7eff7dd5f7db0aa5158f74f9df58aa99937758d68ff6cbbc68c44aac"
+    },
+    "experiments/phase_2_baseline/S1/fold_5_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S1/fold_5_confusion_matrix.json",
+      "size_bytes": 322,
+      "sha256": "0acded03ea3e885eff818bb35902d8db81101834d709d825a1b5e28b40ba08e4"
+    },
+    "experiments/phase_2_baseline/S1/fold_5_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S1/fold_5_test_predictions.csv",
+      "size_bytes": 109079,
+      "sha256": "6b06c8d5376132dc66dd1c466a8323def630e4da2aff28a402b7e00a6f96a948"
+    },
+    "experiments/phase_2_baseline/S2/fold_1_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S2/fold_1_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "8b364e961fe0b030770369ecfd39576b15a3c3668c769c5df9a9412fcac0d3e6"
+    },
+    "experiments/phase_2_baseline/S2/fold_1_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S2/fold_1_confusion_matrix.json",
+      "size_bytes": 322,
+      "sha256": "a15815a0067760751aaf8b1d4b271047a380249f3459c926e6f885df1c491b3a"
+    },
+    "experiments/phase_2_baseline/S2/fold_1_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S2/fold_1_test_predictions.csv",
+      "size_bytes": 109114,
+      "sha256": "a905ed99e2cb69014ac067bc079b6a023de6f0c42bf14eb24fa30a6a1f2cc1d0"
+    },
+    "experiments/phase_2_baseline/S2/fold_2_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S2/fold_2_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "62680ebb7a9bbe474037f531775b3dfedf1cc9d645704b22722584701326d417"
+    },
+    "experiments/phase_2_baseline/S2/fold_2_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S2/fold_2_confusion_matrix.json",
+      "size_bytes": 322,
+      "sha256": "8870c05632823f56b6819d4db13a3acf5aae826730059db428050b8a187146d8"
+    },
+    "experiments/phase_2_baseline/S2/fold_2_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S2/fold_2_test_predictions.csv",
+      "size_bytes": 108279,
+      "sha256": "17262a88445532a17cb4f995da992a372af23e9cb75fd33446da5a7973e2032b"
+    },
+    "experiments/phase_2_baseline/S2/fold_3_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S2/fold_3_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "8475ba11b10167eb6b7d41c9db31686325541ed2bb66e66dcd8f022fa507111e"
+    },
+    "experiments/phase_2_baseline/S2/fold_3_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S2/fold_3_confusion_matrix.json",
+      "size_bytes": 324,
+      "sha256": "08b7486f387839246cb990dc272a088dd4d9f7d385ca3335b3c9fbf7179b5ce1"
+    },
+    "experiments/phase_2_baseline/S2/fold_3_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S2/fold_3_test_predictions.csv",
+      "size_bytes": 108462,
+      "sha256": "827a768057bd507427bfcae9f8c938e8394e6bfe8557fa70bcd85196687926d3"
+    },
+    "experiments/phase_2_baseline/S2/fold_4_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S2/fold_4_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "66ce5f04c2e4cbd340151cade44e531e849240cc930532f6ae1546bb8b4918ab"
+    },
+    "experiments/phase_2_baseline/S2/fold_4_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S2/fold_4_confusion_matrix.json",
+      "size_bytes": 322,
+      "sha256": "ec8c78c37f7e66e63bfb1a5633b3da0f70dc4d3d0758c316dba9c9cbd2ca733f"
+    },
+    "experiments/phase_2_baseline/S2/fold_4_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S2/fold_4_test_predictions.csv",
+      "size_bytes": 108912,
+      "sha256": "0285c29d99fb92a72f2a889e0f729bcba9455304dcbc3d03befc3189324b66ed"
+    },
+    "experiments/phase_2_baseline/S2/fold_5_best_checkpoint.pt": {
+      "path": "experiments/phase_2_baseline/S2/fold_5_best_checkpoint.pt",
+      "size_bytes": 94379801,
+      "sha256": "30ad57c4b50598313f16df796cca8bc9cec6ccfeb04f3a14b958896ce38b3b29"
+    },
+    "experiments/phase_2_baseline/S2/fold_5_confusion_matrix.json": {
+      "path": "experiments/phase_2_baseline/S2/fold_5_confusion_matrix.json",
+      "size_bytes": 321,
+      "sha256": "ea0cce6f2bde0580c302ea965a7aef5e2ce3c075550e38191503f9ba48a36d08"
+    },
+    "experiments/phase_2_baseline/S2/fold_5_test_predictions.csv": {
+      "path": "experiments/phase_2_baseline/S2/fold_5_test_predictions.csv",
+      "size_bytes": 108403,
+      "sha256": "d122b9b5ee8c0cfd66547fa8d30177d356959c8f43a30ccce28e0d654e750080"
+    },
+    "experiments/phase_2_baseline/training_log.csv": {
+      "path": "experiments/phase_2_baseline/training_log.csv",
+      "size_bytes": 17008,
+      "sha256": "149d872dffe8988f5cab32245d8561514c00b7c22cb3e891cf4bcd3fe3279229"
+    }
+  }
+}
