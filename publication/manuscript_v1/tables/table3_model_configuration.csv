@@ -1,0 +1,11 @@
+hyperparameter,specification
+Model Architecture,ResNet-50 (Torchvision default)
+Input Dimensions,224 x 224 x 3 (Bilinear interpolation with ImageNet normalization)
+Pre-training Initialization,ImageNet-1k pretrained weights
+Classification Head,"Linear(2048, 3) (Meningioma, Glioma, Pituitary)"
+Loss Function,Cross-Entropy Loss
+Optimizer & LR,"SGD, Momentum=0.9, Weight Decay=1e-4, Initial LR=1e-3"
+LR Schedule,"StepLR (gamma=0.1 every 10 epochs, 30 total epochs)"
+Batch Size,"32 for training, 64 for inference"
+Checkpoint Selection,Best validation Macro-F1 per fold (Phase 2 authoritative checkpoints)
+Inference Mode,FROZEN (zero parameter fine-tuning during intervention evaluations)

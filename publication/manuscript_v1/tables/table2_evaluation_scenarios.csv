@@ -1,0 +1,4 @@
+scenario,description,grouping_criterion,cluster_count,fold_1_samples,fold_2_samples,fold_3_samples,fold_4_samples,fold_5_samples,total_samples
+S0,Patient-Disjoint 5-Fold CV,Unique Patient ID,233,618,616,612,610,608,3064
+S1,Candidate Duplicate-Cleaned CV,Patient ID + SSIM >= 0.80 Pair Merges,219,618,616,612,610,608,3064
+S2,Aggressive Duplicate-Grouped CV,Patient ID + SSIM >= 0.75 Pair Merges,178,618,616,612,610,608,3064
