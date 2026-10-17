@@ -1,0 +1,123 @@
+{
+  "phase": "1.6",
+  "phase_title": "Independent Review and Alternative Evaluation Design",
+  "date_utc": "2026-10-17T01:09:13+05:30",
+  "final_decision": "CONDITIONAL-GO",
+  "decision_rationale": "A sensitivity-analysis protocol (Protocol C) is available that can produce scientifically defensible results without requiring acquisition-level metadata or external expert review. The protocol pre-registers a family of grouping assumptions, trains models independently under each, and reports whether tumour-versus-context reliance findings are robust across leakage assumptions. This acknowledges uncertainty rather than resolving it with unjustified claims.",
+  "conditions_for_go": [
+    {
+      "condition_id": "C1",
+      "description": "Complete transitive closure analysis of the 236 candidate pairs at SSIM thresholds [0.80, 0.75, 0.70, 0.60] to determine group sizes and cluster structure.",
+      "status": "not_started",
+      "blocking": true
+    },
+    {
+      "condition_id": "C2",
+      "description": "Generate candidate regrouped split manifests for each scenario and verify that all three classes remain present in all folds with sufficient sample counts (minimum 50 per class per fold).",
+      "status": "not_started",
+      "blocking": true
+    },
+    {
+      "condition_id": "C3",
+      "description": "Document the complete sensitivity-analysis plan (all scenarios, grouping rules, and acceptance criteria) before any model training begins.",
+      "status": "not_started",
+      "blocking": true
+    },
+    {
+      "condition_id": "C4",
+      "description": "Verify that the existing pretraining gate passes under at least the baseline scenario (existing patient-grouped splits unchanged).",
+      "status": "partially_met",
+      "notes": "The gate passes all checks except the 236 unresolved candidates. Under Protocol C, the sensitivity analysis explicitly handles this by reporting results under multiple grouping assumptions."
+    },
+    {
+      "condition_id": "C5",
+      "description": "Ensure no labels, fold assignments, or patient IDs are changed in the authoritative dataset. Regrouping scenarios must be implemented as separate, versioned split manifests.",
+      "status": "met",
+      "notes": "All original files are preserved with verified checksums."
+    },
+    {
+      "condition_id": "C6",
+      "description": "Record regrouping-scenario split manifests, their checksums, and the sensitivity-analysis plan in the experiment configuration before training.",
+      "status": "not_started",
+      "blocking": true
+    }
+  ],
+  "recommended_protocol": {
+    "primary": "C",
+    "name": "Sensitivity analysis across grouping assumptions",
+    "description": "Define a family of evaluation protocols parameterized by grouping threshold. Report tumour-versus-context findings under all assumptions. If findings are robust, the conclusion is defensible regardless of which pairs are genuine.",
+    "scenarios": [
+      {
+        "scenario_id": "S0",
+        "description": "Baseline: existing patient-grouped 5-fold split, no regrouping",
+        "samples": 3064,
+        "patients": 233
+      },
+      {
+        "scenario_id": "S1",
+        "description": "Conservative grouping: Tier 1 only (SSIM >= 0.80, 2 pairs, ~4 patients regrouped)",
+        "samples": 3064,
+        "patients_regrouped_estimate": 4
+      },
+      {
+        "scenario_id": "S2",
+        "description": "Conservative grouping: Tier 1+2 (SSIM >= 0.75, 27 pairs)",
+        "samples": 3064,
+        "patients_regrouped_estimate": "up_to_54"
+      },
+      {
+        "scenario_id": "S3",
+        "description": "Full conservative grouping: all 236 candidate pairs",
+        "samples": 3064,
+        "patients_regrouped_estimate": "up_to_123"
+      },
+      {
+        "scenario_id": "S4",
+        "description": "Maximum exclusion: remove all 291 samples involved in any candidate pair",
+        "samples_estimate": 2773,
+        "patients_estimate": 110
+      }
+    ]
+  },
+  "secondary_recommendation": {
+    "protocol": "D",
+    "name": "Independent expert review (parallel track)",
+    "description": "If an independent reviewer becomes available, their pair-level decisions can narrow the sensitivity range and strengthen conclusions. The expert review package and decision template are prepared."
+  },
+  "unresolved_limitations": [
+    "Acquisition-level metadata (DICOM headers, volume identifiers) are unavailable and unlikely to be obtained.",
+    "PID reliability cannot be independently verified without dataset-provider confirmation.",
+    "PID suffix variants (e.g., MR024780B vs MR024780G) may represent same-patient records but cannot be confirmed.",
+    "The cvind.mat file-to-index mapping remains unverified and is not used.",
+    "The pHash screening threshold (Hamming <= 4/64) may miss related pairs with higher distances.",
+    "No model has been trained; sensitivity analysis results are unknown until training is performed.",
+    "Expert review has not been performed; the reviewer template and package are prepared but unfilled."
+  ],
+  "prohibited_actions": [
+    "No model training occurred during this phase.",
+    "No source files, metadata, labels, patient IDs, or fold assignments were modified.",
+    "No pair was labeled as a confirmed duplicate or confirmed non-duplicate.",
+    "No protocol was selected to optimize expected accuracy.",
+    "No reviewer, review date, or review decision was invented."
+  ],
+  "artifact_checksums_verified": {
+    "metadata_csv": "c15f35073d4f03e6a91b13b9ff2d9076b5ece0dce7a8b0f2613d376886fc27f4",
+    "patient_splits_csv": "c45e0eea02f00f7c3d80f20d3f4764f758d8471300a81ff4d25ea31c2387d622",
+    "manifest_json": "4ef492323314630596da8aef0871c5e3708413aec5fe6e3796aef53b8741ca05",
+    "duplicate_pair_review_csv": "a06e79bc379abee2968f49cd57f486fc9ba738fc209916112a04515d71b3fb09",
+    "gate_report_json": "42ce324232c8b559ae27c230c533fcb562e9eff059b0c546c7d48bad381a43ff"
+  },
+  "existing_tests_passed": {
+    "test_count": 15,
+    "framework": "pytest",
+    "details": "7 duplicate-investigation tests and 8 finalization tests — all passed"
+  },
+  "deliverables": [
+    "reports/independent_review/EXPERT_REVIEW_PACKAGE.md",
+    "reports/independent_review/reviewer_decision_template.csv",
+    "reports/independent_review/PROVENANCE_REPORT.md",
+    "reports/independent_review/ALTERNATIVE_PROTOCOL_ASSESSMENT.md",
+    "reports/independent_review/recommendation.json",
+    "reports/independent_review/phase_1_6_checksums.json"
+  ]
+}
