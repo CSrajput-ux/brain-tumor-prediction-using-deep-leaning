@@ -1,0 +1,34 @@
+{
+  "INDEPENDENT_VALIDATION_REPORT.md": {
+    "sha256": "84e2984cd33d468b3e715059647b99ce76ce1d19c76334d71c72abfb4573997b",
+    "size_bytes": 14791
+  },
+  "multiple_testing_audit.csv": {
+    "sha256": "6fb93463b831b1c9cc59bd62eae5c1c55084b423b7aae9c839df58776e471676",
+    "size_bytes": 621
+  },
+  "phase_4a_audit_results.json": {
+    "sha256": "1f6f2660ba93945f5ac9919adc1dcde102da29a01e2491ba7004d31c93fbe2c1",
+    "size_bytes": 1052
+  },
+  "recomputed_metrics.csv": {
+    "sha256": "922492e5e62b396cf1f166456f0edb3009b197103cc83d92cd05bd4795ad71bb",
+    "size_bytes": 6513
+  },
+  "recomputed_paired_contrasts.json": {
+    "sha256": "5e288215eeea2145bc089cfb6d09d3f50012fed424ee7e2856dbf115626baea3",
+    "size_bytes": 5504
+  },
+  "robustness_audit_results.json": {
+    "sha256": "fca1265e4e22e2be35356e5532ae745c1b272ebd46b3953e4ad86be760c4e9cb",
+    "size_bytes": 1971
+  },
+  "sample_level_robustness_data.csv": {
+    "sha256": "187a2178eb6054d20a9aeb04f898042ece3f154612fbcdcf59d2e06ca98d803d",
+    "size_bytes": 640806
+  },
+  "subgroup_audit_results.json": {
+    "sha256": "1c281f0e6a4823215ee4eba3de98d33721abfffc4bd3027d2b2d202e39c206a4",
+    "size_bytes": 2290
+  }
+}
