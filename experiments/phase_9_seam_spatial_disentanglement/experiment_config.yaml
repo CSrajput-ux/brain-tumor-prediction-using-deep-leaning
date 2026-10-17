@@ -1,0 +1,60 @@
+# Phase 9 — Controlled Experiment: Seam Artifacts vs Spatial-Layout Disruption Configuration
+phase: 9
+study_name: "seam_artifacts_vs_spatial_layout_disentanglement"
+date: "2026-10-17"
+random_seed: 42
+bootstrap_replicates: 2000
+
+dataset:
+  source: "prepared_full_run"
+  metadata_csv: "prepared_full_run/metadata.csv"
+  total_samples: 3064
+  total_patients: 233
+  input_resolution: [512, 512]
+  model_input_resolution: [224, 224]
+  interpolation: "bilinear"
+  normalization:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  classes:
+    - meningioma
+    - glioma
+    - pituitary
+
+spatial_geometry:
+  patch_size: 16
+  grid_resolution: [32, 32]
+  protected_dilation_radius: 15
+  dilation_element: "ellipse"
+  dilation_shape: [31, 31]
+
+seam_control:
+  c1_seam_only:
+    type: "dc_offset_boundary_step"
+    description: "Applies C5LP inter-tile DC mean intensity steps to unpermuted tiles"
+  c2_seam_suppressed:
+    type: "distance_weighted_gaussian_boundary_blend"
+    ksize: 9
+    sigma: 2.5
+    blend_width_pixels: 4
+    description: "Permutes distant tiles with distance-weighted seam cross-fading to suppress high-frequency boundary steps"
+  c3_c5lp_reference:
+    type: "patch_scramble_luminance_preserved"
+    description: "Permutes distant tiles outside 15px margin with exact mean and variance preservation"
+
+scenarios:
+  S0:
+    name: "Patient-Disjoint Split"
+    manifest: "prepared_full_run/patient_splits.csv"
+    cluster_column: "patient_id"
+    clusters: 233
+  S1:
+    name: "Duplicate-Cleaned (SSIM 0.80)"
+    manifest: "experiments/phase_1_7/candidate_grouped_manifests/split_regrouped_ssim_0_80.csv"
+    cluster_column: "combined_group_id"
+    clusters: 231
+  S2:
+    name: "Aggressive Grouping (SSIM 0.75)"
+    manifest: "experiments/phase_1_7/candidate_grouped_manifests/split_regrouped_ssim_0_75.csv"
+    cluster_column: "combined_group_id"
+    clusters: 217
