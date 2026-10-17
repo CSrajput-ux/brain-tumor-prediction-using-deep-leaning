@@ -1,0 +1,42 @@
+{
+  "PHASE_6_1_CLAIM_SANITY_REPORT.md": {
+    "sha256": "dfe6bbec9ac1f3ffaa700a23fcff8294e920ca5ec8126e6b252ac49e4badbf24",
+    "size_bytes": 7096
+  },
+  "artifact_integrity_audit.csv": {
+    "sha256": "9298a4767e715c3f8caf7a15e03f13d3c971d9ef2572b7e6aa53d227c80a8be2",
+    "size_bytes": 900
+  },
+  "phase6_result_reproduction.csv": {
+    "sha256": "8f3d665cd008393c678be00e92cdf25e8a7f992b40edb9814c5aa853b9b5646a",
+    "size_bytes": 2971
+  },
+  "c5lp_claim_audit.md": {
+    "sha256": "a0d96cad853e726fd08efd9aa6c25b85d6b8f97600140ad81f5fc8ae368ef2c6",
+    "size_bytes": 6055
+  },
+  "class_transition_sanity.csv": {
+    "sha256": "b5b831d1f3cfccf2d73c959d1e1799bd34cf9b2faca602fdaf0910f213a9c22b",
+    "size_bytes": 968
+  },
+  "c3ns_claim_audit.md": {
+    "sha256": "7faaf15b751a5e7184df24dc0f4796f127731d58bb02135861d2b95575825eef",
+    "size_bytes": 4729
+  },
+  "statistical_validity_audit.md": {
+    "sha256": "7f2c40fd4c3d8aa65d69f52aa9a9f9fd5f0f5014f7ab55c9e9a2bb78acc761d3",
+    "size_bytes": 3213
+  },
+  "claim_evidence_matrix.md": {
+    "sha256": "db75d00a7d34ef5a57627546fa3791b4394921c6d4da549bad111414311b0906",
+    "size_bytes": 5764
+  },
+  "recommended_followup_controls.md": {
+    "sha256": "6ca3fc791b75eac4d76a36d83facf0b9db43201dac4a57c0bdd70e9d15c02fa3",
+    "size_bytes": 3046
+  },
+  "test_results.txt": {
+    "sha256": "0b104db95403bbdafe708577d58b6004e4c007c2609894cc3ea5d30d3369bc95",
+    "size_bytes": 1125
+  }
+}
