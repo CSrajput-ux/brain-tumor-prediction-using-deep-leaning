@@ -1,0 +1,76 @@
+{
+  "all_human_review_statuses": [
+    "automated_evidence_only_no_human_review"
+  ],
+  "automated_categories": {
+    "unresolved": 236
+  },
+  "candidate_metadata_mismatch_pairs": 0,
+  "candidate_rows_in_source_review_csv": 1254,
+  "contact_sheet_pages": 63,
+  "contact_sheet_pair_counts": {
+    "low_similarity_controls": 12,
+    "ssim_0_70_to_0_80": 59,
+    "ssim_ge_0_80": 2,
+    "ssim_lt_0_70": 175
+  },
+  "cross_patient_cross_fold_pairs": 236,
+  "errors": [],
+  "input_files_unchanged": true,
+  "metadata_sha256_after": "c15f35073d4f03e6a91b13b9ff2d9076b5ece0dce7a8b0f2613d376886fc27f4",
+  "metadata_sha256_before": "c15f35073d4f03e6a91b13b9ff2d9076b5ece0dce7a8b0f2613d376886fc27f4",
+  "pairs_with_ssim_at_least_0_80": 2,
+  "phash_hamming_distance_counts": {
+    "2": 19,
+    "4": 217
+  },
+  "phash_threshold": "Candidate set supplied by the prior audit: Hamming distance <=4/64; source IDs and order retained.",
+  "prepared_directory": "C:\\Users\\jkgga\\Downloads\\ChengResearch\\prepared_full_run",
+  "prohibited_changes": {
+    "automatic_deletion": false,
+    "automatic_fold_reassignment": false,
+    "automatic_patient_id_merging": false,
+    "automatic_relabeling": false,
+    "metadata_modified": false,
+    "prepared_images_or_masks_modified": false,
+    "source_files_modified": false,
+    "split_manifest_modified": false
+  },
+  "review_csv_sha256_after": "3a15554290ef8db234d7590455976576dc5766f797d5affd3b561c938b58a9d7",
+  "review_csv_sha256_before": "3a15554290ef8db234d7590455976576dc5766f797d5affd3b561c938b58a9d7",
+  "reviewed_pair_rows": 236,
+  "source_array_similarity_summary": {
+    "pearson_at_least_0_90": 0,
+    "pearson_at_least_0_95": 0,
+    "pearson_maximum": 0.8815301482400296,
+    "pearson_median": 0.6649004640089156,
+    "pixel_equal_fraction_maximum": 0.325286865234375,
+    "pixel_equal_fraction_median": 0.03902435302734375
+  },
+  "source_file_sha256_equal_pairs": 0,
+  "source_files_checked_unique": 291,
+  "source_identity_metadata_mismatch_pairs": 0,
+  "source_metadata": "C:\\Users\\jkgga\\Downloads\\ChengResearch\\prepared_full_run\\metadata.csv",
+  "source_review_csv": "C:\\Users\\jkgga\\Downloads\\ChengResearch\\experiments\\baseline\\near_duplicate_crossfold_review.csv",
+  "source_split_manifest": "C:\\Users\\jkgga\\Downloads\\ChengResearch\\prepared_full_run\\patient_splits.csv",
+  "split_manifest_sha256_after": "c45e0eea02f00f7c3d80f20d3f4764f758d8471300a81ff4d25ea31c2387d622",
+  "split_manifest_sha256_before": "c45e0eea02f00f7c3d80f20d3f4764f758d8471300a81ff4d25ea31c2387d622",
+  "ssim_exact_preprocessing": "Prior exported-image SSIM: min-max uint8 grayscale PNGs; no registration; scipy.ndimage.gaussian_filter sigma=1.5, truncate=4.0 (13x13 support), reflect mode; C1=(0.01*255)^2, C2=(0.03*255)^2; global mean.",
+  "ssim_high_threshold": 0.8,
+  "ssim_medium_threshold": 0.7,
+  "ssim_summary": {
+    "at_least_0_80": 2,
+    "maximum": 0.8096743135184341,
+    "median": 0.603066606843766,
+    "minimum": 0.396994110018589
+  },
+  "stable_pair_ids_unique": true,
+  "status": "investigation_completed",
+  "stored_image_array_equal_pairs": 0,
+  "tool_versions": {
+    "Pillow": "12.3.0",
+    "numpy": "2.5.1",
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "scipy": "1.18.0"
+  }
+}
