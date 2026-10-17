@@ -1,0 +1,5 @@
+﻿threshold,num_edges,num_similarity_components,num_singleton_samples,num_non_singleton_components,samples_in_non_singleton_components,num_components_multi_pid,num_components_multi_fold,total_pids_affected,total_samples_affected,max_similarity_component_size,num_combined_groups,num_combined_multi_pid,num_combined_multi_fold,total_pids_in_combined_multi,total_slices_in_combined_multi,max_combined_group_size,min_class_count_across_folds,five_fold_ge_50_satisfied,max_fold_size_disparity,fold_1_samples,fold_2_samples,fold_3_samples,fold_4_samples,fold_5_samples
+0.80,2,3062,3060,2,4,2,2,4,4,2,231,2,2,4,63,38,141,True,2,612,614,613,612,613
+0.75,27,3039,3027,12,37,12,12,23,37,6,217,7,7,23,398,155,141,True,2,613,612,614,612,613
+0.70,61,3009,2988,21,76,21,21,36,76,9,204,7,7,36,591,293,141,True,1,612,613,613,613,613
+0.60,119,2960,2916,44,148,44,44,75,148,11,166,8,8,75,1156,807,137,True,474,518,518,518,518,992
