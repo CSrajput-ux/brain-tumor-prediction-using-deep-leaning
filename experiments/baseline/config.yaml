@@ -1,0 +1,103 @@
+experiment_version: 1
+experiment_status: blocked_by_pretraining_gate
+dataset:
+  prepared_directory: ../../prepared_full_run
+  source_of_labels: cjdata.label
+  class_mapping:
+    1: meningioma
+    2: glioma
+    3: pituitary
+  dataset_manifest: ../../prepared_full_run/manifest.json
+  dataset_manifest_sha256: 4EF492323314630596DA8AEF0871C5E3708413AEC5FE6E3796AEF53B8741CA05
+  split_manifest: ../../prepared_full_run/patient_splits.csv
+  split_manifest_sha256: C45E0EEA02F00F7C3D80F20D3F4764F758D8471300A81FF4D25EA31C2387D622
+splitting:
+  protocol: five_fold_patient_grouped_outer_test_with_inner_validation
+  outer_test_fold: each_of_the_5_existing_patient_grouped_folds_once
+  inner_validation_fold: next_fold_cyclically_after_outer_test_fold
+  training_data: remaining_3_folds
+  grouping_unit: exact_cjdata_PID
+  use_cvind: false
+  cvind_status: unverified_file_order_mapping
+  seed: 42
+  patient_leakage_check: required_for_each_training_validation_test_partition
+model:
+  architecture: resnet50
+  architecture_reason: ResNet-18 weights are not cached; a torchvision ResNet-50 ImageNet V2 checkpoint is already cached locally.
+  pretrained: true
+  weights: ResNet50_Weights.IMAGENET1K_V2
+  weights_provenance: https://download.pytorch.org/models/resnet50-11ad3fa6.pth
+  weights_cache_file: ~/.cache/torch/hub/checkpoints/resnet50-11ad3fa6.pth
+  cached_checkpoint_sha256: 11ad3fa62ca79e40addfd354a8ec4b7c75143b3038b8d2a807fbc68deab379ca
+  output_classes: 3
+  predictive_inputs: MRI pixels only
+  prohibited_predictive_inputs:
+    - patient_id
+    - sample_id
+    - filename
+    - source_folder
+    - tumor_mask
+    - metadata
+  grayscale_handling: replicate_single_channel_image_to_three_rgb_channels
+preprocessing:
+  source_export: prepared per-image min-max normalized uint8 grayscale PNG
+  resize: 224x224 bilinear
+  tensor_scale: uint8_to_float32_divide_by_255
+  channel_normalization:
+    mean: [0.485, 0.456, 0.406]
+    standard_deviation: [0.229, 0.224, 0.225]
+  fitted_using_test_data: false
+training:
+  seed: 42
+  deterministic_algorithms: true
+  cudnn_benchmark: false
+  batch_size: 16
+  optimizer: AdamW
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  maximum_epochs: 30
+  early_stopping:
+    monitored_metric: validation_macro_f1
+    patience_epochs: 5
+  loss: class_weighted_cross_entropy
+  class_weights: inverse_training_fold_class_frequency_only
+  augmentation: none_for_initial_reference_run
+  checkpoint_policy:
+    select_using: validation_macro_f1
+    tie_breaker: lower_validation_loss
+    test_fold_used_for_selection: false
+evaluation:
+  primary_metric: macro_f1
+  metrics:
+    - balanced_accuracy
+    - per_class_precision_recall_f1
+    - confusion_matrix
+    - accuracy
+  confidence_intervals: patient_cluster_bootstrap_95_percent
+  bootstrap_replicates: 2000
+  inference_timing: report_per_sample_and_batch_timing
+runtime_detected_before_training:
+  python: 3.14.6
+  numpy: 2.5.1
+  scipy: 1.18.0
+  pillow: 12.3.0
+  scikit_learn: 1.9.0
+  torch: 2.15.0.dev20260907+cu126
+  torchvision: 0.30.0.dev20260906+cu126
+  cuda_available: true
+  pytorch_cuda_build: "12.6"
+  nvidia_driver: "591.86"
+  nvidia_smi_cuda_compatibility: "13.1"
+  gpu: NVIDIA GeForce RTX 4050 Laptop GPU
+  gpu_vram_gib_approx: 6
+  cpu: Intel Core i5-13450HX
+  logical_cpus: 16
+  system_ram_gib_approx: 15.71
+  hardware_used_for_training: none
+limitations:
+  - No model training has been run because cross-patient, cross-fold near-duplicate candidates remain unresolved.
+  - The supplied cvind.mat order-to-file mapping remains unverified and is not used.
+  - The cached pretrained checkpoint SHA-256 and torchvision weight URL are recorded; cache provenance cannot independently prove the original download chain.
+  - Per-image min-max export normalization can remove absolute-intensity information.
+  - Slice-level predictions are clustered within patients and are not independent observations.
+  - This baseline does not establish tumour-versus-context causal reliance or research novelty.

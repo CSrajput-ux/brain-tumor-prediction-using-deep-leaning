@@ -1,0 +1,134 @@
+{
+  "artifact_hashes": {
+    "dataset_manifest_sha256": "4ef492323314630596da8aef0871c5e3708413aec5fe6e3796aef53b8741ca05",
+    "duplicate_audit_sha256": "6e6ef5f00b0a2b9a2117a48f5d6eff4d778b99e60a0f9e6adb51b9bd86a0f46a",
+    "metadata_csv_sha256": "c15f35073d4f03e6a91b13b9ff2d9076b5ece0dce7a8b0f2613d376886fc27f4",
+    "split_manifest_sha256": "c45e0eea02f00f7c3d80f20d3f4764f758d8471300a81ff4d25ea31c2387d622"
+  },
+  "created_at_utc": "2026-10-16T19:20:27.467592+00:00",
+  "cross_patient_cross_fold_candidates": 236,
+  "cross_patient_cross_fold_ssim_ge_threshold": 2,
+  "cvind_inspection": {
+    "fold_assignment_counts": {
+      "1": 542,
+      "2": 679,
+      "3": 572,
+      "4": 628,
+      "5": 643
+    },
+    "mapping_status": "UNVERIFIED: numeric filenames provide a possible 1-based candidate order, but the supplied README does not establish that cvind position i corresponds to file i.mat. No fold assignments were mapped.",
+    "mapping_verified": false,
+    "matlab_native_shape_inferred": [
+      3064,
+      1
+    ],
+    "stored_shape": [
+      1,
+      3064
+    ]
+  },
+  "cvind_status": "unverified; not used for any split assignment",
+  "exact_duplicate_source_files": 0,
+  "expected_class_counts": {
+    "glioma": 1426,
+    "meningioma": 708,
+    "pituitary": 930
+  },
+  "fold_summary": [
+    {
+      "class_counts": {
+        "glioma": 286,
+        "meningioma": 142,
+        "pituitary": 185
+      },
+      "fold": "fold_1",
+      "patient_count": 47,
+      "slice_count": 613
+    },
+    {
+      "class_counts": {
+        "glioma": 286,
+        "meningioma": 142,
+        "pituitary": 186
+      },
+      "fold": "fold_2",
+      "patient_count": 47,
+      "slice_count": 614
+    },
+    {
+      "class_counts": {
+        "glioma": 284,
+        "meningioma": 142,
+        "pituitary": 185
+      },
+      "fold": "fold_3",
+      "patient_count": 46,
+      "slice_count": 611
+    },
+    {
+      "class_counts": {
+        "glioma": 285,
+        "meningioma": 141,
+        "pituitary": 187
+      },
+      "fold": "fold_4",
+      "patient_count": 46,
+      "slice_count": 613
+    },
+    {
+      "class_counts": {
+        "glioma": 285,
+        "meningioma": 141,
+        "pituitary": 187
+      },
+      "fold": "fold_5",
+      "patient_count": 47,
+      "slice_count": 613
+    }
+  ],
+  "issues": [
+    "236 cross-patient near-duplicate candidates span different evaluation folds and have not been manually resolved; this is a potential leakage risk."
+  ],
+  "manifest_discovered_mat_files": 3064,
+  "manifest_run_id": "20261015T205539Z_a167ed4b",
+  "mask_issues": 0,
+  "missing_patient_ids": 0,
+  "near_duplicate_candidate_pairs": 1254,
+  "near_duplicate_ssim_review_threshold": 0.8,
+  "observed_class_counts": {
+    "glioma": 1426,
+    "meningioma": 708,
+    "pituitary": 930
+  },
+  "output_failure_examples": [],
+  "output_failures": 0,
+  "patient_fold_overlap_count": 0,
+  "prepared_dir": "C:\\Users\\jkgga\\Downloads\\ChengResearch\\prepared_full_run",
+  "runtime": {
+    "cuda_available": true,
+    "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "gpu_vram_bytes": 6438780928,
+    "logical_cpu_count": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "resnet18_imagenet1k_v1_cached": false,
+    "resnet50_imagenet1k_v2_cached": true,
+    "torch_available": true,
+    "torch_cuda_build": "12.6",
+    "torch_version": "2.15.0.dev20260907+cu126",
+    "torchvision_version": "0.30.0.dev20260906+cu126"
+  },
+  "source_failure_examples": [],
+  "source_failures": 0,
+  "source_root": "C:\\Users\\jkgga\\Downloads\\ChengResearch",
+  "source_sample_count": 3064,
+  "source_sha256_mismatches": 0,
+  "split_row_count": 3064,
+  "split_samples_missing_or_extra": {
+    "extra": 0,
+    "missing": 0
+  },
+  "status": "NO-GO",
+  "unique_patient_ids": 233,
+  "unique_sample_ids": 3064
+}
