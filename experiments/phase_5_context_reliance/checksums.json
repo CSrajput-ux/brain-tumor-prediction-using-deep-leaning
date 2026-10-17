@@ -1,0 +1,42 @@
+{
+  "context_reliance_report.md": {
+    "sha256": "1f6b4c8d4252f2c3d3c4b66a193998358f9410c45a2fda4325e267421016ef42",
+    "size_bytes": 11133
+  },
+  "intervention_config.yaml": {
+    "sha256": "3802008fcc784358ed75e228e653ff892fddbe7e31650a23c9a507b4f071e08e",
+    "size_bytes": 2319
+  },
+  "intervention_manifest.csv": {
+    "sha256": "1b0ce7ae8e7312b8aa9b67eda4bfdfe4ceb8a80a919ee9339f947e02d5a41ea8",
+    "size_bytes": 893243
+  },
+  "intervention_quality_audit.md": {
+    "sha256": "30e320b1832b305feb7352e5d0e4429ae239db712711d0f5a604cde3f0f77f91",
+    "size_bytes": 5220
+  },
+  "limitations_and_claims.md": {
+    "sha256": "7956f441075e5ea8932f8da9ed1e2e4a9f1480c8bbfbe4fde98646c883a2f5a9",
+    "size_bytes": 5532
+  },
+  "matched_predictions.csv": {
+    "sha256": "f7c70cbf35da2c87d8a8e68537abc45d715333e00dab18bc762704ba5abe22ce",
+    "size_bytes": 11697165
+  },
+  "metrics_by_condition.csv": {
+    "sha256": "4cb68e0692eb74ceeda7a9e5cc3bdca24be6d4c92e821f695ada0c28f63eb195",
+    "size_bytes": 3694
+  },
+  "paired_contrasts.json": {
+    "sha256": "3163b0eceff4fb0eea9759b86c8f3dbad929e13b1842baca8bd1e9e4252dd31f",
+    "size_bytes": 8679
+  },
+  "preregistration.md": {
+    "sha256": "ad5151c69fb24a4a24ea626e6526e2722596f0bae35bf99a01729555a5bf128c",
+    "size_bytes": 7520
+  },
+  "spatial_intervention_contact_sheet.png": {
+    "sha256": "83f0a2bf95f1c80cae73589df93372b473f6abf9fc9e36099e904c5c576fed6d",
+    "size_bytes": 265358
+  }
+}
