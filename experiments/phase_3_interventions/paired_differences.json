@@ -1,0 +1,215 @@
+{
+  "S0": {
+    "macro_f1_orig": 0.9329720205195574,
+    "macro_f1_removed": 0.8173557191208217,
+    "macro_f1_placebo": 0.9222059067916833,
+    "macro_f1_tumor": 0.31140592778258885,
+    "macro_f1_context_shift": 0.9341097882230596,
+    "macro_f1_removed_feathered": 0.8587826663650816,
+    "Delta_removal": {
+      "point_estimate": 0.11561630139873569,
+      "ci_95": [
+        0.0757507585909188,
+        0.15719830382708067
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_removed)"
+    },
+    "Delta_placebo": {
+      "point_estimate": 0.01076611372787406,
+      "ci_95": [
+        -0.026219451239083504,
+        0.04550883666432177
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_placebo)"
+    },
+    "Delta_tumor": {
+      "point_estimate": -0.02192740555074446,
+      "ci_95": [
+        -0.06273912632382306,
+        0.01789753291313594
+      ],
+      "definition": "Macro-F1(I_tumor) - Chance(0.3333)"
+    },
+    "Delta_context_shift": {
+      "point_estimate": -0.0011377677035021572,
+      "ci_95": [
+        -0.035981535312425164,
+        0.034088537574554
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_context_shift)"
+    },
+    "Net_tumor_reliance": {
+      "point_estimate": 0.10485018767086163,
+      "ci_95": [
+        0.06477715699434287,
+        0.1473093170442832
+      ],
+      "definition": "Delta_removal - Delta_placebo"
+    },
+    "Delta_removal_feathered": {
+      "point_estimate": 0.0741893541544758,
+      "ci_95": [
+        0.031108445934565358,
+        0.11545953592466009
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_removed_feathered)"
+    },
+    "mcnemar_test_removal": {
+      "discordant_b_correct_to_incorrect": 330,
+      "discordant_c_incorrect_to_correct": 26,
+      "statistic": 257.89044943820227,
+      "p_value": 0.0
+    },
+    "wilcoxon_patient_f1_diff": {
+      "statistic": 68.0,
+      "p_value": 5.540230715976948e-15
+    },
+    "zone_assignment": {
+      "zone_code": "ZONE_3",
+      "zone_name": "Zone 3 (Primary Intratumoral Reliance)",
+      "spans_zone_boundary": true
+    }
+  },
+  "S1": {
+    "macro_f1_orig": 0.9331518434436711,
+    "macro_f1_removed": 0.8182064086766303,
+    "macro_f1_placebo": 0.9222359492867982,
+    "macro_f1_tumor": 0.2739369408269238,
+    "macro_f1_context_shift": 0.9319946104859689,
+    "macro_f1_removed_feathered": 0.8643661104182673,
+    "Delta_removal": {
+      "point_estimate": 0.11494543476704078,
+      "ci_95": [
+        0.07230529635425002,
+        0.15988774037467066
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_removed)"
+    },
+    "Delta_placebo": {
+      "point_estimate": 0.010915894156872885,
+      "ci_95": [
+        -0.028560209607074012,
+        0.048883384182367574
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_placebo)"
+    },
+    "Delta_tumor": {
+      "point_estimate": -0.05939639250640949,
+      "ci_95": [
+        -0.10443360819312118,
+        -0.015638690274761696
+      ],
+      "definition": "Macro-F1(I_tumor) - Chance(0.3333)"
+    },
+    "Delta_context_shift": {
+      "point_estimate": 0.0011572329577022034,
+      "ci_95": [
+        -0.034008771172752555,
+        0.03791441598834043
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_context_shift)"
+    },
+    "Net_tumor_reliance": {
+      "point_estimate": 0.10402954061016789,
+      "ci_95": [
+        0.0584483881446822,
+        0.15113179547162528
+      ],
+      "definition": "Delta_removal - Delta_placebo"
+    },
+    "Delta_removal_feathered": {
+      "point_estimate": 0.0687857330254038,
+      "ci_95": [
+        0.02573645015300883,
+        0.11123877333219301
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_removed_feathered)"
+    },
+    "mcnemar_test_removal": {
+      "discordant_b_correct_to_incorrect": 318,
+      "discordant_c_incorrect_to_correct": 25,
+      "statistic": 248.58309037900875,
+      "p_value": 0.0
+    },
+    "wilcoxon_patient_f1_diff": {
+      "statistic": 158.5,
+      "p_value": 9.378759472240378e-16
+    },
+    "zone_assignment": {
+      "zone_code": "ZONE_3",
+      "zone_name": "Zone 3 (Primary Intratumoral Reliance)",
+      "spans_zone_boundary": true
+    }
+  },
+  "S2": {
+    "macro_f1_orig": 0.9272744753915024,
+    "macro_f1_removed": 0.814325748079411,
+    "macro_f1_placebo": 0.9131617681595339,
+    "macro_f1_tumor": 0.2721902499369077,
+    "macro_f1_context_shift": 0.9275239331894959,
+    "macro_f1_removed_feathered": 0.866874482151994,
+    "Delta_removal": {
+      "point_estimate": 0.11294872731209138,
+      "ci_95": [
+        0.06829067511562951,
+        0.1601116231873039
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_removed)"
+    },
+    "Delta_placebo": {
+      "point_estimate": 0.014112707231968558,
+      "ci_95": [
+        -0.022114224639087115,
+        0.053846241555913964
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_placebo)"
+    },
+    "Delta_tumor": {
+      "point_estimate": -0.0611430833964256,
+      "ci_95": [
+        -0.10252543224148708,
+        -0.020796828486115495
+      ],
+      "definition": "Macro-F1(I_tumor) - Chance(0.3333)"
+    },
+    "Delta_context_shift": {
+      "point_estimate": -0.0002494577979934576,
+      "ci_95": [
+        -0.03754392810428642,
+        0.036190679007563745
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_context_shift)"
+    },
+    "Net_tumor_reliance": {
+      "point_estimate": 0.09883602008012282,
+      "ci_95": [
+        0.05320066136346333,
+        0.1463488756584302
+      ],
+      "definition": "Delta_removal - Delta_placebo"
+    },
+    "Delta_removal_feathered": {
+      "point_estimate": 0.0603999932395084,
+      "ci_95": [
+        0.02037776534435156,
+        0.1051525543520527
+      ],
+      "definition": "Macro-F1(I_orig) - Macro-F1(I_removed_feathered)"
+    },
+    "mcnemar_test_removal": {
+      "discordant_b_correct_to_incorrect": 354,
+      "discordant_c_incorrect_to_correct": 29,
+      "statistic": 274.08877284595303,
+      "p_value": 0.0
+    },
+    "wilcoxon_patient_f1_diff": {
+      "statistic": 320.5,
+      "p_value": 5.439320667290238e-14
+    },
+    "zone_assignment": {
+      "zone_code": "ZONE_3",
+      "zone_name": "Zone 3 (Primary Intratumoral Reliance)",
+      "spans_zone_boundary": true
+    }
+  }
+}
