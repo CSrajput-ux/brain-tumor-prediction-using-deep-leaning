@@ -1,0 +1,90 @@
+# Phase 3 Controlled Intervention Configuration (Pre-Registered)
+phase: 3_controlled_tumour_region_vs_context_intervention
+date_utc: "2026-10-17T03:00:00Z"
+status: locked_for_execution
+
+dataset:
+  name: cheng_brain_tumor_mri_3class
+  num_samples: 3064
+  original_dimensions: [512, 512]
+  classes:
+    0: meningioma
+    1: glioma
+    2: pituitary
+
+scenarios:
+  S0:
+    manifest_path: "prepared_full_run/patient_splits.csv"
+    cluster_col: "patient_id"
+    description: "Authoritative patient-grouped evaluation"
+  S1:
+    manifest_path: "experiments/phase_1_7/candidate_grouped_manifests/split_regrouped_ssim_0_80.csv"
+    cluster_col: "combined_group_id"
+    description: "Candidate-grouped evaluation at SSIM >= 0.80"
+  S2:
+    manifest_path: "experiments/phase_1_7/candidate_grouped_manifests/split_regrouped_ssim_0_75.csv"
+    cluster_col: "combined_group_id"
+    description: "Candidate-grouped evaluation at SSIM >= 0.75"
+
+checkpoints:
+  directory: "experiments/phase_2_baseline"
+  pattern: "{scenario}/fold_{fold}_best_checkpoint.pt"
+  num_checkpoints_per_scenario: 5
+  total_checkpoints: 15
+
+conditions:
+  I_orig:
+    description: "Original unmanipulated MRI slice"
+    operation: "identity"
+    fill_value: null
+    boundary: "unmodified"
+  I_tumor:
+    description: "Intratumoral evidence isolated; all external pixels zeroed out"
+    operation: "img * mask"
+    fill_value: 0
+    boundary: "sharp_binary"
+  I_removed:
+    description: "Tumor region suppressed; all intratumoral pixels zeroed out"
+    operation: "img * (1 - mask)"
+    fill_value: 0
+    boundary: "sharp_binary"
+  I_placebo:
+    description: "Matched contralateral normal tissue suppressed; non-overlapping mirrored region zeroed out"
+    operation: "img * (1 - placebo_mask)"
+    fill_value: 0
+    boundary: "sharp_binary_contralateral"
+  I_context_shift:
+    description: "Surrounding anatomical context dimmed by 20% contrast reduction; tumor pixels preserved"
+    operation: "np.where(mask > 0, img, np.clip(img * 0.80, 0, 255))"
+    contrast_scaling: 0.80
+    boundary: "anatomical"
+
+sensitivity_checks:
+  I_removed_feathered:
+    description: "Ablation with 5-pixel Gaussian feathered border and mean parenchymal infill"
+    sigma: 2.0
+    fill_strategy: "mean_parenchymal"
+
+model_evaluation:
+  architecture: "resnet50"
+  input_resolution: [224, 224]
+  interpolation: "bilinear"
+  normalization:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  amp_enabled: true
+  batch_size: 64
+
+statistical_analysis:
+  primary_metric: "Macro-F1"
+  primary_contrast: "Delta_removal = Macro-F1(I_orig) - Macro-F1(I_removed)"
+  bootstrap_replicates: 2000
+  cluster_aware: true
+  confidence_level: 0.95
+  hypothesis_zones:
+    zone_1_context_shortcut: "< 0.05"
+    zone_2_dual_reliance: "0.05 to < 0.10"
+    zone_3_primary_tumor_reliance: ">= 0.10"
+  multiple_comparison_control:
+    fdr_method: "Benjamini-Hochberg (q=0.05)"
+    fwer_method: "Holm-Bonferroni (alpha=0.05)"

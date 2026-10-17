@@ -1,0 +1,27 @@
+{
+  "timestamp_utc": "2026-10-16T21:18:15.268052+00:00",
+  "phase": "2.1_independent_baseline_completion_audit",
+  "total_artifacts": 4,
+  "artifacts": {
+    "INDEPENDENT_AUDIT_REPORT.md": {
+      "path": "experiments/phase_2_baseline_audit/INDEPENDENT_AUDIT_REPORT.md",
+      "size_bytes": 8247,
+      "sha256": "4a6adc0e2684eb1a9e8d3708efb558f4d1cf0d54933c93712d16f9a35e2cdcd7"
+    },
+    "metric_reconciliation.csv": {
+      "path": "experiments/phase_2_baseline_audit/metric_reconciliation.csv",
+      "size_bytes": 6946,
+      "sha256": "7c63e337acbef67118d2a16e9ed0befbc3cedfaea099c9a5f176c53cf57d4046"
+    },
+    "recomputed_metrics.json": {
+      "path": "experiments/phase_2_baseline_audit/recomputed_metrics.json",
+      "size_bytes": 17676,
+      "sha256": "6efda67751bd411cc715139a2000e92d8a9b201dbf0c432f01d544b84840f471"
+    },
+    "split_isolation_audit.json": {
+      "path": "experiments/phase_2_baseline_audit/split_isolation_audit.json",
+      "size_bytes": 9577,
+      "sha256": "e0d62b0f0edea1489afeadcbb4bb6af68f2ea8c26cbd9218b7f0935678b68e63"
+    }
+  }
+}

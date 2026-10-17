@@ -1,0 +1,720 @@
+{
+  "scenarios": {
+    "S0": {
+      "total_samples": 3064,
+      "clusters_count": 233,
+      "pooled_macro_f1": 0.9329720205195574,
+      "pooled_macro_f1_95ci": [
+        0.906041654973343,
+        0.9548995542153589
+      ],
+      "pooled_balanced_acc": 0.935988489261839,
+      "pooled_balanced_acc_95ci": [
+        0.910296149205196,
+        0.9578437120519535
+      ],
+      "pooled_accuracy": 0.9406005221932114,
+      "pooled_accuracy_95ci": [
+        0.9179025620478017,
+        0.9603367315528715
+      ],
+      "fold_macro_f1_mean": 0.9328316368336793,
+      "fold_macro_f1_std": 0.023592741400341455,
+      "per_class": {
+        "meningioma": {
+          "precision": 0.8670284938941656,
+          "recall": 0.902542372881356,
+          "f1": 0.8844290657439446,
+          "support": 708
+        },
+        "glioma": {
+          "precision": 0.9720028715003589,
+          "recall": 0.9495091164095372,
+          "f1": 0.9606243348705215,
+          "support": 1426
+        },
+        "pituitary": {
+          "precision": 0.9518201284796574,
+          "recall": 0.9559139784946237,
+          "f1": 0.953862660944206,
+          "support": 930
+        }
+      },
+      "confusion_matrix": [
+        [
+          639,
+          26,
+          43
+        ],
+        [
+          70,
+          1354,
+          2
+        ],
+        [
+          28,
+          13,
+          889
+        ]
+      ],
+      "folds": {
+        "fold_1": {
+          "num_samples": 613,
+          "num_patients": 47,
+          "macro_f1": 0.9353847161300054,
+          "balanced_acc": 0.9448610138750984,
+          "accuracy": 0.9412724306688418,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 286,
+            "pituitary": 185
+          },
+          "class_f1": {
+            "meningioma": 0.8945686900958466,
+            "glioma": 0.962432915921288,
+            "pituitary": 0.9491525423728814
+          },
+          "confusion_matrix": [
+            [
+              140,
+              1,
+              1
+            ],
+            [
+              17,
+              269,
+              0
+            ],
+            [
+              14,
+              3,
+              168
+            ]
+          ]
+        },
+        "fold_2": {
+          "num_samples": 614,
+          "num_patients": 47,
+          "macro_f1": 0.9095734594143926,
+          "balanced_acc": 0.9093304343190759,
+          "accuracy": 0.9169381107491856,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 286,
+            "pituitary": 186
+          },
+          "class_f1": {
+            "meningioma": 0.8601398601398601,
+            "glioma": 0.9337979094076655,
+            "pituitary": 0.9347826086956522
+          },
+          "confusion_matrix": [
+            [
+              123,
+              10,
+              9
+            ],
+            [
+              17,
+              268,
+              1
+            ],
+            [
+              4,
+              10,
+              172
+            ]
+          ]
+        },
+        "fold_3": {
+          "num_samples": 611,
+          "num_patients": 46,
+          "macro_f1": 0.970617186473493,
+          "balanced_acc": 0.9706572769953051,
+          "accuracy": 0.9754500818330606,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 284,
+            "pituitary": 185
+          },
+          "class_f1": {
+            "meningioma": 0.946236559139785,
+            "glioma": 0.9893617021276596,
+            "pituitary": 0.9762532981530343
+          },
+          "confusion_matrix": [
+            [
+              132,
+              1,
+              9
+            ],
+            [
+              5,
+              279,
+              0
+            ],
+            [
+              0,
+              0,
+              185
+            ]
+          ]
+        },
+        "fold_4": {
+          "num_samples": 613,
+          "num_patients": 46,
+          "macro_f1": 0.9170322760448038,
+          "balanced_acc": 0.9119847443541534,
+          "accuracy": 0.933115823817292,
+          "class_support": {
+            "meningioma": 141,
+            "glioma": 285,
+            "pituitary": 187
+          },
+          "class_f1": {
+            "meningioma": 0.8449612403100775,
+            "glioma": 0.9721254355400697,
+            "pituitary": 0.934010152284264
+          },
+          "confusion_matrix": [
+            [
+              109,
+              10,
+              22
+            ],
+            [
+              5,
+              279,
+              1
+            ],
+            [
+              3,
+              0,
+              184
+            ]
+          ]
+        },
+        "fold_5": {
+          "num_samples": 613,
+          "num_patients": 47,
+          "macro_f1": 0.931550546105702,
+          "balanced_acc": 0.942928527751662,
+          "accuracy": 0.9363784665579119,
+          "class_support": {
+            "meningioma": 141,
+            "glioma": 285,
+            "pituitary": 187
+          },
+          "class_f1": {
+            "meningioma": 0.8737864077669902,
+            "glioma": 0.9452554744525548,
+            "pituitary": 0.975609756097561
+          },
+          "confusion_matrix": [
+            [
+              135,
+              4,
+              2
+            ],
+            [
+              26,
+              259,
+              0
+            ],
+            [
+              7,
+              0,
+              180
+            ]
+          ]
+        }
+      }
+    },
+    "S1": {
+      "total_samples": 3064,
+      "clusters_count": 231,
+      "pooled_macro_f1": 0.9331518434436711,
+      "pooled_macro_f1_95ci": [
+        0.9048578231096275,
+        0.956193251300436
+      ],
+      "pooled_balanced_acc": 0.9336170077891617,
+      "pooled_balanced_acc_95ci": [
+        0.9058295586002169,
+        0.955982310065323
+      ],
+      "pooled_accuracy": 0.9419060052219321,
+      "pooled_accuracy_95ci": [
+        0.9174167518613301,
+        0.9623564220206251
+      ],
+      "fold_macro_f1_mean": 0.9327749070199911,
+      "fold_macro_f1_std": 0.02851750657511245,
+      "per_class": {
+        "meningioma": {
+          "precision": 0.8851063829787233,
+          "recall": 0.8813559322033898,
+          "f1": 0.8832271762208068,
+          "support": 708
+        },
+        "glioma": {
+          "precision": 0.9682203389830508,
+          "recall": 0.9614305750350631,
+          "f1": 0.9648135116115412,
+          "support": 1426
+        },
+        "pituitary": {
+          "precision": 0.9448568398727466,
+          "recall": 0.9580645161290322,
+          "f1": 0.9514148424986653,
+          "support": 930
+        }
+      },
+      "confusion_matrix": [
+        [
+          624,
+          37,
+          47
+        ],
+        [
+          50,
+          1371,
+          5
+        ],
+        [
+          31,
+          8,
+          891
+        ]
+      ],
+      "folds": {
+        "fold_1": {
+          "num_samples": 612,
+          "num_patients": 45,
+          "macro_f1": 0.9709877140672988,
+          "balanced_acc": 0.9690753021368291,
+          "accuracy": 0.9738562091503268,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 285,
+            "pituitary": 185
+          },
+          "class_f1": {
+            "meningioma": 0.958041958041958,
+            "glioma": 0.9826989619377162,
+            "pituitary": 0.9722222222222222
+          },
+          "confusion_matrix": [
+            [
+              137,
+              5,
+              0
+            ],
+            [
+              1,
+              284,
+              0
+            ],
+            [
+              6,
+              4,
+              175
+            ]
+          ]
+        },
+        "fold_2": {
+          "num_samples": 614,
+          "num_patients": 47,
+          "macro_f1": 0.9512069211744315,
+          "balanced_acc": 0.9576378981885866,
+          "accuracy": 0.9560260586319218,
+          "class_support": {
+            "meningioma": 141,
+            "glioma": 286,
+            "pituitary": 187
+          },
+          "class_f1": {
+            "meningioma": 0.9152542372881356,
+            "glioma": 0.9678571428571429,
+            "pituitary": 0.9705093833780161
+          },
+          "confusion_matrix": [
+            [
+              135,
+              1,
+              5
+            ],
+            [
+              15,
+              271,
+              0
+            ],
+            [
+              4,
+              2,
+              181
+            ]
+          ]
+        },
+        "fold_3": {
+          "num_samples": 613,
+          "num_patients": 46,
+          "macro_f1": 0.9020095828082182,
+          "balanced_acc": 0.8943236859375457,
+          "accuracy": 0.9216965742251223,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 285,
+            "pituitary": 186
+          },
+          "class_f1": {
+            "meningioma": 0.8211382113821138,
+            "glioma": 0.9671848013816926,
+            "pituitary": 0.9177057356608479
+          },
+          "confusion_matrix": [
+            [
+              101,
+              14,
+              27
+            ],
+            [
+              1,
+              280,
+              4
+            ],
+            [
+              2,
+              0,
+              184
+            ]
+          ]
+        },
+        "fold_4": {
+          "num_samples": 612,
+          "num_patients": 47,
+          "macro_f1": 0.9105708290635827,
+          "balanced_acc": 0.9173816110656174,
+          "accuracy": 0.9199346405228758,
+          "class_support": {
+            "meningioma": 141,
+            "glioma": 284,
+            "pituitary": 187
+          },
+          "class_f1": {
+            "meningioma": 0.835016835016835,
+            "glioma": 0.9420289855072463,
+            "pituitary": 0.9546666666666667
+          },
+          "confusion_matrix": [
+            [
+              124,
+              8,
+              9
+            ],
+            [
+              24,
+              260,
+              0
+            ],
+            [
+              8,
+              0,
+              179
+            ]
+          ]
+        },
+        "fold_5": {
+          "num_samples": 613,
+          "num_patients": 48,
+          "macro_f1": 0.9290994879864244,
+          "balanced_acc": 0.929710297315931,
+          "accuracy": 0.9380097879282219,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 286,
+            "pituitary": 185
+          },
+          "class_f1": {
+            "meningioma": 0.8788927335640139,
+            "glioma": 0.9633507853403142,
+            "pituitary": 0.945054945054945
+          },
+          "confusion_matrix": [
+            [
+              127,
+              9,
+              6
+            ],
+            [
+              9,
+              276,
+              1
+            ],
+            [
+              11,
+              2,
+              172
+            ]
+          ]
+        }
+      }
+    },
+    "S2": {
+      "total_samples": 3064,
+      "clusters_count": 217,
+      "pooled_macro_f1": 0.9272744753915024,
+      "pooled_macro_f1_95ci": [
+        0.8982253724723928,
+        0.9502922081216352
+      ],
+      "pooled_balanced_acc": 0.9299902536429979,
+      "pooled_balanced_acc_95ci": [
+        0.9029414520955782,
+        0.9526287639511423
+      ],
+      "pooled_accuracy": 0.935378590078329,
+      "pooled_accuracy_95ci": [
+        0.9107919946817816,
+        0.9564116000602471
+      ],
+      "fold_macro_f1_mean": 0.9274156418407745,
+      "fold_macro_f1_std": 0.020392679164135844,
+      "per_class": {
+        "meningioma": {
+          "precision": 0.8548168249660787,
+          "recall": 0.8898305084745762,
+          "f1": 0.8719723183391004,
+          "support": 708
+        },
+        "glioma": {
+          "precision": 0.964924838940587,
+          "recall": 0.9453015427769986,
+          "f1": 0.955012398157988,
+          "support": 1426
+        },
+        "pituitary": {
+          "precision": 0.9548387096774194,
+          "recall": 0.9548387096774194,
+          "f1": 0.9548387096774194,
+          "support": 930
+        }
+      },
+      "confusion_matrix": [
+        [
+          630,
+          40,
+          38
+        ],
+        [
+          74,
+          1348,
+          4
+        ],
+        [
+          33,
+          9,
+          888
+        ]
+      ],
+      "folds": {
+        "fold_1": {
+          "num_samples": 613,
+          "num_patients": 48,
+          "macro_f1": 0.9383351809881049,
+          "balanced_acc": 0.9397024465658647,
+          "accuracy": 0.9429037520391517,
+          "class_support": {
+            "meningioma": 141,
+            "glioma": 286,
+            "pituitary": 186
+          },
+          "class_f1": {
+            "meningioma": 0.903448275862069,
+            "glioma": 0.9528795811518325,
+            "pituitary": 0.9586776859504132
+          },
+          "confusion_matrix": [
+            [
+              131,
+              7,
+              3
+            ],
+            [
+              13,
+              273,
+              0
+            ],
+            [
+              5,
+              7,
+              174
+            ]
+          ]
+        },
+        "fold_2": {
+          "num_samples": 612,
+          "num_patients": 46,
+          "macro_f1": 0.9286150464093795,
+          "balanced_acc": 0.945992693954147,
+          "accuracy": 0.9313725490196079,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 285,
+            "pituitary": 185
+          },
+          "class_f1": {
+            "meningioma": 0.8695652173913043,
+            "glioma": 0.9325842696629213,
+            "pituitary": 0.9836956521739131
+          },
+          "confusion_matrix": [
+            [
+              140,
+              0,
+              2
+            ],
+            [
+              36,
+              249,
+              0
+            ],
+            [
+              4,
+              0,
+              181
+            ]
+          ]
+        },
+        "fold_3": {
+          "num_samples": 614,
+          "num_patients": 46,
+          "macro_f1": 0.8951900237237451,
+          "balanced_acc": 0.8972190373942563,
+          "accuracy": 0.9071661237785016,
+          "class_support": {
+            "meningioma": 141,
+            "glioma": 286,
+            "pituitary": 187
+          },
+          "class_f1": {
+            "meningioma": 0.8187919463087249,
+            "glioma": 0.9424083769633508,
+            "pituitary": 0.9243697478991597
+          },
+          "confusion_matrix": [
+            [
+              122,
+              15,
+              4
+            ],
+            [
+              15,
+              270,
+              1
+            ],
+            [
+              20,
+              2,
+              165
+            ]
+          ]
+        },
+        "fold_4": {
+          "num_samples": 612,
+          "num_patients": 46,
+          "macro_f1": 0.9251779069421139,
+          "balanced_acc": 0.9224815623629561,
+          "accuracy": 0.9395424836601307,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 285,
+            "pituitary": 185
+          },
+          "class_f1": {
+            "meningioma": 0.8636363636363636,
+            "glioma": 0.9805996472663139,
+            "pituitary": 0.9312977099236641
+          },
+          "confusion_matrix": [
+            [
+              114,
+              4,
+              24
+            ],
+            [
+              6,
+              278,
+              1
+            ],
+            [
+              2,
+              0,
+              183
+            ]
+          ]
+        },
+        "fold_5": {
+          "num_samples": 613,
+          "num_patients": 47,
+          "macro_f1": 0.949760051140529,
+          "balanced_acc": 0.9447917451231452,
+          "accuracy": 0.9559543230016313,
+          "class_support": {
+            "meningioma": 142,
+            "glioma": 284,
+            "pituitary": 187
+          },
+          "class_f1": {
+            "meningioma": 0.9077490774907749,
+            "glioma": 0.9652777777777778,
+            "pituitary": 0.9762532981530343
+          },
+          "confusion_matrix": [
+            [
+              123,
+              14,
+              5
+            ],
+            [
+              4,
+              278,
+              2
+            ],
+            [
+              2,
+              0,
+              185
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "paired_comparisons": {
+    "S0_vs_S1": {
+      "macro_f1_difference": -0.00017982292411367062,
+      "paired_95ci": [
+        -0.013968535199623591,
+        0.01386828874860965
+      ],
+      "contains_zero": true
+    },
+    "S0_vs_S2": {
+      "macro_f1_difference": 0.005697545128054982,
+      "paired_95ci": [
+        -0.007015545729705317,
+        0.018229161146797776
+      ],
+      "contains_zero": true
+    },
+    "S1_vs_S2": {
+      "macro_f1_difference": 0.005877368052168652,
+      "paired_95ci": [
+        -0.008760620015413107,
+        0.01945662512003044
+      ],
+      "contains_zero": true
+    }
+  }
+}
