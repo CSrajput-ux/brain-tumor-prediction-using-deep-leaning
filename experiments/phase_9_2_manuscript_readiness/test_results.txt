@@ -1,0 +1,15 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\jkgga\AppData\Local\Python\pythoncore-3.14-64\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jkgga\Downloads\ChengResearch
+plugins: anyio-4.14.2
+collecting ... collected 5 items
+
+tests/test_phase_9_2_manuscript_readiness.py::test_phase_9_2_required_artifacts_exist PASSED [ 20%]
+tests/test_phase_9_2_manuscript_readiness.py::test_phase_9_2_prediction_accounting_integrity PASSED [ 40%]
+tests/test_phase_9_2_manuscript_readiness.py::test_phase_9_2_canonical_contrasts_fidelity PASSED [ 60%]
+tests/test_phase_9_2_manuscript_readiness.py::test_phase_9_2_intervention_validity_matrix_invariants PASSED [ 80%]
+tests/test_phase_9_2_manuscript_readiness.py::test_phase_9_2_gate_verdict_in_report PASSED [100%]
+
+============================== 5 passed in 1.26s ==============================
+
