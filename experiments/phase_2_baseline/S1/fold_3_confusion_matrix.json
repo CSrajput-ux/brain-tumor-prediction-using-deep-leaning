@@ -1,0 +1,27 @@
+{
+  "scenario": "S1",
+  "fold": "fold_3",
+  "classes": [
+    "meningioma",
+    "glioma",
+    "pituitary"
+  ],
+  "confusion_matrix": [
+    [
+      101,
+      14,
+      27
+    ],
+    [
+      1,
+      280,
+      4
+    ],
+    [
+      2,
+      0,
+      184
+    ]
+  ],
+  "macro_f1": 0.9020095828082182
+}
