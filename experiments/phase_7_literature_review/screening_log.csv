@@ -1,0 +1,21 @@
+record_id,title,first_author,year,screening_stage,decision,exclusion_reason,category
+R01,"Shortcut Learning in Deep Neural Networks",Geirhos,2020,Full-Text,INCLUDE,N/A,Foundational Shortcut
+R02,"AI for radiographic COVID-19 detection frequently relies on superficial shortcuts",DeGrave,2021,Full-Text,INCLUDE,N/A,Medical Shortcut / XAI
+R03,"Variable generalization performance of a deep learning model to detect pneumonia in chest radiographs",Zech,2018,Full-Text,INCLUDE,N/A,Hospital Confounding / Generalization
+R04,"Deep learning predicts hip fracture using confounding patient and healthcare variables",Badgeley,2019,Full-Text,INCLUDE,N/A,Confounder Exploitation
+R05,"Association Between Surgical Skin Markings in Dermoscopic Images and Diagnostic Performance of a Deep Learning Model",Winkler,2019,Full-Text,INCLUDE,N/A,Clinical Artifact Confounding
+R06,"(De)Constructing Bias on Skin Lesion Datasets",Bissoto,2019,Full-Text,INCLUDE,N/A,Lesion Removal / Background Bias
+R07,"Noise or Signal: The Role of Image Backgrounds in Object Recognition",Xiao,2021,Full-Text,INCLUDE,N/A,Foreground-Background Disentanglement
+R08,"Visualizing and Understanding Convolutional Networks",Zeiler,2014,Full-Text,INCLUDE,N/A,Occlusion Sensitivity Foundation
+R09,"Interpretable Explanations of Black Boxes by Meaningful Perturbation",Fong,2017,Full-Text,INCLUDE,N/A,Inpainting / Smooth Perturbation
+R10,"Image Inpainting",Bertalmio,2000,Full-Text,INCLUDE,N/A,Navier-Stokes PDE Inpainting
+R11,"Causality matters in medical imaging",Castro,2020,Full-Text,INCLUDE,N/A,Causal Inference in Imaging
+R12,"Hidden Stratification Causes Clinically Meaningful Failures in Machine Learning for Medical Imaging",Oakden-Rayner,2020,Full-Text,INCLUDE,N/A,Subgroup Evaluation / Failure Modes
+R13,"Scores That Hold, Benchmarks That Leak: Measuring Dataset Contamination in Public Brain-Tumor MRI Classification",Vangala,2026,Full-Text,INCLUDE,N/A,Cheng Benchmark Leakage
+R14,"Enhanced Performance of Brain Tumor Classification via Tumor Region Augmentation and Partition",Cheng,2015,Full-Text,INCLUDE,N/A,Cheng Dataset / Ring Dilation
+R15,"Retrieval of Brain Tumors by Adaptive Spatial Pooling and Fisher Vector Representation",Cheng,2016,Full-Text,INCLUDE,N/A,Cheng Dataset / Context Dilation
+R16,"TACE: Tumor-Aware Counterfactual Explanations",Rossi,2024,Full-Text,INCLUDE,N/A,Tumor-Aware Inpainting / Counterfactuals
+R17,"TumorDetNet: A unified deep learning model for brain tumor detection and classification",Ullah,2023,Title-Abstract,EXCLUDE,Generic architecture without shortcut/bias audit,Excluded Generic CAD
+R18,"Deep learning model for brain tumor classification using MRI texture and shape",Zacharaki,2009,Full-Text,INCLUDE,N/A,Classical Texture / Shape Baseline
+R19,"Mechanical stroke thrombectomy for acute ischemic stroke",Smith,2020,Title-Abstract,EXCLUDE,Clinical stroke paper with vascular occlusion keyword,Excluded Off-topic
+R20,"Multimodal brain tumor segmentation using 3D U-Net",Menze,2015,Title-Abstract,EXCLUDE,Pure segmentation challenge without classification shortcut analysis,Excluded Pure Segmentation
