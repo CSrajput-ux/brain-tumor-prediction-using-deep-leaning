@@ -1,5 +1,52 @@
+# Python & Bytecode
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
 .pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env/
+
+# Environment variables & secrets
+.env
+.env.*
+*.token
+*.pem
+*.key
+credentials.json
+
+# Datasets and raw MRI data
+brainTumorDataPublic_*/
+prepared/
+prepared_full_run/
+prepared_verify/
+*.mat
+*.h5
+*.hdf5
+*.nii
+*.nii.gz
+
+# Model weights & large binary checkpoints
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.bin
+*.weights
+
+# IDE & OS files
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+
+# Logs & Temporary Scratch
+*.log
+scratch/
+*.tmp
+*.swp
