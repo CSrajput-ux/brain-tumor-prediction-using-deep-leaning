@@ -52,27 +52,61 @@ def test_table2_manifest_fold_counts():
 
 
 def test_bootstrap_results_integrity():
-    """Verify Task 5 synchronized paired cluster bootstrap outputs."""
+    """Verify Task 5 synchronized paired cluster bootstrap outputs and zero occurrences of p = 0.0."""
     b_path = AUDIT_DIR / 'task5_synchronized_bootstrap_b25000.csv'
     assert b_path.exists(), "task5_synchronized_bootstrap_b25000.csv must exist"
     df = pd.read_csv(b_path)
     
-    # 1. No p = 0 entries
-    assert (df['mcnemar_chi2_p_float'] == 0.0).sum() == 0, "No floating-point p-values should be exactly 0.0"
+    # 1. No p = 0 entries in ANY floating-point or string column
+    assert (df['mcnemar_chi2_p_float'] == 0.0).sum() == 0, "No chi2 asymptotic p-values should be exactly 0.0"
+    assert (df['mcnemar_exact_binomial_p'] == 0.0).sum() == 0, "No exact binomial p-values should be exactly 0.0"
+    assert (df['raw_bootstrap_p_value'] == 0.0).sum() == 0, "No raw bootstrap p-values should be exactly 0.0"
+    assert (df['wald_asymptotic_p_value'] == 0.0).sum() == 0, "No Wald asymptotic p-values should be exactly 0.0"
+    
     for p_disp in df['mcnemar_p_display']:
-        assert p_disp != "0.0" and p_disp != "0", f"Disallowed display p-value: {p_disp}"
+        assert p_disp != "0.0" and p_disp != "0", f"Disallowed McNemar display p-value: {p_disp}"
+    for w_disp in df['wald_p_display']:
+        assert w_disp != "0.0" and w_disp != "0", f"Disallowed Wald display p-value: {w_disp}"
         
-    # 2. Replicates count
+    # 2. Replicates count and cluster accounting
     assert (df['bootstrap_replicates'] == 25000).all(), "All contrasts must use B=25,000 resamples"
     assert (df['invalid_replicates'] == 0).all(), "All replicates must have zero degenerate/invalid iterations"
+    assert (df['patient_clusters'] >= 217).all(), "Patient cluster count must reflect scenario clusters"
     
     # 3. Confidence intervals are strictly ordered
     assert (df['bootstrap_ci_lower'] < df['bootstrap_ci_upper']).all(), "CI lower must be strictly less than CI upper"
+
+
+def test_holm_multiplicity_families_independent_correction():
+    """Verify independent Holm-Bonferroni correction across primary, true-seam, and exploratory families."""
+    b_path = AUDIT_DIR / 'task5_synchronized_bootstrap_b25000.csv'
+    df = pd.read_csv(b_path)
     
-    # 4. Multiplicity control family size
-    primary_df = df[df['hypothesis_family'] == 'primary_confirmatory']
-    assert len(primary_df) == 12, f"Expected 12 primary confirmatory contrasts, got {len(primary_df)}"
-    assert (primary_df['holm_family_size'] == 12).all(), "Holm family size for primary contrasts must be exactly 12"
+    families = {
+        'primary_confirmatory': 12,
+        'true_seam_controls': 12,
+        'exploratory': 3
+    }
+    
+    for fam_name, expected_size in families.items():
+        sub = df[df['hypothesis_family'] == fam_name].sort_values('raw_bootstrap_p_value').reset_index(drop=True)
+        assert len(sub) == expected_size, f"Family {fam_name} expected {expected_size} contrasts, got {len(sub)}"
+        assert (sub['holm_family_size'] == expected_size).all(), f"Family size field mismatch in {fam_name}"
+        
+        # Verify step-down Holm formula: p_adj_{(k)} = max_{j <= k} min(1.0, (M - j + 1) * p_{(j)})
+        running_max = 0.0
+        for rank, row in sub.iterrows():
+            mult = expected_size - rank
+            raw_p = row['raw_bootstrap_p_value']
+            expected_adj = min(1.0, mult * raw_p)
+            running_max = max(running_max, expected_adj)
+            actual_adj = row['holm_adjusted_p_value']
+            assert np.isclose(actual_adj, running_max, atol=1e-8), (
+                f"Holm adj mismatch in {fam_name} rank {rank}: actual {actual_adj} vs expected {running_max}"
+            )
+            
+        # Verify monotonicity of adjusted p-values
+        assert sub['holm_adjusted_p_value'].is_monotonic_increasing, f"Adjusted p-values in {fam_name} must be non-decreasing"
 
 
 def test_true_seam_prediction_matching_and_invariants():
@@ -97,7 +131,7 @@ def test_true_seam_prediction_matching_and_invariants():
 
 
 def test_claim_evidence_matrix_reconciliation():
-    """Verify Table 8 claim-evidence matrix percentages and causal statements."""
+    """Verify Table 8 claim-evidence matrix percentages and causal statements match canonical Table 7."""
     c_path = PUB_TAB_DIR / 'table8_claim_evidence_matrix.csv'
     assert c_path.exists(), "table8_claim_evidence_matrix.csv must exist"
     df = pd.read_csv(c_path).set_index('hypothesis_id')
@@ -114,8 +148,10 @@ def test_claim_evidence_matrix_reconciliation():
     assert '0.1206' in w2_ev, "Delta = 0.1206 must be documented"
     
     layout_ev = df.loc['H_LAYOUT_ISOLATION', 'measured_evidence']
-    assert '54.8%' in layout_ev, "54.8% seam Sobel suppression must be documented"
-    assert '84.9%' in layout_ev, "84.9% HF Fourier suppression must be documented"
+    assert '26.0%' in layout_ev, "26.0% excess seam Sobel reduction (source) must be documented"
+    assert '53.9%' in layout_ev, "53.9% excess HF Fourier reduction (source) must be documented"
+    assert '10.5%' in layout_ev, "10.5% excess seam Sobel reduction (input 224) must be documented"
+    assert '41.2%' in layout_ev, "41.2% excess HF Fourier reduction (input 224) must be documented"
     
     # Check causal caveat on layout isolation
     layout_cav = df.loc['H_LAYOUT_ISOLATION', 'scientific_caveat']
@@ -143,7 +179,12 @@ def test_manuscript_and_abstract_causal_and_novelty_language():
     assert 'first definitive' not in manuscript_text.lower(), "Unsupported 'first definitive' found in manuscript.md"
     assert 'first-ever' not in abstract_text.lower(), "Unsupported 'first-ever' found in abstract.md"
     
-    # Four-factor explanation present in manuscript
+    # No anti-causal claims asserting macroscopic anatomy is independently essential
+    assert "independently essential" not in abstract_text.lower(), "'independently essential' found in abstract.md"
+    assert "independently essential" not in manuscript_text.lower(), "'independently essential' found in manuscript.md"
+    
+    # Four-factor explanation present in manuscript and abstract
     assert "four inseparable factors" in manuscript_text.lower()
+    assert "four inseparable factors" in abstract_text.lower()
     assert "non-local" in manuscript_text.lower()
     assert "out-of-distribution" in manuscript_text.lower() or "ood" in manuscript_text.lower()

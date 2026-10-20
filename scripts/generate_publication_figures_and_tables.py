@@ -261,20 +261,20 @@ def generate_figure_6(contrasts):
     contrast_order = [
         'C3_vs_C0',
         'C1_hist_vs_C0',
-        'C1_w2_vs_C0',
-        'C1_w3_vs_C0',
+        'C1_true_w2_vs_C0',
+        'C1_true_w3_vs_C0',
         'C2_vs_C0',
         'C3_vs_C2',
-        'C3_vs_C1_w2'
+        'C3_vs_C1_true_w2'
     ]
     c_labels = {
         'C3_vs_C0': 'C3 vs C0: Raw Scramble Effect',
         'C1_hist_vs_C0': 'C1_hist vs C0: Historical DC-Offset Effect',
-        'C1_w2_vs_C0': 'C1_w2 vs C0: True Seam (w=2) Effect',
-        'C1_w3_vs_C0': 'C1_w3 vs C0: True Seam (w=3) Effect',
+        'C1_true_w2_vs_C0': 'C1_true_w2 vs C0: Pure Boundary Seam (w=2)',
+        'C1_true_w3_vs_C0': 'C1_true_w3 vs C0: Pure Boundary Seam (w=3)',
         'C2_vs_C0': 'C2 vs C0: Seam-Suppressed Rearrangement',
         'C3_vs_C2': 'C3 vs C2: Sensitivity to Seam Smoothing',
-        'C3_vs_C1_w2': 'C3 vs C1_w2: Rearrangement beyond True Seam'
+        'C3_vs_C1_true_w2': 'C3 vs C1_true_w2: Scrambling beyond Seams'
     }
     
     y_pos = []

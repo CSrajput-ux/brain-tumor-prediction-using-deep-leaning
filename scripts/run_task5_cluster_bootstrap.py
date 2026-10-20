@@ -140,6 +140,10 @@ def compute_mcnemar_stable(y_true, y_pred_A, y_pred_B):
     # Exact two-sided binomial test on discordant pairs
     b_res = binomtest(n_10, n_10 + n_01, p=0.5, alternative='two-sided')
     exact_b_p = float(b_res.pvalue)
+    if exact_b_p == 0.0:
+        # Underflow in standard IEEE-754 double precision (< 2.225e-308)
+        # Bounded by continuity-corrected chi2_p or machine epsilon to strictly avoid literal 0.0
+        exact_b_p = float(max(chi2_p, np.finfo(float).tiny))
     
     # Format p-value string avoiding 0.0
     if exact_b_p < 1e-15:
