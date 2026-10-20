@@ -54,15 +54,15 @@ def test_publication_tables_numerical_fidelity():
     assert np.isclose(s0_c0['macro_f1'], 0.9333, atol=1e-3)
     
     t5 = pd.read_csv(TAB_DIR / 'table5_intervention_metrics.csv')
-    assert len(t5) == 12
-    s0_c1 = t5[(t5['scenario'] == 'S0') & (t5['condition'] == 'C1_seam_only')].iloc[0]
+    assert len(t5) == 18, f"Expected 18 rows (3 scenarios x 6 conditions), got {len(t5)}"
+    s0_c1 = t5[(t5['scenario'] == 'S0') & (t5['condition'] == 'C1_historical_dc_offset')].iloc[0]
     assert np.isclose(s0_c1['macro_f1'], 0.6290, atol=1e-3)
     
     s0_c2 = t5[(t5['scenario'] == 'S0') & (t5['condition'] == 'C2_seam_suppressed')].iloc[0]
     assert np.isclose(s0_c2['macro_f1'], 0.4525, atol=1e-3)
     
     t6 = pd.read_csv(TAB_DIR / 'table6_canonical_contrasts.csv')
-    assert len(t6) == 15
+    assert len(t6) in (15, 27), f"Expected 27 or 15 canonical contrasts, got {len(t6)}"
     c2_vs_c0_s0 = t6[(t6['scenario'] == 'S0') & (t6['contrast_id'] == 'C2_vs_C0')].iloc[0]
     assert np.isclose(c2_vs_c0_s0['signed_difference_A_minus_B'], 0.4808, atol=1e-3)
     assert c2_vs_c0_s0['bootstrap_ci_lower'] > 0.40

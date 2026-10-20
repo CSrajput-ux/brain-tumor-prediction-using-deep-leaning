@@ -10,11 +10,11 @@
 
 **Background:** Deep convolutional neural networks (CNNs) have demonstrated remarkable nominal accuracy in brain tumour classification from magnetic resonance imaging (MRI). However, emerging evidence across medical imaging suggests that high predictive performance is frequently confounded by shortcut learning on non-pathological background features. Spatial perturbation studies, such as distant-context tile scrambling, have reported catastrophic classification failure when surrounding cranial structures are disrupted, suggesting that classifiers rely heavily on global anatomical layout. Nonetheless, tile scrambling simultaneously introduces prominent high-frequency step discontinuities along tile seams. This introduces a critical unresolved question: does the performance collapse reflect genuine model reliance on macroscopic cranial layout, or is it an artifactual vulnerability to synthetic high-frequency edge noise?
 
-**Methods:** We conducted a preregistered, multi-control spatial intervention experiment using the benchmark Cheng Figshare brain tumour MRI cohort (3,064 2D T1-contrast-enhanced slices from 233 patient clusters, encompassing meningioma, glioma, and pituitary tumour). Across three cross-validation regimes ($S_0$: patient-disjoint, $S_1$: candidate duplicate-cleaned at SSIM 0.80, and $S_2$: aggressively grouped at SSIM 0.75), we evaluated 15 frozen ResNet-50 checkpoints across four matched conditions: (1) $C_0$ original baseline; (2) $C_1$ seam-only control, injecting boundary step discontinuities matching scrambled DC offsets onto unpermuted anatomy; (3) $C_2$ seam-suppressed spatial rearrangement, permuting distant tiles while cross-fading tile boundaries (reducing boundary seam Sobel gradient energy by 54.8% and excess high-frequency Fourier energy by 84.9%); and (4) $C_3$ raw historical tile scrambling. In all conditions, the tumour core and a 15-pixel dilation margin ring were strictly protected (zero pixels altered). Across 36,768 matched out-of-fold forward evaluations, uncertainty was quantified using synchronized paired cluster bootstrapping ($B=2,000$ resamples) and Holm-Bonferroni Family-Wise Error Rate (FWER) multiplicity control.
+**Methods:** We conducted a multi-control spatial intervention experiment governed by a pre-specified analytical protocol on the benchmark Cheng Figshare brain tumour MRI cohort (3,064 2D T1-contrast-enhanced slices from 233 patient clusters, encompassing meningioma, glioma, and pituitary tumour). Across three cross-validation regimes ($S_0$: patient-disjoint, $S_1$: candidate duplicate-cleaned at SSIM 0.80, and $S_2$: aggressively grouped at SSIM 0.75), we evaluated 15 frozen ResNet-50 checkpoints across six matched conditions: (1) $C_0$ original baseline ($C_{0\text{,orig}}$); (2) $C_1$ historical DC-offset control ($C_{1\text{,historical\_dc\_offset}}$), shifting whole-tile DC means onto unpermuted anatomy; (3) pure 2-pixel boundary step seam control ($C_{1\text{,true\_seam\_w2}}$); (4) 3-pixel boundary step seam control ($C_{1\text{,true\_seam\_w3}}$); (5) $C_2$ seam-suppressed spatial rearrangement ($C_{2\text{,seam\_suppressed}}$), permuting distant tiles while cross-fading tile boundaries (reducing boundary seam Sobel gradient energy by 54.8% and excess high-frequency Fourier energy by 84.9% in source $512\times512$ space, and 32.1% and 93.8% in $224\times224$ model input space); and (6) $C_3$ raw historical tile scrambling ($C_{3\text{,c5lp\_scramble}}$). In all conditions, the tumour core and a 15-pixel dilation margin ring were strictly protected (zero pixels altered). Across 55,152 matched out-of-fold forward evaluations, uncertainty was quantified using synchronized paired cluster bootstrapping ($B=25,000$ resamples) with family-wise Holm-Bonferroni Family-Wise Error Rate (FWER) multiplicity control and exact binomial McNemar calculations.
 
-**Results:** In the primary patient-disjoint split ($S_0$), raw scrambling caused a severe drop replicating historical benchmarks ($\Delta \text{Macro-F1} = +0.4215$, 95% CI: $[0.3734, 0.4726]$, $p < 10^{-15}$). Synthetic seams alone ($C_1$) induced a statistically significant drop of $\Delta \text{Macro-F1} = +0.3043$ (95% CI: $[0.2547, 0.3510]$, $p < 10^{-15}$), proving that CNN feature hierarchies are acutely fragile to high-frequency grid step edges. Crucially, seam-suppressed tile permutation ($C_2$) still caused an extreme performance collapse of $\Delta \text{Macro-F1} = +0.4808$ (95% CI: $[0.4361, 0.5292]$, $p < 10^{-15}$), far exceeding our preregistered practical significance threshold of $0.150$. Mechanistic transition analysis revealed that cranial disorientation collapsed glioma recall from 95.0% to 8.6%, with 63.5% of gliomas misclassified as pituitary tumour—a skull-base lesion.
+**Results:** In the primary patient-disjoint split ($S_0$), raw scrambling caused a severe drop replicating historical benchmarks ($\Delta \text{Macro-F1} = +0.4215$, 95% CI: $[0.3722, 0.4713]$, exact McNemar $p < 10^{-15}$). Historical whole-tile DC shifts alone ($C_{1\text{,historical\_dc\_offset}}$) induced a drop of $\Delta \text{Macro-F1} = +0.3043$ (95% CI: $[0.2581, 0.3530]$, $p < 10^{-15}$), while pure 2-pixel boundary steps ($C_{1\text{,true\_seam\_w2}}$) produced a drop of $\Delta = +0.1206$ (95% CI: $[0.0827, 0.1607]$, $p < 10^{-15}$). Crucially, seam-suppressed tile permutation ($C_{2\text{,seam\_suppressed}}$) still caused an extreme performance collapse of $\Delta \text{Macro-F1} = +0.4808$ (95% CI: $[0.4360, 0.5280]$, $p < 10^{-15}$), four times larger than pure boundary seams alone ($\Delta = +0.1206$) and substantially exceeding our pre-defined significance threshold of $0.150$. Mechanistic transition analysis revealed that cranial disorientation collapsed glioma recall from 95.0% to 8.6%, with 63.5% of gliomas misclassified into the skull-base pituitary class—a suprasellar lesion.
 
-**Conclusions:** Our findings demonstrate a dual-factor, mixed mechanism: while artificial boundary discontinuities alone degrade CNN feature extraction, macroscopic spatial layout is independently essential for brain tumour classification in this architecture. Permuting cranial anatomy destroys the global coordinate anchor separating supratentorial glioma from skull-base pituitary tumour, collapsing the classifier into its prior. These results establish that perturbation studies must explicitly control for high-frequency intervention artifacts, and emphasize that deep medical classifiers rely heavily on extracranial context shortcuts rather than autonomous tumour pathology.
+**Conclusions:** Our findings demonstrate a dual-factor, mixed mechanism: while artificial boundary discontinuities alone degrade CNN feature extraction (accounting for an empirical ratio of 28.6% of the scrambling drop), spatial rearrangement causes severe diagnostic failure. Crucially, spatial scrambling does not isolate independent stereotactic spatial coordinates, but rather conflates four inseparable factors: disrupted cranial anatomical layout, non-local unnatural tissue juxtapositions (e.g., skull bone adjacent to ventricular CSF), residual boundary steps, and out-of-distribution topological inputs. Under this compound disorientation, the model loses spatial orientation and defaults to its skull-base pituitary prior. These results establish that perturbation studies must explicitly separate boundary seam artifacts from spatial rearrangement, and emphasize that deep medical classifiers rely heavily on extracranial context shortcuts rather than autonomous tumour pathology.
 
 **Keywords:** Brain tumour classification; Convolutional neural networks; Magnetic resonance imaging; Shortcut learning; Spatial context; Image perturbation; Artifact disentanglement; Reproducibility.
 
@@ -31,7 +31,7 @@ To probe whether medical classifiers rely on pathological lesions or extraneous 
 Nevertheless, an overlooked methodological vulnerability compromises this spatial perturbation paradigm: **tile scrambling introduces high-frequency artificial boundary step discontinuities at every tile seam.** Natural brain MRI slices are characterized by smooth intensity gradients and continuous anatomical contours governed by biological tissue architecture. When tiles are randomly permuted, sharp intensity discontinuities arise along tile edges. Deep convolutional networks are known to be biased toward high-frequency spectral components and local edge textures [1, 7]. Consequently, an acute scientific ambiguity arises:
 > *Does the observed performance collapse under distant tile scrambling reflect true neural network reliance on macroscopic cranial spatial arrangement, or is it an artifactual vulnerability to synthetic high-frequency edge seams introduced by the intervention itself?*
 
-In this study, we address this fundamental question through a controlled, preregistered multi-intervention experiment on the benchmark Cheng Figshare brain tumour MRI cohort (3,064 slices across 233 patient clusters) [13]. By designing two novel, matched control conditions—a **seam-only control ($C_1$)** that injects boundary step discontinuities onto stationary anatomy, and a **seam-suppressed rearrangement ($C_2$)** that permutes tiles while cross-fading seams—we independently isolate the contributions of synthetic boundary edge noise and macroscopic spatial layout. Evaluated across 15 frozen ResNet-50 checkpoints across three cross-validation regimes ($S_0, S_1, S_2$), our study provides the first definitive, multi-control disentanglement of spatial context reliance from synthetic intervention artifacts in medical deep classifiers.
+In this study, we address this fundamental question through a controlled multi-intervention experiment on the benchmark Cheng Figshare brain tumour MRI cohort (3,064 slices across 233 patient clusters) [13]. By designing matched control conditions—including a whole-tile DC-offset control ($C_{1\text{,historical\_dc\_offset}}$), dedicated true-seam boundary controls ($C_{1\text{,true\_seam\_w2}}$, $C_{1\text{,true\_seam\_w3}}$) injecting boundary step discontinuities onto stationary anatomy, and a seam-suppressed rearrangement ($C_{2\text{,seam\_suppressed}}$) that permutes tiles while cross-fading seams—we independently isolate the contributions of synthetic boundary edge noise, tile intensity shifts, and macroscopic spatial rearrangement. Evaluated across 15 frozen ResNet-50 checkpoints across three cross-validation regimes ($S_0, S_1, S_2$), our study provides a rigorous multi-control disentanglement of spatial context reliance from synthetic intervention artifacts in medical deep classifiers.
 
 ---
 
@@ -99,25 +99,27 @@ To ensure that spatial interventions evaluate only non-tumour anatomical context
 Exactly zero pixels were altered inside $M_{\text{protected}}$ across all 3,064 slices in all conditions.
 
 ### 4.3 Operationalized Experimental Conditions
-Images were partitioned into non-overlapping grid tiles of size $16 \times 16$ pixels. Tiles having zero intersection with $M_{\text{protected}}$ were designated as eligible distant context ($\Omega_{\text{distant}}$). A deterministic pseudo-random permutation $\pi$ was assigned per slice using a SHA-256 hash seed:
-- **Condition $C_0$ (Original Baseline):** Unperturbed test slices evaluated through standard inference.
-- **Condition $C_3$ (Raw Historical Scramble):** Eligible distant tiles were permuted according to $\pi$, preserving global mean and standard deviation while introducing 1-pixel hard step edges.
-- **Condition $C_1$ (Seam-Only Control):** Injected inter-tile DC offsets matching the scrambling intervention onto stationary tiles:
+Images were partitioned into non-overlapping grid tiles of size $16 \times 16$ pixels. Tiles having zero intersection with $M_{\text{protected}}$ were designated as eligible distant context ($\Omega_{\text{distant}}$). A deterministic pseudo-random permutation $\pi$ was assigned per slice using a SHA-256 hash seed. To rigorously separate boundary step discontinuities, tile DC shifts, and spatial permutations, we operationalized six standardized conditions:
+- **Condition $C_0$ ($C_{0\text{,orig}}$ - Original Baseline):** Unperturbed test slices evaluated through standard inference.
+- **Condition $C_{1\text{,historical\_dc\_offset}}$ (Historical Whole-Tile DC-Offset Control):** Injected inter-tile DC offsets matching the scrambling intervention onto stationary tiles:
   $$\Delta \mu_i = \text{mean}\left(I_{\text{original}}[\Omega_{\text{distant}}(\pi(i))]\right) - \text{mean}\left(I_{\text{original}}[\Omega_{\text{distant}}(i)]\right)$$
-  Inside tile $i$, pixel values were shifted by $\Delta \mu_i$. Within-tile texture remained identical to original tissue ($\nabla I_{C1} \equiv \nabla I_{\text{original}}$), while across adjacent tile boundaries, a step discontinuity matching $C_3$ was produced.
-- **Condition $C_2$ (Seam-Suppressed Spatial Rearrangement):** Eligible distant tiles were permuted according to $\pi$, but tile boundaries were cross-faded using a distance-weighted Gaussian blending strip of half-width $w = 4$ pixels ($\sigma = 2.5$). Boundary seam Sobel energy was suppressed by 54.8%, and excess high-frequency Fourier energy was reduced by 84.9%.
+  Inside tile $i$, pixel values were shifted by $\Delta \mu_i$. Within-tile texture gradients remained identical to original tissue ($\nabla I_{C1} \equiv \nabla I_{\text{original}}$), while across adjacent tile boundaries, a step discontinuity matching $C_3$ was produced.
+- **Condition $C_{1\text{,true\_seam\_w2}}$ (Pure 2-Pixel Boundary Seam Control):** Restricts synthetic step adjustments strictly to a 1-pixel boundary strip on each side of adjacent tile interfaces ($w = 2$). The inner $14 \times 14$ pixels of every distant tile, the tumour core, and the 15-pixel margin ring remained 100% bit-for-bit identical to baseline $C_0$ (81.35% of total slice pixels preserved; exactly zero altered pixels outside the seam band across all 3,064 slices).
+- **Condition $C_{1\text{,true\_seam\_w3}}$ (3-Pixel Boundary Seam Control):** Synthetic step adjustments applied across a 3-pixel boundary band ($w = 3$) with amplification gain $\alpha = 1.8$, matching the elevated seam Sobel energy of raw scrambling while preserving tile interiors.
+- **Condition $C_2$ ($C_{2\text{,seam\_suppressed}}$ - Seam-Suppressed Spatial Rearrangement):** Eligible distant tiles were permuted according to $\pi$, but tile boundaries were cross-faded using a distance-weighted Gaussian blending strip of half-width $w = 4$ pixels ($\sigma = 2.5$). Boundary seam Sobel energy was suppressed by 54.8%, and excess high-frequency Fourier energy was reduced by 84.9% at source resolution (and 32.1% and 93.8% at $224\times224$ model input resolution).
+- **Condition $C_3$ ($C_{3\text{,c5lp\_scramble}}$ - Raw Historical Tile Scramble):** Eligible distant tiles were permuted according to $\pi$, preserving global mean and standard deviation while introducing 1-pixel hard step edges.
 
 ### 4.4 Out-of-Fold Inference Pipeline
-Predictions were generated strictly out-of-fold: in each scenario and fold, the frozen checkpoint evaluated only its designated held-out test fold partition. Slices were never evaluated on checkpoints exposed to them during training. Across 3 scenarios, 5 folds, 4 conditions, and 3,064 slices, exactly 36,768 matched prediction records were generated.
+Predictions were generated strictly out-of-fold: in each scenario and fold, the frozen checkpoint evaluated only its designated held-out test fold partition. Slices were never evaluated on checkpoints exposed to them during training. Across 3 scenarios, 5 folds, 6 conditions, and 3,064 slices, exactly 55,152 matched prediction records were generated.
 
 ### 4.5 Statistical Inference and Hypothesis Testing
 1. **Primary Metric:** Macro-F1 across the three classes.
 2. **Canonical Contrast Convention:**
    $$\Delta = \text{Macro-F1}_A - \text{Macro-F1}_B$$
    A positive value indicates that condition $B$ produced a performance drop relative to condition $A$.
-3. **Clustered Bootstrap:** Synchronized paired cluster bootstrapping ($B=25,000$ resamples, seed 42) resampled patient clusters in $S_0$ (233 clusters) and duplicate-group clusters in $S_1$ (231 clusters) and $S_2$ (217 clusters). Initial exploration employed $B=2,000$, which was subsequently scaled to $B=25,000$ to achieve complete Monte Carlo convergence (standard error $< 0.0003$ across replicate draws). Condition $A$ and condition $B$ received identical resampled cluster draws within every replicate. Empirical 95% confidence intervals were computed as the 2.5th and 97.5th percentiles.
-4. **Multiplicity Control:** Holm-Bonferroni step-down FWER adjustments were applied across all 15 confirmatory contrasts simultaneously at $\alpha = 0.05$.
-5. **McNemar Tests:** Paired sample-level classification disagreement was evaluated using McNemar $\chi^2$ tests with continuity correction.
+3. **Clustered Bootstrap:** Synchronized paired cluster bootstrapping ($B=25,000$ resamples, seed 42) resampled patient clusters in $S_0$ (233 clusters) and duplicate-group clusters in $S_1$ (231 clusters) and $S_2$ (217 clusters). Condition $A$ and condition $B$ received identical resampled cluster draws within every replicate. Empirical 95% confidence intervals were computed as the 2.5th and 97.5th percentiles. Wald $z$-scores and studentized standard errors ($\text{SE}_{\text{boot}}$) were computed alongside empirical Davison-Hinkley bounds.
+4. **Multiplicity Control:** Family-wise Holm-Bonferroni step-down FWER adjustments were applied across the 12 primary confirmatory contrasts family ($M=12$) and true-seam family ($M=12$) at $\alpha = 0.05$.
+5. **McNemar Tests:** Paired sample-level classification disagreement was evaluated using exact binomial tests (`scipy.stats.binomtest`) and continuity-corrected $\chi^2$ tests. All $p$-values are reported exactly without truncating to $p = 0.0$ (formatted as exact scientific notation or $< 10^{-15}$).
 
 ---
 
@@ -131,66 +133,84 @@ Under unperturbed baseline conditions ($C_0$), frozen ResNet-50 models achieved 
 Per-class F1 scores under baseline were balanced: Meningioma F1 was 0.8850, Glioma F1 was 0.9610, and Pituitary F1 was 0.9539 in $S_0$.
 
 ### 5.2 Multi-Condition Intervention Outcomes
-Evaluating the frozen checkpoints on the matched spatial intervention conditions revealed severe performance declines across all scenarios (Table 5, Figure 5):
-1. **Seam-Only Control ($C_1$):**
-   Injecting synthetic boundary step discontinuities without rearranging anatomical tiles caused Macro-F1 to collapse from $0.9333$ to **$0.6290$** in $S_0$ (drop of $\Delta = +0.3043$, 95% CI: $[0.2547, 0.3510]$, $p < 10^{-15}$).
-2. **Seam-Suppressed Rearrangement ($C_2$):**
-   Permuting distant tiles with smoothed boundary seams caused an even steeper collapse to **$0.4525$** in $S_0$ (drop of $\Delta = +0.4808$, 95% CI: $[0.4361, 0.5292]$, $p < 10^{-15}$).
-3. **Raw Scrambling ($C_3$):**
-   Raw historical tile scrambling yielded a Macro-F1 of **$0.5118$** in $S_0$ (drop of $\Delta = +0.4215$, 95% CI: $[0.3734, 0.4726]$, $p < 10^{-15}$), replicating historical benchmarks within numerical precision.
+Evaluating the frozen checkpoints across all six standardized conditions revealed distinct degradations reflecting boundary step sensitivity, tile DC shifts, and spatial rearrangement (Table 5, Figure 5):
+1. **Pure Boundary Seam Control ($C_{1\text{,true\_seam\_w2}}$):**
+   Injecting 2-pixel boundary step discontinuities onto stationary anatomy dropped Macro-F1 from $0.9333$ to **$0.8127$** in $S_0$ ($\Delta = +0.1206$, 95% CI: $[0.0827, 0.1607]$, exact McNemar $p < 10^{-15}$). In $S_1$ and $S_2$, Macro-F1 dropped to $0.8613$ ($\Delta = +0.0719$) and $0.8758$ ($\Delta = +0.0515$).
+2. **Amplified Boundary Seams ($C_{1\text{,true\_seam\_w3}}$):**
+   Widening boundary steps to 3 pixels dropped Macro-F1 to **$0.7811$** in $S_0$ ($\Delta = +0.1873$, 95% CI: $[0.1472, 0.2298]$, $p < 10^{-15}$), $0.8341$ in $S_1$, and $0.8580$ in $S_2$.
+3. **Historical Whole-Tile DC-Offset Control ($C_{1\text{,historical\_dc\_offset}}$):**
+   Shifting whole-tile DC means caused Macro-F1 to drop to **$0.6290$** in $S_0$ ($\Delta = +0.3043$, 95% CI: $[0.2581, 0.3530]$, $p < 10^{-15}$), $0.6094$ in $S_1$, and $0.6385$ in $S_2$.
+4. **Raw Scrambling ($C_{3\text{,c5lp\_scramble}}$):**
+   Raw historical tile scrambling yielded a Macro-F1 of **$0.5118$** in $S_0$ ($\Delta = +0.4215$, 95% CI: $[0.3722, 0.4713]$, $p < 10^{-15}$), $0.4884$ in $S_1$, and $0.5303$ in $S_2$.
+5. **Seam-Suppressed Spatial Rearrangement ($C_{2\text{,seam\_suppressed}}$):**
+   Permuting distant tiles with smoothed boundary seams caused a catastrophic collapse to **$0.4525$** in $S_0$ ($\Delta = +0.4808$, 95% CI: $[0.4360, 0.5280]$, $p < 10^{-15}$), $0.4941$ in $S_1$, and $0.5159$ in $S_2$.
 
-### Table 5: Primary Classification Metrics Across Experimental Conditions
+### Table 5: Primary Classification Metrics Across All Six Standardized Conditions
 
-| Scenario | Condition | Macro-F1 | Balanced Acc | Overall Acc | F1 Meningioma | F1 Glioma | F1 Pituitary |
-| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **$S_0$** | $C_0$ (Baseline) | **0.9333** | 0.9362 | 0.9409 | 0.8850 | 0.9610 | 0.9539 |
-| **$S_0$** | $C_1$ (Seam-Only) | **0.6290** | 0.6817 | 0.6276 | 0.6598 | 0.5687 | 0.6583 |
-| **$S_0$** | $C_2$ (Seam-Suppressed) | **0.4525** | 0.5783 | 0.4847 | 0.6187 | 0.1588 | 0.5800 |
-| **$S_0$** | $C_3$ (Raw Scramble) | **0.5118** | 0.6082 | 0.5255 | 0.6389 | 0.3076 | 0.5889 |
-| **$S_1$** | $C_0$ (Baseline) | **0.9332** | 0.9336 | 0.9419 | 0.8832 | 0.9648 | 0.9514 |
-| **$S_1$** | $C_1$ (Seam-Only) | **0.6094** | 0.6633 | 0.6106 | 0.6347 | 0.5534 | 0.6402 |
-| **$S_1$** | $C_2$ (Seam-Suppressed) | **0.4941** | 0.5855 | 0.5085 | 0.6029 | 0.3054 | 0.5741 |
-| **$S_1$** | $C_3$ (Raw Scramble) | **0.4884** | 0.5732 | 0.5007 | 0.5985 | 0.3072 | 0.5595 |
-| **$S_2$** | $C_0$ (Baseline) | **0.9273** | 0.9230 | 0.9354 | 0.8720 | 0.9550 | 0.9548 |
-| **$S_2$** | $C_1$ (Seam-Only) | **0.6385** | 0.7135 | 0.6439 | 0.6620 | 0.5248 | 0.7288 |
-| **$S_2$** | $C_2$ (Seam-Suppressed) | **0.5159** | 0.6255 | 0.5385 | 0.6387 | 0.2745 | 0.6345 |
-| **$S_2$** | $C_3$ (Raw Scramble) | **0.5303** | 0.6281 | 0.5463 | 0.6546 | 0.3124 | 0.6240 |
+| Scenario | Condition | Macro-F1 | Overall Acc | F1 Meningioma | F1 Glioma | F1 Pituitary |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: |
+| **$S_0$** | $C_{0\text{,orig}}$ (Baseline) | **0.9333** | 0.9409 | 0.8850 | 0.9610 | 0.9539 |
+| **$S_0$** | $C_{1\text{,true\_seam\_w2}}$ (True Seam w=2) | **0.8127** | 0.8260 | 0.7564 | 0.8838 | 0.7977 |
+| **$S_0$** | $C_{1\text{,true\_seam\_w3}}$ (True Seam w=3) | **0.7811** | 0.7901 | 0.7414 | 0.8436 | 0.7583 |
+| **$S_0$** | $C_{1\text{,historical\_dc\_offset}}$ (Historical DC) | **0.6290** | 0.6276 | 0.6598 | 0.5687 | 0.6583 |
+| **$S_0$** | $C_{2\text{,seam\_suppressed}}$ (Seam-Suppressed) | **0.4525** | 0.4847 | 0.6187 | 0.1588 | 0.5800 |
+| **$S_0$** | $C_{3\text{,c5lp\_scramble}}$ (Raw Scramble) | **0.5118** | 0.5255 | 0.6389 | 0.3076 | 0.5889 |
+| **$S_1$** | $C_{0\text{,orig}}$ (Baseline) | **0.9332** | 0.9419 | 0.8832 | 0.9648 | 0.9514 |
+| **$S_1$** | $C_{1\text{,true\_seam\_w2}}$ (True Seam w=2) | **0.8613** | 0.8822 | 0.7795 | 0.9427 | 0.8618 |
+| **$S_1$** | $C_{1\text{,true\_seam\_w3}}$ (True Seam w=3) | **0.8341** | 0.8600 | 0.7337 | 0.9239 | 0.8447 |
+| **$S_1$** | $C_{1\text{,historical\_dc\_offset}}$ (Historical DC) | **0.6094** | 0.6106 | 0.6347 | 0.5534 | 0.6402 |
+| **$S_1$** | $C_{2\text{,seam\_suppressed}}$ (Seam-Suppressed) | **0.4941** | 0.5085 | 0.6029 | 0.3054 | 0.5741 |
+| **$S_1$** | $C_{3\text{,c5lp\_scramble}}$ (Raw Scramble) | **0.4884** | 0.5007 | 0.5985 | 0.3072 | 0.5595 |
+| **$S_2$** | $C_{0\text{,orig}}$ (Baseline) | **0.9273** | 0.9354 | 0.8720 | 0.9550 | 0.9548 |
+| **$S_2$** | $C_{1\text{,true\_seam\_w2}}$ (True Seam w=2) | **0.8758** | 0.8900 | 0.8150 | 0.9340 | 0.8783 |
+| **$S_2$** | $C_{1\text{,true\_seam\_w3}}$ (True Seam w=3) | **0.8580** | 0.8724 | 0.7997 | 0.9173 | 0.8570 |
+| **$S_2$** | $C_{1\text{,historical\_dc\_offset}}$ (Historical DC) | **0.6385** | 0.6439 | 0.6620 | 0.5248 | 0.7288 |
+| **$S_2$** | $C_{2\text{,seam\_suppressed}}$ (Seam-Suppressed) | **0.5159** | 0.5385 | 0.6387 | 0.2745 | 0.6345 |
+| **$S_2$** | $C_{3\text{,c5lp\_scramble}}$ (Raw Scramble) | **0.5303** | 0.5463 | 0.6546 | 0.3124 | 0.6240 |
 
 ### 5.3 Canonical Paired Contrasts & Hypothesis Decisions
 Synchronized paired cluster bootstrap contrasts ($B=25,000$ resamples) provided decisive statistical evidence (Table 6, Figure 6):
 1. **Replication of Raw Scrambling Drop ($C_3 \text{ vs } C_0$):**
-   In $S_0$, $\Delta = +0.4215$ (95% CI: $[0.3722, 0.4713]$, McNemar $\chi^2 = 1145.1, p < 10^{-15}$). Replicated in $S_1$ ($\Delta = +0.4447$, 95% CI: $[0.3977, 0.4942]$) and $S_2$ ($\Delta = +0.3969$, 95% CI: $[0.3424, 0.4560]$).
-2. **Seam-Only Degradation ($C_1 \text{ vs } C_0$):**
-   In $S_0$, $\Delta = +0.3043$ (95% CI: $[0.2581, 0.3530]$, McNemar $\chi^2 = 824.1, p < 10^{-15}$). Replicated in $S_1$ ($\Delta = +0.3237$, 95% CI: $[0.2778, 0.3735]$) and $S_2$ ($\Delta = +0.2887$, 95% CI: $[0.2287, 0.3552]$). **Hypothesis $H_1$ is supported.**
-3. **Independent Spatial-Rearrangement Drop ($C_2 \text{ vs } C_0$):**
-   In $S_0$, $\Delta = +0.4808$ (95% CI: $[0.4360, 0.5280]$, McNemar $\chi^2 = 1273.9, p < 10^{-15}$). Replicated in $S_1$ ($\Delta = +0.4390$, 95% CI: $[0.3924, 0.4879]$) and $S_2$ ($\Delta = +0.4114$, 95% CI: $[0.3569, 0.4684]$). In all scenarios, this drop substantially exceeds the preregistered threshold of $0.150$. **Hypothesis $H_2$ is supported.**
-4. **Scrambling Beyond Seams Alone ($C_3 \text{ vs } C_1$):**
-   In $S_0$, $\Delta = +0.1172$ (95% CI: $[0.0825, 0.1526]$, McNemar $\chi^2 = 170.5, p < 10^{-15}$). Permuting tiles is significantly and reliably more destructive than injecting seams alone. **Null hypothesis $H_0$ is decisively refuted.**
-5. **Sensitivity to Seam Smoothing ($C_3 \text{ vs } C_2$):**
-   In $S_0$, $\Delta = -0.0593$ (95% CI: $[-0.0832, -0.0358]$, $p = 3.62 \times 10^{-13}$). Seam smoothing did not mitigate the scrambling drop; $C_2$ was actually worse than $C_3$. In $S_1$ ($\Delta = +0.0057, p=0.123$) and $S_2$ ($\Delta = -0.0144, p=0.138$), the difference was not statistically significant.
+   In $S_0$, $\Delta = +0.4215$ (95% CI: $[0.3722, 0.4713]$, exact McNemar $p < 10^{-15}$). Replicated in $S_1$ ($\Delta = +0.4447$) and $S_2$ ($\Delta = +0.3969$).
+2. **Historical Whole-Tile DC-Offset Drop ($C_{1\text{,hist}} \text{ vs } C_0$):**
+   In $S_0$, $\Delta = +0.3043$ (95% CI: $[0.2581, 0.3530]$, exact McNemar $p < 10^{-15}$).
+3. **Pure Boundary Seam Drop ($C_{1\text{,true\_w2}} \text{ vs } C_0$):**
+   In $S_0$, $\Delta = +0.1206$ (95% CI: $[0.0827, 0.1607]$, exact McNemar $p < 10^{-15}$). Accounts for an empirical ratio of 28.6% of the raw scrambling drop (0.1206 / 0.4215).
+4. **Independent Spatial-Rearrangement Drop ($C_2 \text{ vs } C_0$):**
+   In $S_0$, $\Delta = +0.4808$ (95% CI: $[0.4360, 0.5280]$, exact McNemar $p < 10^{-15}$). Replicated in $S_1$ ($\Delta = +0.4390$) and $S_2$ ($\Delta = +0.4114$). In all scenarios, this drop substantially exceeds the pre-defined threshold of $0.150$.
+5. **Incremental Scrambling Beyond Pure Seams ($C_3 \text{ vs } C_{1\text{,true\_w2}}$):**
+   In $S_0$, $\Delta = +0.3009$ (95% CI: $[0.2506, 0.3496]$, exact McNemar $p < 10^{-15}$). Scrambling is significantly worse than pure boundary seams alone.
+6. **Sensitivity to Seam Smoothing ($C_3 \text{ vs } C_2$):**
+   In $S_0$, $\Delta = -0.0593$ (95% CI: $[-0.0832, -0.0358]$, exact McNemar $p = 1.53 \times 10^{-13}$). Seam smoothing did not recover performance; $C_2$ was actually worse than $C_3$. In $S_1$ ($p = 0.122$) and $S_2$ ($p = 0.137$), the difference was not statistically significant after Holm FWER control.
 
-### Table 6: Canonical Paired Statistical Contrasts
+### Table 6: Canonical Paired Statistical Contrasts ($B=25,000$ Cluster Resamples)
 
-| Scenario | Contrast ID | Condition A | Condition B | Macro-F1 A | Macro-F1 B | Signed Diff $(A - B)$ | Bootstrap 95% Cl | Fold Std | McNemar $\chi^2$ | $p$-value | Holm FWER Status |
+| Scenario | Contrast ID | Condition A | Condition B | Macro-F1 A | Macro-F1 B | Signed Diff $(A - B)$ | Bootstrap 95% CI | $\text{SE}_{\text{boot}}$ | McNemar $\chi^2$ | McNemar $p$-value | Holm FWER Status |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **$S_0$** | **C3 vs C0** | $C_0$ | $C_3$ | 0.9333 | 0.5118 | **+0.4215** | $[+0.3722, +0.4713]$ | 0.0939 | 1145.1 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_0$** | **C1 vs C0** | $C_0$ | $C_1$ | 0.9333 | 0.6290 | **+0.3043** | $[+0.2581, +0.3530]$ | 0.0901 | 824.1 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_0$** | **C2 vs C0** | $C_0$ | $C_2$ | 0.9333 | 0.4525 | **+0.4808** | $[+0.4360, +0.5280]$ | 0.0390 | 1273.9 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_0$** | **C3 vs C1** | $C_1$ | $C_3$ | 0.6290 | 0.5118 | **+0.1172** | $[+0.0825, +0.1526]$ | 0.0607 | 170.5 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_0$** | **C3 vs C2** | $C_2$ | $C_3$ | 0.4525 | 0.5118 | **-0.0593** | $[-0.0832, -0.0358]$ | 0.0782 | 52.8 | $3.6 \times 10^{-13}$ | REJECT $H_0$ |
-| **$S_1$** | **C3 vs C0** | $C_0$ | $C_3$ | 0.9332 | 0.4884 | **+0.4447** | $[+0.3977, +0.4942]$ | 0.0929 | 1262.2 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_1$** | **C1 vs C0** | $C_0$ | $C_1$ | 0.9332 | 0.6094 | **+0.3237** | $[+0.2778, +0.3735]$ | 0.1570 | 920.5 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_1$** | **C2 vs C0** | $C_0$ | $C_2$ | 0.9332 | 0.4941 | **+0.4390** | $[+0.3924, +0.4879]$ | 0.0617 | 1233.1 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_1$** | **C3 vs C1** | $C_1$ | $C_3$ | 0.6094 | 0.4884 | **+0.1210** | $[+0.0964, +0.1460]$ | 0.0815 | 250.3 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_1$** | **C3 vs C2** | $C_2$ | $C_3$ | 0.4941 | 0.4884 | **+0.0057** | $[-0.0099, +0.0218]$ | 0.0472 | 2.38 | 0.123 | FAIL TO REJECT |
-| **$S_2$** | **C3 vs C0** | $C_0$ | $C_3$ | 0.9273 | 0.5303 | **+0.3969** | $[+0.3424, +0.4560]$ | 0.0524 | 1068.1 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_2$** | **C1 vs C0** | $C_0$ | $C_1$ | 0.9273 | 0.6385 | **+0.2887** | $[+0.2287, +0.3552]$ | 0.0994 | 744.3 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_2$** | **C2 vs C0** | $C_0$ | $C_2$ | 0.9273 | 0.5159 | **+0.4114** | $[+0.3569, +0.4684]$ | 0.0703 | 1080.7 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_2$** | **C3 vs C1** | $C_1$ | $C_3$ | 0.6385 | 0.5303 | **+0.1082** | $[+0.0828, +0.1348]$ | 0.0879 | 196.0 | $< 10^{-15}$ | REJECT $H_0$ |
-| **$S_2$** | **C3 vs C2** | $C_2$ | $C_3$ | 0.5159 | 0.5303 | **-0.0144** | $[-0.0335, +0.0043]$ | 0.0430 | 2.20 | 0.138 | FAIL TO REJECT |
+| **$S_0$** | **C3 vs C0** | $C_0$ | $C_3$ | 0.9333 | 0.5118 | **+0.4215** | $[+0.3722, +0.4713]$ | 0.0252 | 1145.1 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_0$** | **C1_hist vs C0** | $C_0$ | $C_{1\text{,hist}}$ | 0.9333 | 0.6290 | **+0.3043** | $[+0.2581, +0.3530]$ | 0.0241 | 824.1 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_0$** | **C2 vs C0** | $C_0$ | $C_2$ | 0.9333 | 0.4525 | **+0.4808** | $[+0.4360, +0.5280]$ | 0.0235 | 1273.9 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_0$** | **C3 vs C1_hist** | $C_{1\text{,hist}}$ | $C_3$ | 0.6290 | 0.5118 | **+0.1172** | $[+0.0825, +0.1526]$ | 0.0180 | 170.5 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_0$** | **C1_true_w2 vs C0** | $C_0$ | $C_{1\text{,w2}}$ | 0.9333 | 0.8127 | **+0.1206** | $[+0.0888, +0.1565]$ | 0.0172 | 267.8 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_0$** | **C3 vs C1_true_w2** | $C_{1\text{,w2}}$ | $C_3$ | 0.8127 | 0.5118 | **+0.3009** | $[+0.2506, +0.3496]$ | 0.0252 | 669.1 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_0$** | **C3 vs C2** | $C_2$ | $C_3$ | 0.4525 | 0.5118 | **-0.0593** | $[-0.0832, -0.0358]$ | 0.0120 | 52.8 | $1.5 \times 10^{-13}$ | REJECT $H_0$ |
+| **$S_1$** | **C3 vs C0** | $C_0$ | $C_3$ | 0.9332 | 0.4884 | **+0.4447** | $[+0.3977, +0.4942]$ | 0.0247 | 1262.2 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_1$** | **C1_hist vs C0** | $C_0$ | $C_{1\text{,hist}}$ | 0.9332 | 0.6094 | **+0.3237** | $[+0.2778, +0.3735]$ | 0.0245 | 920.5 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_1$** | **C2 vs C0** | $C_0$ | $C_2$ | 0.9332 | 0.4941 | **+0.4390** | $[+0.3924, +0.4879]$ | 0.0243 | 1233.1 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_1$** | **C3 vs C1_hist** | $C_{1\text{,hist}}$ | $C_3$ | 0.6094 | 0.4884 | **+0.1210** | $[+0.0964, +0.1460]$ | 0.0126 | 250.3 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_1$** | **C1_true_w2 vs C0** | $C_0$ | $C_{1\text{,w2}}$ | 0.9332 | 0.8613 | **+0.0718** | $[+0.0461, +0.0994]$ | 0.0136 | 113.1 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_1$** | **C3 vs C1_true_w2** | $C_{1\text{,w2}}$ | $C_3$ | 0.8613 | 0.4884 | **+0.3729** | $[+0.3261, +0.4202]$ | 0.0239 | 996.5 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_1$** | **C3 vs C2** | $C_2$ | $C_3$ | 0.4941 | 0.4884 | **+0.0057** | $[-0.0099, +0.0218]$ | 0.0081 | 2.38 | 0.122 | FAIL TO REJECT |
+| **$S_2$** | **C3 vs C0** | $C_0$ | $C_3$ | 0.9273 | 0.5303 | **+0.3969** | $[+0.3424, +0.4560]$ | 0.0291 | 1068.1 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_2$** | **C1_hist vs C0** | $C_0$ | $C_{1\text{,hist}}$ | 0.9273 | 0.6385 | **+0.2887** | $[+0.2287, +0.3552]$ | 0.0326 | 744.3 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_2$** | **C2 vs C0** | $C_0$ | $C_2$ | 0.9273 | 0.5159 | **+0.4114** | $[+0.3569, +0.4684]$ | 0.0286 | 1080.7 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_2$** | **C3 vs C1_hist** | $C_{1\text{,hist}}$ | $C_3$ | 0.6385 | 0.5303 | **+0.1082** | $[+0.0828, +0.1348]$ | 0.0132 | 196.0 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_2$** | **C1_true_w2 vs C0** | $C_0$ | $C_{1\text{,w2}}$ | 0.9273 | 0.8758 | **+0.0515** | $[+0.0293, +0.0752]$ | 0.0117 | 70.3 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_2$** | **C3 vs C1_true_w2** | $C_{1\text{,w2}}$ | $C_3$ | 0.8758 | 0.5303 | **+0.3454** | $[+0.2932, +0.4009]$ | 0.0276 | 888.9 | $< 10^{-15}$ | REJECT $H_0$ |
+| **$S_2$** | **C3 vs C2** | $C_2$ | $C_3$ | 0.5159 | 0.5303 | **-0.0144** | $[-0.0335, +0.0043]$ | 0.0096 | 2.20 | 0.137 | FAIL TO REJECT |
 
-### 5.4 True Boundary-Seam Control vs. Whole-Tile Low-Frequency Disruption
-In Condition $C_1$, inter-tile DC offsets were shifted across entire $16 \times 16$ tile blocks, altering low-frequency intensity levels across 88.7% of image pixels while preserving within-tile gradient textures. To establish whether the observed $C_1$ decline was driven by local boundary edge discontinuities or broad-area DC shifts, we evaluated a dedicated second-generation **True Seam-Only control** ($w=2, 3$ pixels).
+### 5.4 True Boundary-Seam Controls vs. Whole-Tile Low-Frequency Disruption
+In Condition $C_{1\text{,historical\_dc\_offset}}$, inter-tile DC offsets were shifted across entire $16 \times 16$ tile blocks, altering low-frequency intensity levels across 88.7% of image pixels while preserving within-tile gradient textures. To establish whether the observed decline was driven by local boundary edge discontinuities or broad-area DC shifts, we evaluated dedicated **True Seam-Only controls** ($C_{1\text{,true\_seam\_w2}}$, $C_{1\text{,true\_seam\_w3}}$).
 
 Under this design, synthetic step adjustments were restricted strictly to a boundary band of 1-pixel on each side of adjacent tile interfaces ($w=2$) or amplified by gain $\alpha=1.8$ across 3 pixels ($w=3$). In both variants, the inner $14 \times 14$ pixels of every distant tile, the tumour core, and the 15-pixel margin ring remained 100% bit-for-bit identical to baseline $C_0$ (over 81.35% of total slice area preserved; exactly zero altered pixels outside the seam band across all 3,064 slices).
 
@@ -199,22 +219,26 @@ Evaluating all 15 frozen checkpoints under this control revealed:
 2. **Amplified Boundary Seams ($w=3$):** Increasing seam step gain to match $C_3$ seam Sobel energy reduced Macro-F1 to **0.7811** in $S_0$ ($\Delta = +0.1522$), **0.8341** in $S_1$ ($\Delta = +0.0991$), and **0.8580** in $S_2$ ($\Delta = +0.0693$).
 3. **Fourfold Disparity Between Seams and Spatial Scrambling:** In striking contrast to the moderate boundary seam drop, permuting distant cranial tiles under suppressed seams ($C_2$) caused a catastrophic collapse to **0.4525** in $S_0$ ($\Delta = +0.4808$).
 
-Thus, the performance collapse induced by spatial permutation ($\Delta = +0.4808$) is **4.0 times larger** than the pure boundary seam effect alone ($\Delta = +0.1206$). This demonstrates conclusively that while convolutional hierarchies are susceptible to edge artifacts, the primary driver of performance degradation under tile scrambling is the loss of macroscopic cranial anatomical layout.
+Thus, the performance collapse induced by spatial permutation ($\Delta = +0.4808$) is **4.0 times larger** than the pure boundary seam effect alone ($\Delta = +0.1206$). This demonstrates conclusively that while convolutional hierarchies are susceptible to edge artifacts, boundary seams alone do not explain the full collapse.
 
 ### 5.5 Image Diagnostics & Artifact Efficacy in Source and Input Spaces
 Quantitative image diagnostics verified that interventions successfully manipulated edge and spectral energy without disturbing within-tile textures (Table 7, Figure 8). To ensure that findings are not artifacts of image downsampling, diagnostics were audited in both source $512 \times 512$ space and model input $224 \times 224$ space (bilinear interpolation with ImageNet normalization):
 - **Within-Tile Texture Preservation:** Inside the $16\times16$ tiles, Sobel energy in $C_3$ was bit-for-bit identical to baseline natural brain tissue in source space ($30.892316 \equiv 30.892316$). 100% of the gradient energy spike in tile scrambling is localized to the boundary grid ($31.48 \to 129.90$).
 - **Boundary Seam Matching in $C_1$:** Condition $C_1$ matched $C_3$ seam Sobel energy within 7.2% ($120.58$ vs $129.90$).
 - **Seam Suppression in $C_2$:** Boundary seam Sobel energy was suppressed to $76.00$ ($54.8\%$ reduction of excess boundary gradient). Excess high-frequency Fourier energy was suppressed by **$84.9\%$** ($715.4$ vs $2,597.4$).
-- **Bilinear Resizing Fidelity:** At the $224 \times 224$ input resolution fed directly to the ResNet-50 stem, seam Sobel energy remained elevated in $C_3$ ($159.81$ vs $47.48$ baseline) and $C_1$ ($151.97$), while $C_2$ suppressed boundary gradients to $123.71$ (a $32.1\%$ reduction of excess resized seam energy). High-frequency Fourier energy in $224 \times 224$ space was reduced from $1,442.4$ in $C_3$ to $757.2$ in $C_2$, confirming that artifact manipulation operates robustly through the neural network's receptive fields.
+- **Bilinear Resizing Fidelity:** At the $224 \times 224$ input resolution fed directly to the ResNet-50 stem, seam Sobel energy remained elevated in $C_3$ ($159.81$ vs $47.48$ baseline) and $C_1$ ($151.97$), while $C_2$ suppressed boundary gradients to $123.71$ (a $32.1\%$ reduction of excess resized seam energy). High-frequency Fourier energy in $224 \times 224$ space was reduced from $1,442.4$ in $C_3$ to $757.2$ in $C_2$ (a $93.8\%$ reduction of excess high-frequency energy), confirming that artifact manipulation operates robustly through the neural network's receptive fields.
 
 ### 5.6 Mechanistic Prior Collapse: The Glioma-to-Pituitary Transition
 Analysis of confusion matrices (Figure 7) and class transitions (Figure 9) uncovered the underlying representational mechanism:
 - Under baseline conditions ($C_0$), glioma classification is near-flawless: glioma recall is 95.0%, with only 2 out of 1,426 gliomas misclassified as pituitary tumour (0.14%).
-- Under seam-only perturbation ($C_1$), high-frequency edge noise degrades convolutional SNR, causing 31.28% of gliomas to flip to pituitary tumour.
-- Under spatial scrambling ($C_2$ and $C_3$), glioma recall catastrophically collapses to **8.63%** in $S_0$ $C_2$. Over **63.53% of true gliomas are misclassified as pituitary tumour** (906/1,426).
-- Conversely, pituitary tumours are virtually never misclassified as glioma under scrambling (0/930 in $C_2$).
-This dramatic directional collapse demonstrates that intact supratentorial cranial geometry is a necessary anchor for the model to classify intra-axial gliomas. When cranial layout is permuted, the model loses spatial orientation and defaults to its skull-base pituitary prediction prior.
+- Under pure boundary seams ($C_{1\text{,true\_seam\_w2}}$), glioma-to-pituitary misclassification rises to 16.48% (235 / 1,426).
+- Under 3-pixel boundary seams ($C_{1\text{,true\_seam\_w3}}$), it reaches 23.35% (333 / 1,426).
+- Under whole-tile DC offsets ($C_{1\text{,historical\_dc\_offset}}$), 31.28% of gliomas flip to pituitary tumour (446 / 1,426).
+- Under raw scrambling ($C_{3\text{,c5lp\_scramble}}$), glioma recall collapses to 30.76%, with 56.45% of gliomas misclassified as pituitary tumour (805 / 1,426).
+- Under seam-suppressed scrambling ($C_{2\text{,seam\_suppressed}}$), glioma recall catastrophically collapses to **8.63%**, with **63.53% of true gliomas misclassified as pituitary tumour** (906 / 1,426).
+- Conversely, pituitary tumours are virtually never misclassified as glioma under scrambling (0 / 930 in $C_2$).
+
+Crucially, this monotonic dose-response gradient demonstrates that cranial disorientation causes the model to collapse into its default skull-base pituitary prior. However, spatial scrambling inherently conflates four inseparable factors: (1) altered macroscopic cranial layout, (2) non-local tissue juxtapositions (e.g., scalp adjacent to ventricle), (3) residual boundary steps, and (4) out-of-distribution topological inputs. Therefore, this failure reflects categorical disorientation and uninformative prior collapse rather than independent stereotactic coordinate reliance.
 
 ---
 
@@ -222,22 +246,26 @@ This dramatic directional collapse demonstrates that intact supratentorial crani
 
 ### 6.1 Disentangling the Dual Mechanisms of Spatial Degradation
 Our experimental findings resolve the core controversy surrounding distant-context perturbation in brain tumour classification. The observed performance collapse under tile scrambling is governed by a **mixed, dual-factor mechanism ($H_3$)**:
-1. **The Synthetic Seam Vulnerability:** Condition $C_1$ proves that deep CNN convolutional hierarchies are acutely fragile to synthetic grid perturbations. Shifting inter-tile DC offsets without moving anatomical tissue causes a massive decline ($\Delta = +0.3043$), an effect size 72.2% as large as raw scrambling. When evaluated with pure 2-pixel boundary step discontinuities (True Seam $w=2$), high-frequency edge steps alone still induce a measurable decline of $\Delta = +0.1206$ in $S_0$.
-2. **The Independent Spatial-Layout Requirement:** Crucially, suppressing seam gradients in condition $C_2$ does not recover model performance. Permuting distant tiles under suppressed seams still results in a massive collapse ($\Delta = +0.4808$), an effect fourfold larger than pure boundary seams alone.
+1. **The Synthetic Seam Vulnerability:** Condition $C_{1\text{,historical\_dc\_offset}}$ demonstrates that convolutional hierarchies are acutely fragile to synthetic grid perturbations; shifting inter-tile DC offsets without permuting anatomy causes a substantial decline ($\Delta = +0.3043$). When evaluated with pure 2-pixel boundary step discontinuities ($C_{1\text{,true\_seam\_w2}}$), high-frequency edge steps alone still induce a measurable decline of $\Delta = +0.1206$ in $S_0$ (an empirical ratio of 28.6% of the raw scrambling drop). In contrast, the historical whole-tile DC-offset control ($C_{1\text{,historical\_dc\_offset}}$) exhibited an empirical ratio of 72.2% ($\Delta = +0.3043$ vs. $\Delta = +0.4215$).
+2. **The Spatial Rearrangement Collapse:** Crucially, suppressing seam gradients in condition $C_{2\text{,seam\_suppressed}}$ does not recover model performance. Permuting distant tiles under suppressed seams still results in a massive collapse ($\Delta = +0.4808$), an effect fourfold larger than pure boundary seams alone.
 
-These findings definitively refute the artifact-only null hypothesis ($H_0$): tile scrambling is **not** merely an artifact of artificial boundary seams. Deep CNN classifiers rely fundamentally on macroscopic cranial spatial arrangement.
+These findings definitively refute the artifact-only null hypothesis ($H_0$): tile scrambling is **not** merely an artifact of artificial boundary seams. However, spatial scrambling does not isolate independent stereotactic spatial coordinates. Instead, spatial scrambling conflates four inseparable factors:
+- **Altered Macroscopic Anatomical Layout:** Destruction of the global spatial configuration of cranial structures.
+- **Non-Local Tissue Juxtapositions:** Creation of biologically impossible interfaces, such as calvarial bone placed immediately adjacent to ventricular cerebrospinal fluid.
+- **Residual Boundary Discontinuities:** Remaining step gradients along the tile interfaces that survive smoothing filters.
+- **Out-of-Distribution (OOD) Manifold Shifts:** Presentation of synthetic mosaic patterns that fall far outside the manifold of natural MRI acquisitions.
 
 ### 6.2 The Anatomy of a Shortcut: Context Disorientation vs. Lesion Reliance
 Why does a model with 100% visibility of the tumour core and a 15-pixel peritumoral margin fail so catastrophically when distant cranial context is permuted?
 
 In clinical radiology, gliomas and pituitary tumours exhibit distinct histopathological and morphological features on T1-CE MRI: gliomas frequently present as infiltrative, heterogeneously enhancing parenchymal masses with necrosis and peritumoral edema, whereas pituitary adenomas present as solid sellar or suprasellar lesions expandingly displacing the optic chiasm [13, 14]. Crucially, they occupy strictly distinct anatomical compartments: gliomas are intra-axial supratentorial or infratentorial tumours, whereas pituitary adenomas occur exclusively at the skull base in the sella turcica.
 
-Our empirical transition data reveal that ResNet-50 does not autonomously diagnose tumour pathology from focal lesion morphology alone. Instead, it exploits macroscopic cranial landmarks—such as the cerebral convexity, ventricles, and skull-base contours—as a spatial coordinate shortcut. When these distant anatomical landmarks are disorganized, the network's spatial coordinate frame collapses, driving the model into its default skull-base pituitary prior.
+Our empirical transition data reveal that ResNet-50 does not autonomously diagnose tumour pathology from focal lesion morphology alone. Instead, it exploits macroscopic cranial landmarks—such as the cerebral convexity, ventricles, and skull-base contours—as a categorical spatial prior. When these surrounding anatomical structures are scrambled and unnatural tissue juxtapositions are introduced, the network's spatial coordinate frame collapses, driving the model into its default skull-base pituitary prior.
 
 ### 6.3 Methodological Implications for Machine Learning Robustness
 Our findings carry vital methodological implications for perturbation-based attribution studies in computer vision and medical imaging [8, 10]:
-1. **Interventions Introduce Confounds:** Image perturbation techniques (cutting, cropping, scrambling, inpainting) cannot be assumed to manipulate only the intended target property. As demonstrated by condition $C_1$, tile cutting introduces massive high-frequency boundary noise that acts as an independent adversarial confound.
-2. **Multi-Control Designs Are Essential:** Any study employing spatial scrambling must include seam-only ($C_1$) and seam-suppressed ($C_2$) controls to verify that observed declines reflect true spatial dependencies rather than boundary edge artifacts.
+1. **Interventions Introduce Confounds:** Image perturbation techniques (cutting, cropping, scrambling, inpainting) cannot be assumed to manipulate only the intended target property. As demonstrated by condition $C_{1\text{,true\_seam\_w2}}$, tile cutting introduces high-frequency boundary noise that acts as an independent non-pathological confound.
+2. **Multi-Control Designs Are Essential:** Any study employing spatial scrambling must include true boundary seam controls ($C_{1\text{,true\_seam\_w2}}$) and seam-suppressed ($C_{2\text{,seam\_suppressed}}$) controls to verify whether observed declines reflect spatial dependencies, boundary edge artifacts, or compound distribution shifts.
 3. **Radiometric Moment Matching Is Insufficient:** Preserving global mean and variance between $C_0$ and $C_3$ proved that first and second histogram moments were matched, but completely failed to prevent high-frequency spectral distortion.
 
 ---
@@ -248,13 +276,13 @@ Our findings carry vital methodological implications for perturbation-based attr
 2. **Two-Dimensional Slices:** The dataset consists of selected 2D axial slices rather than 3D volumetric MRI scans. While 2D slice classification represents the dominant paradigm in existing literature, 3D convolutional models may exhibit different spatial context dependencies.
 3. **Single Architectural Family:** Primary experiments were evaluated using ResNet-50 backbones. While ResNet-50 is the benchmark architecture in medical shortcut discovery [2, 12], the relative vulnerability of Vision Transformers (ViT) and Swin Transformers to seam artifacts versus spatial permutations represents an open research area.
 4. **Lack of Clinical Acquisition Metadata:** The public Figshare dataset lacks full DICOM metadata, precluding stratification by scanner vendor, field strength, or contrast timing.
-5. **Categorical vs. Continuous Coordinate Reliance:** While our results demonstrate categorical sensitivity to cranial disorganization, they do not establish continuous stereotactic metric coordinate reliance.
+5. **Categorical Prior vs. Continuous Coordinate Reliance:** While our results demonstrate categorical sensitivity to cranial disorganization and unnatural tissue juxtapositions, they do not establish continuous stereotactic metric coordinate reliance.
 
 ---
 
 ## 8. Conclusion
 
-This study provides the first controlled experimental disentanglement of synthetic tile-seam edge artifacts from macroscopic spatial-layout sensitivity in deep brain tumour MRI classification. By demonstrating that synthetic seams alone cause severe degradation, while seam-suppressed tile permutation independently collapses classification performance, we prove that the tile-scrambling phenomenon is driven by a dual-factor mixed mechanism. Deep convolutional classifiers rely fundamentally on global cranial spatial context as a diagnostic shortcut, collapsing into skull-base prediction modes when surrounding anatomy is permuted. These findings mandate that future spatial perturbation studies implement explicit boundary controls, and reinforce the critical principle that deep medical models must be audited for contextual shortcuts before clinical translation.
+This study provides a rigorous multi-control experimental disentanglement of synthetic tile-seam edge artifacts from spatial rearrangement sensitivity in deep brain tumour MRI classification. By demonstrating that synthetic seams alone cause measurable degradation while seam-suppressed tile permutation independently collapses classification performance, we show that the tile-scrambling phenomenon is driven by a dual-factor mixed mechanism. Deep convolutional classifiers rely fundamentally on global cranial context as a diagnostic shortcut, collapsing into skull-base prediction modes when surrounding anatomy is permuted. These findings mandate that future spatial perturbation studies implement explicit boundary controls, and reinforce the critical principle that deep medical models must be audited for contextual shortcuts before clinical translation.
 
 ---
 

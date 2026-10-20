@@ -1,6 +1,13 @@
 """
 Task 5: Synchronized Paired Cluster Bootstrap (B = 25,000)
-Recalculates primary intervention contrasts using synchronized patient-cluster resampling.
+Rigorous Statistical Audit & Re-analysis with Numerically Stable Inference.
+
+Updates:
+1. Strict consistent condition naming: C1_historical_dc_offset, C1_true_seam_w2, C1_true_seam_w3, C0_orig, C2_seam_suppressed, C3_c5lp_scramble.
+2. Numerically stable McNemar calculation using scipy.stats.chi2.sf and exact binomial test (scipy.stats.binomtest). Never reports p = 0.0.
+3. Rigorous bootstrap p-value reporting: both empirical percentile bound and Wald studentized p-value from bootstrap standard error.
+4. Holm-Bonferroni FWER step-down correction applied strictly to the declared family of 12 primary confirmatory contrasts (M=12).
+5. Separate reporting for True Seam control family and exploratory contrasts.
 """
 
 import os
@@ -9,9 +16,11 @@ import time
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from scipy.stats import chi2 as chi2_dist, norm, binomtest
 
 ROOT = Path(__file__).resolve().parent.parent
-INPUT_CSV = ROOT / 'experiments' / 'phase_9_seam_spatial_disentanglement' / 'matched_predictions.csv'
+P9_CSV = ROOT / 'experiments' / 'phase_9_seam_spatial_disentanglement' / 'matched_predictions.csv'
+TRUE_SEAM_CSV = ROOT / 'remaining_work_audit' / 'true_seam_oof_predictions.csv'
 OUTPUT_DIR = ROOT / 'remaining_work_audit'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -20,35 +29,69 @@ B_REPLICATES = 25000
 
 SCENARIOS = ['S0', 'S1', 'S2']
 
+# Hypotheses definitions with strict family assignments
 CONTRASTS = [
+    # --- Primary Confirmatory Family (M = 12 across 3 scenarios) ---
     {
         'contrast_id': 'C3_vs_C0',
-        'desc': 'Original Scrambling Effect',
+        'desc': 'Raw Scrambling Effect',
         'cond_A': 'C0_orig',
         'cond_B': 'C3_c5lp_scramble',
-        'family': 'primary'
+        'family': 'primary_confirmatory'
     },
     {
-        'contrast_id': 'C1_vs_C0',
-        'desc': 'Seam-Only Effect',
+        'contrast_id': 'C1_hist_vs_C0',
+        'desc': 'Historical Whole-Tile DC-Offset Effect',
         'cond_A': 'C0_orig',
-        'cond_B': 'C1_seam_only',
-        'family': 'primary'
+        'cond_B': 'C1_historical_dc_offset',
+        'family': 'primary_confirmatory'
     },
     {
         'contrast_id': 'C2_vs_C0',
-        'desc': 'Seam-Suppressed Spatial Rearrangement',
+        'desc': 'Seam-Suppressed Spatial Rearrangement Effect',
         'cond_A': 'C0_orig',
         'cond_B': 'C2_seam_suppressed',
-        'family': 'primary'
+        'family': 'primary_confirmatory'
     },
     {
-        'contrast_id': 'C3_vs_C1',
-        'desc': 'Incremental Scrambling vs Seam-Only Difference',
-        'cond_A': 'C1_seam_only',
+        'contrast_id': 'C3_vs_C1_hist',
+        'desc': 'Incremental Scrambling vs Historical DC Offset',
+        'cond_A': 'C1_historical_dc_offset',
         'cond_B': 'C3_c5lp_scramble',
-        'family': 'primary'
+        'family': 'primary_confirmatory'
     },
+    
+    # --- True Seam-Only Control Family ---
+    {
+        'contrast_id': 'C1_true_w2_vs_C0',
+        'desc': 'Pure 2-Pixel Boundary Seam Effect',
+        'cond_A': 'C0_orig',
+        'cond_B': 'C1_true_seam_w2',
+        'family': 'true_seam_controls'
+    },
+    {
+        'contrast_id': 'C1_true_w3_vs_C0',
+        'desc': 'Amplified 3-Pixel Boundary Seam Effect',
+        'cond_A': 'C0_orig',
+        'cond_B': 'C1_true_seam_w3',
+        'family': 'true_seam_controls'
+    },
+    {
+        'contrast_id': 'C3_vs_C1_true_w2',
+        'desc': 'Incremental Scrambling vs Pure Boundary Seam (w=2)',
+        'cond_A': 'C1_true_seam_w2',
+        'cond_B': 'C3_c5lp_scramble',
+        'family': 'true_seam_controls'
+    },
+    {
+        'contrast_id': 'C2_vs_C1_true_w2',
+        'desc': 'Spatial Rearrangement vs Pure Boundary Seam (w=2)',
+        'cond_A': 'C1_true_seam_w2',
+        'cond_B': 'C2_seam_suppressed',
+        'family': 'true_seam_controls'
+    },
+    
+    # --- Exploratory Family ---
     {
         'contrast_id': 'C3_vs_C2',
         'desc': 'Sensitivity to Seam Suppression',
@@ -78,24 +121,60 @@ def f1_from_cm(cm):
         f1s.append(f1)
     return float(np.mean(f1s)), [float(x) for x in f1s]
 
-def compute_mcnemar(y_true, y_pred_A, y_pred_B):
-    """Compute McNemar chi2 with continuity correction and p-value."""
+def compute_mcnemar_stable(y_true, y_pred_A, y_pred_B):
+    """
+    Compute McNemar test with continuity correction and exact binomial p-value.
+    Guaranteed numerical stability: never underflows to 0.0 without bounded representation.
+    """
     corr_A = (y_pred_A == y_true)
     corr_B = (y_pred_B == y_true)
-    n_10 = np.sum(corr_A & (~corr_B))
-    n_01 = np.sum((~corr_A) & corr_B)
+    n_10 = int(np.sum(corr_A & (~corr_B)))
+    n_01 = int(np.sum((~corr_A) & corr_B))
     
     if (n_10 + n_01) == 0:
-        return 0.0, 1.0, int(n_10), int(n_01)
+        return 0.0, 1.0, 1.0, "1.000", n_10, n_01
     
     chi2 = ((abs(n_10 - n_01) - 1.0) ** 2) / (n_10 + n_01)
-    from scipy.stats import chi2 as chi2_dist
-    p_val = float(1.0 - chi2_dist.cdf(chi2, df=1))
-    return float(chi2), p_val, int(n_10), int(n_01)
+    chi2_p = float(chi2_dist.sf(chi2, df=1))
+    
+    # Exact two-sided binomial test on discordant pairs
+    b_res = binomtest(n_10, n_10 + n_01, p=0.5, alternative='two-sided')
+    exact_b_p = float(b_res.pvalue)
+    
+    # Format p-value string avoiding 0.0
+    if exact_b_p < 1e-15:
+        p_display = "< 1e-15"
+    else:
+        p_display = f"{exact_b_p:.4e}"
+        
+    return float(chi2), chi2_p, exact_b_p, p_display, n_10, n_01
+
+def load_consolidated_predictions():
+    """Load and unify predictions with consistent condition naming."""
+    p9_df = pd.read_csv(P9_CSV)
+    # Rename canonical historical DC offset condition
+    p9_df['condition'] = p9_df['condition'].replace({'C1_seam_only': 'C1_historical_dc_offset'})
+    
+    ts_df = pd.read_csv(TRUE_SEAM_CSV)
+    
+    # Ensure aligned columns
+    common_cols = [
+        'scenario', 'fold', 'condition', 'sample_id', 'cluster_id',
+        'true_label', 'class_name', 'pred_label', 'pred_class',
+        'prob_meningioma', 'prob_glioma', 'prob_pituitary', 'correct'
+    ]
+    combined = pd.concat([p9_df[common_cols], ts_df[common_cols]], ignore_index=True)
+    return combined
 
 def main():
-    print(f"Loading predictions from {INPUT_CSV}...", flush=True)
-    df = pd.read_csv(INPUT_CSV)
+    print("=" * 75, flush=True)
+    print("TASK 5 AUDIT: Synchronized Paired Cluster Bootstrap (B = 25,000)", flush=True)
+    print("Rigorous numerical validation, family-wise FWER control, and stable inference.", flush=True)
+    print("=" * 75, flush=True)
+    
+    df = load_consolidated_predictions()
+    print(f"Total consolidated prediction rows: {len(df)} across {df['condition'].nunique()} conditions.", flush=True)
+    print(f"Conditions: {list(df['condition'].unique())}", flush=True)
     
     rng = np.random.RandomState(SEED)
     results = []
@@ -110,11 +189,12 @@ def main():
         cluster_to_idx = {cid: i for i, cid in enumerate(clusters)}
         scen_df['c_idx'] = scen_df['cluster_id'].map(cluster_to_idx)
         
-        print(f"Scenario {scen}: {K} unique clusters, {len(scen_df)} total prediction rows.", flush=True)
+        print(f"\nScenario {scen}: {K} unique patient/duplicate clusters, {len(scen_df)} rows.", flush=True)
         
         # Precompute per-cluster confusion matrices for each condition
         cluster_cms = {}
-        for cond in ['C0_orig', 'C1_seam_only', 'C2_seam_suppressed', 'C3_c5lp_scramble']:
+        all_conds = df['condition'].unique()
+        for cond in all_conds:
             c_df = scen_df[scen_df['condition'] == cond].sort_values('sample_id')
             c_cms = np.zeros((K, 3, 3), dtype=np.int64)
             for c_idx, group in c_df.groupby('c_idx'):
@@ -123,20 +203,17 @@ def main():
         
         # Generate shared cluster resampling indices for this scenario (B x K)
         boot_indices = rng.choice(K, size=(B_REPLICATES, K), replace=True)
-        
-        # Count occurrences of each cluster in each replicate: (B x K)
-        # Using bincount row by row
         boot_weights = np.zeros((B_REPLICATES, K), dtype=np.int32)
         for b in range(B_REPLICATES):
             boot_weights[b] = np.bincount(boot_indices[b], minlength=K)
             
-        print(f"  Weights generated for B={B_REPLICATES}. Running paired contrasts...", flush=True)
+        print(f"  Cluster weights generated (B={B_REPLICATES}). Evaluating contrasts...", flush=True)
         
-        # For each contrast
         for c_def in CONTRASTS:
             cid = c_def['contrast_id']
             cond_A = c_def['cond_A']
             cond_B = c_def['cond_B']
+            family = c_def['family']
             
             # Full cohort point estimates
             cm_A_full = cluster_cms[cond_A].sum(axis=0)
@@ -145,10 +222,10 @@ def main():
             f1_B_full, class_f1_B = f1_from_cm(cm_B_full)
             point_delta = f1_A_full - f1_B_full
             
-            # McNemar
+            # Numerically stable McNemar test
             sub_A = scen_df[scen_df['condition'] == cond_A].sort_values('sample_id')
             sub_B = scen_df[scen_df['condition'] == cond_B].sort_values('sample_id')
-            chi2_val, mcnemar_p, n_10, n_01 = compute_mcnemar(
+            chi2_val, chi2_p, exact_b_p, p_display, n_10, n_01 = compute_mcnemar_stable(
                 sub_A['true_label'].values,
                 sub_A['pred_label'].values,
                 sub_B['pred_label'].values
@@ -160,7 +237,6 @@ def main():
             
             deltas = np.zeros(B_REPLICATES, dtype=np.float64)
             class_deltas = np.zeros((B_REPLICATES, 3), dtype=np.float64)
-            invalid_reps = 0
             
             for b in range(B_REPLICATES):
                 f1_a, cls_a = f1_from_cm(cms_A_boot[b])
@@ -171,19 +247,25 @@ def main():
             
             ci_lower = float(np.percentile(deltas, 2.5))
             ci_upper = float(np.percentile(deltas, 97.5))
+            se_boot = float(np.std(deltas, ddof=1))
             
-            # Finite-sample corrected bootstrap p-value
+            # Empirical percentile p-value with Davison-Hinkley pseudo-count
             if point_delta >= 0:
                 p_one_sided = (np.sum(deltas <= 0) + 1) / (B_REPLICATES + 1)
             else:
                 p_one_sided = (np.sum(deltas >= 0) + 1) / (B_REPLICATES + 1)
-            raw_p_val = float(min(1.0, 2.0 * p_one_sided))
+            raw_p_empirical = float(min(1.0, 2.0 * p_one_sided))
+            
+            # Wald / Studentized z-score and asymptotic p-value
+            z_score = float(point_delta / se_boot) if se_boot > 0 else 0.0
+            wald_p = float(2.0 * norm.sf(abs(z_score)))
+            wald_p_display = "< 1e-15" if wald_p < 1e-15 else f"{wald_p:.4e}"
             
             results.append({
                 'scenario': scen,
                 'contrast_id': cid,
                 'description': c_def['desc'],
-                'hypothesis_family': c_def['family'],
+                'hypothesis_family': family,
                 'condition_A': cond_A,
                 'condition_B': cond_B,
                 'macro_f1_A': f1_A_full,
@@ -191,21 +273,28 @@ def main():
                 'signed_difference_A_minus_B': point_delta,
                 'bootstrap_ci_lower': ci_lower,
                 'bootstrap_ci_upper': ci_upper,
+                'se_bootstrap': se_boot,
+                'bootstrap_z_score': z_score,
+                'wald_asymptotic_p_value': wald_p,
+                'wald_p_display': wald_p_display,
                 'bootstrap_replicates': B_REPLICATES,
-                'invalid_replicates': invalid_reps,
+                'invalid_replicates': 0,
                 'patient_clusters': K,
-                'raw_bootstrap_p_value': raw_p_val,
+                'raw_bootstrap_p_value': raw_p_empirical,
                 'mcnemar_chi2': chi2_val,
-                'mcnemar_p_value': mcnemar_p,
+                'mcnemar_chi2_p_float': chi2_p,
+                'mcnemar_exact_binomial_p': exact_b_p,
+                'mcnemar_p_display': p_display,
                 'mcnemar_n_10': n_10,
                 'mcnemar_n_01': n_01,
-                'se_bootstrap': float(np.std(deltas, ddof=1))
+                'inference_method': 'synchronized_paired_cluster_bootstrap_percentile_b25000'
             })
             
             for c_idx, c_name in enumerate(['meningioma', 'glioma', 'pituitary']):
                 class_results.append({
                     'scenario': scen,
                     'contrast_id': cid,
+                    'hypothesis_family': family,
                     'class_name': c_name,
                     'condition_A': cond_A,
                     'condition_B': cond_B,
@@ -218,31 +307,38 @@ def main():
 
     res_df = pd.DataFrame(results)
     
-    # Apply Holm-Bonferroni correction across all 15 contrasts
-    # Sort by raw p-value
-    res_df = res_df.sort_values('raw_bootstrap_p_value').reset_index(drop=True)
-    M = len(res_df)
-    adj_p = np.zeros(M, dtype=np.float64)
-    running_max = 0.0
-    for i in range(M):
-        p_val = res_df.loc[i, 'raw_bootstrap_p_value']
-        mult = (M - i)
-        val = min(1.0, mult * p_val)
-        running_max = max(running_max, val)
-        adj_p[i] = running_max
-    res_df['holm_adjusted_p_value'] = adj_p
-    res_df['holm_fwer_status'] = res_df['holm_adjusted_p_value'].apply(
-        lambda p: 'REJECT_H0 (Significant after Holm FWER)' if p < 0.05 else 'FAIL_TO_REJECT (Not significant)'
-    )
+    # Apply Holm-Bonferroni step-down correction strictly within the declared hypothesis families:
+    # 1. Primary Confirmatory Family (M = 12 hypotheses)
+    # 2. True Seam Control Family (M = 12 hypotheses)
+    # 3. Exploratory Family (M = 3 hypotheses)
     
-    # Also order back by scenario and contrast
-    order_map = {f"{r['scenario']}_{r['contrast_id']}": idx for idx, r in enumerate(results)}
-    res_df['sort_key'] = res_df.apply(lambda r: order_map[f"{r['scenario']}_{r['contrast_id']}"], axis=1)
-    res_df = res_df.sort_values('sort_key').drop(columns=['sort_key']).reset_index(drop=True)
+    res_df['holm_adjusted_p_value'] = np.nan
+    res_df['holm_family_size'] = 0
+    res_df['holm_fwer_status'] = ''
     
+    for fam in ['primary_confirmatory', 'true_seam_controls', 'exploratory']:
+        fam_idx = res_df[res_df['hypothesis_family'] == fam].index
+        fam_sub = res_df.loc[fam_idx].sort_values('raw_bootstrap_p_value').copy()
+        M = len(fam_sub)
+        
+        running_max = 0.0
+        adj_vals = {}
+        for rank, (orig_i, row) in enumerate(fam_sub.iterrows()):
+            p_val = row['raw_bootstrap_p_value']
+            mult = M - rank
+            val = min(1.0, mult * p_val)
+            running_max = max(running_max, val)
+            adj_vals[orig_i] = running_max
+            
+        for orig_i, adj_p in adj_vals.items():
+            res_df.loc[orig_i, 'holm_adjusted_p_value'] = adj_p
+            res_df.loc[orig_i, 'holm_family_size'] = M
+            status = 'REJECT_H0 (Significant after Holm FWER)' if adj_p < 0.05 else 'FAIL_TO_REJECT (Not significant)'
+            res_df.loc[orig_i, 'holm_fwer_status'] = status
+
     out_path = OUTPUT_DIR / 'task5_synchronized_bootstrap_b25000.csv'
     res_df.to_csv(out_path, index=False)
-    print(f"Task 5 results saved to {out_path} in {time.time() - t0:.2f}s", flush=True)
+    print(f"\nTask 5 results successfully saved to {out_path} in {time.time() - t0:.2f}s", flush=True)
     
     class_df = pd.DataFrame(class_results)
     class_out_path = OUTPUT_DIR / 'task5_class_stratified_bootstrap.csv'
