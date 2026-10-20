@@ -5,7 +5,7 @@
 **Auditor:** Senior Medical Imaging Scientist, Statistical Reviewer, and ML Systems Engineer  
 **Baseline Repository:** [https://github.com/CSrajput-ux/brain-tumor-prediction-using-deep-leaning](https://github.com/CSrajput-ux/brain-tumor-prediction-using-deep-leaning)  
 **Execution Environment:** Windows x64, Python 3.14.6, PyTorch 2.15.0.dev, CUDA 12.6, NVIDIA GeForce RTX 4050 Laptop GPU  
-**Audit Gate Status:** **CLEARED (All 9 Mandatory Correction Domains Fully Resolved & Verified)**
+**Audit Gate Status: **NOT YET VERIFIED — PENDING AUTHOR AND JOURNAL ACTIONS**
 
 ---
 
@@ -16,9 +16,10 @@ This report establishes the complete, versioned audit trail for the comprehensiv
 The primary objective was to resolve critical numerical conflicts, eliminate misleading causal and novelty claims, audit and mathematically justify the inference procedures, cleanly separate historical DC-offset perturbations from genuine boundary-seam controls, compute dual-resolution image diagnostics, and regenerate all published figures, tables, captions, manuscript text, and automated regression tests from authoritative source data.
 
 ### Key Scientific Conclusions:
-1. **The Dual-Factor Mechanism ($H_3$ Confirmed):** Catastrophic performance collapse under distant-tile scrambling is governed by two distinct components:
+1. **The Dual-Factor Mechanism ($H_3$ Partially Supported / Operationally Defined):** Catastrophic performance collapse under distant-tile scrambling is governed by two distinct components under explicit operational definitions:
    - Convolutional neural networks exhibit acute vulnerability to high-frequency boundary step artifacts ($\Delta = +0.1206$ Macro-F1 drop for pure 2-pixel boundary steps, condition $C_{1\text{,true\_seam\_w2}}$), representing an empirical ratio of **28.6%** of the raw scrambling drop ($\Delta = +0.4215$).
    - However, suppressing boundary seam gradients in condition $C_{2\text{,seam\_suppressed}}$ does not rescue the model: permuting distant tiles under suppressed seams still results in a massive performance collapse ($\Delta = +0.4808$), an effect **4.0 times larger** than the pure boundary seam effect alone.
+   - *Operational Nuance:* While both boundary noise and spatial disruption independently degrade performance (supporting the operational dual-factor hypothesis), tile scrambling cannot be claimed as "confirming" reliance on continuous anatomical coordinates because scrambling jointly alters macroscopic layout, local texture, tissue adjacency, boundary artifacts, and the input manifold distribution.
 2. **Causal Refinement (No Independent Stereotactic Coordinate Reliance):** Model degradation under tile scrambling does **not** prove reliance on continuous stereotactic anatomical coordinates. Instead, spatial permutation inherently conflates four inseparable factors: (1) altered macroscopic cranial layout, (2) non-local tissue juxtapositions (e.g. scalp adjacent to ventricle), (3) residual boundary discontinuities, and (4) out-of-distribution topological inputs. Under this compound disorientation, models with 100% lesion visibility collapse into an uninformative skull-base pituitary prior (glioma-to-pituitary misclassification monotonically rises from 0.14% at baseline to 16.48% for $w=2$ seams, 23.35% for $w=3$ seams, 31.28% for historical DC-offsets, 56.45% for raw scrambling, and 63.53% for seam-suppressed scrambling).
 3. **Full Multi-Split Reproducibility:** Findings remain statistically significant across all 3 patient-level evaluation scenarios ($S_0$: Patient-Disjoint 5-Fold, $S_1$: Duplicate-Cleaned $\text{SSIM} \ge 0.80$, $S_2$: Duplicate-Grouped $\text{SSIM} \ge 0.75$) after family-wise Holm FWER multiplicity control ($M=12$ primary contrasts, all $p < 10^{-15}$).
 
@@ -41,18 +42,22 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
 
 ### Domain 2: Statistical Audit of Bootstrap Inference (`run_task5_cluster_bootstrap.py`)
 - **Defects Identified:**
-  1. Bootstrap p-values reported as exact $0.0$ due to finite Monte Carlo resamples ($B=2,000$), which is statistically unsound.
-  2. McNemar test calculations relied on uncorrected asymptotic $\chi^2$ without exact binomial validation on extreme off-diagonal counts.
-  3. Holm multiplicity correction was inconsistently applied across exploratory and confirmatory contrasts.
+  1. McNemar exact binomial calculation suffered from IEEE-754 double precision underflow ($p < 10^{-308}$) on extreme off-diagonal counts (e.g., $N=1532, k=67$), causing uninformative 0.0 outputs or improper fallback substitution of asymptotic $\chi^2$ p-values into exact p-value fields.
+  2. Ordinary bootstrap replicate fractions on one side of zero were previously conflated with formal null-hypothesis p-values.
+  3. Holm multiplicity correction was applied without clearly defined family boundaries.
 - **Corrections Implemented:**
-  1. Scaled bootstrap replicates to $B = 25,000$ paired patient-cluster resamples with zero degenerate/invalid iterations across all 233 clusters.
-  2. Implemented Davison-Hinkley empirical bounds:
-     $$p_{\text{empirical}} = \frac{1 + \sum_{b=1}^B \mathbb{I}(\Delta_b^* \le 0)}{B + 1}$$
-     yielding exact, non-zero empirical bounds ($p = 7.9997 \times 10^{-5}$ for 0 extreme resamples).
-  3. Implemented Wald studentized $z$-score and two-tailed standard normal asymptotic p-values ($z = 16.70$, $p = 1.28 \times 10^{-62}$ for $C_3 \text{ vs } C_0$ in $S_0$).
-  4. Implemented exact two-sided binomial McNemar tests using `scipy.stats.binomtest(n_01, n_10 + n_01, 0.5)` with Edwards continuity correction on $\chi^2$.
-  5. Enforced strict rule: **Zero occurrences of $p = 0.0$**; all extreme values formatted as `< 1e-15` for display, while preserving full IEEE-754 double precision floats in CSV.
-  6. Formally partitioned hypotheses into the declared Primary Confirmatory Family ($M = 12$: 4 key contrasts $\times$ 3 scenarios) and applied step-down Holm-Bonferroni FWER control strictly to this family.
+  1. **Primary Uncertainty Analysis:** Paired patient-cluster bootstrap 95% percentile confidence intervals ($B = 25,000$ paired cluster resamples with zero degenerate/invalid iterations across all clusters) established as primary uncertainty analysis.
+  2. **Exploratory Bound Documented:** Raw bootstrap tail fractions are clearly labeled as Davison-Hinkley empirical percentile bounds:
+     $$p_{\text{empirical}} = \min\left(1.0, 2 \times \frac{1 + \sum_{b=1}^B \mathbb{I}(\Delta_b^* \le 0)}{B + 1}\right)$$
+     strictly documented as empirical percentile bounds, NOT formal null-hypothesis p-values. Wald studentized $z$-score and two-tailed standard normal asymptotic p-values ($z = 16.70$, $p = 1.28 \times 10^{-62}$ for $C_3 \text{ vs } C_0$ in $S_0$) are reported alongside.
+  3. **Robust Log-Space Exact McNemar Test (Issue 1 Fix):** Computed exact two-sided binomial McNemar p-value robustly in log space via `scipy.special.logsumexp` across observed discordant counts ($n_{10}, n_{01}$), handling ties and edge cases ($N=0$). For extreme values ($p < 10^{-308}$), exact significance is preserved in `mcnemar_exact_log10_p` with `mcnemar_exact_underflow = True`.
+  4. **Strict Separation of Statistics (No Chi2 Fallback Substitution):** Edwards continuity-corrected $\chi^2$ asymptotic p-value is computed and stored as a separate column (`mcnemar_asymptotic_chi2_p`). It is **NEVER** substituted into the exact p-value field (`mcnemar_exact_binomial_p`).
+  5. **Separate Output Fields:** Canonical CSV includes `mcnemar_exact_log10_p`, `mcnemar_exact_underflow`, `mcnemar_exact_binomial_p`, `mcnemar_asymptotic_chi2_p`, `mcnemar_discordant_n10`, `mcnemar_discordant_n01`.
+  6. **Family Multiplicity Control (Issue 2 Fix):** Holm-Bonferroni FWER step-down adjustment applied independently within three declared families:
+     - Primary Confirmatory Family: 4 contrasts $\times$ 3 scenarios = 12 comparisons.
+     - True-Seam Control Family: 4 contrasts $\times$ 3 scenarios = 12 comparisons.
+     - Exploratory Family: 1 contrast $\times$ 3 scenarios = 3 comparisons.
+     Confidence intervals including zero are explicitly barred from being claimed as proof of statistical equivalence without an equivalence margin and TOST test.
 
 ---
 
@@ -181,14 +186,16 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
 | Audit Gate Item | Verification Criterion | Status | Evidence / Notes |
 | :--- | :--- | :--- | :--- |
 | **G1: Historical vs True Seams** | Disentangled and consistently named across all deliverables | **PASS** | `C1_historical_dc_offset`, `C1_true_seam_w2`, `C1_true_seam_w3` used uniformly |
-| **G2: Bootstrap Statistical Soundness** | Zero $p=0.0$, exact binomial McNemar, Wald $z$, $B=25,000$ | **PASS** | $B=25,000$, empirical bounds, exact binomial McNemar, $M=12$ Holm FWER |
+| **G2: Bootstrap Statistical Soundness** | Primary percentile CIs, exact log-space McNemar, no chi2 fallback | **PASS** | $B=25,000$ paired cluster CIs, log-space exact McNemar, separate chi2, $M=12$ Holm FWER |
 | **G3: Dual-Resolution Diagnostics** | Audited at both source $512^2$ and input $224^2$ | **PASS** | Evaluated on all 3,064 slices; Table 7 and Figure 8 updated |
-| **G4: Claim-Evidence Matrix (Table 8)** | All percentages mathematically reconciled with exact definitions | **PASS** | 54.8%, 84.9%, 28.6%, 72.2%, and 0.14%–63.53% dose-response verified |
-| **G5: Epistemic & Causal Boundaries** | Unsupported preregistration/first-ever removed; 4 factors explained | **PASS** | Overclaims excised; four-factor confounding mechanism detailed |
+| **G4: Claim-Evidence Matrix (Table 8)** | All percentages mathematically reconciled with exact definitions | **PASS** | 26.0%, 53.9%, 10.5%, 41.2%, 28.6%, 72.2%, and 0.14%–63.53% dose-response verified |
+| **G5: Epistemic & Causal Boundaries** | Unsupported causal/preregistration claims removed; 4 factors explained | **PASS** | Overclaims excised; four-factor confounding mechanism detailed; $H_3$ operationally calibrated |
 | **G6: Deliverable Parity** | 10 figures (PNG/PDF), Tables 1–8, S1, S2, DOCX regenerated | **PASS** | All generated without error; `test_publication_package_v1.py` 100% pass |
-| **G7: Automated Regression Testing** | All unit/integration tests pass with zero failures | **PASS** | **178 / 178 tests passed** in 65.52 seconds |
-| **G8: Metadata & Integrity** | Zero invented authors, DOIs, cohorts, or synthetic test results | **PASS** | Standard double-blind placeholders preserved; genuine Cheng dataset used |
+| **G7: Automated Regression Testing** | All unit/integration tests pass with zero failures | **PASS** | **178 / 178 tests passed** across all test suites |
+| **G8: Metadata Integrity & Scientific Honesty** | Zero invented authors, DOIs, cohorts, or synthetic test results | **PASS** | Standard double-blind placeholders preserved; genuine Cheng dataset used |
+| **G9: Acquisition-Plane Confound** | Explicitly marked as UNRESOLVED — DATASET LIMITATION | **PASS** | Source provenance audited; resolution sensitivity kept strictly separate |
+| **G10: Author & Journal Gate Actions** | Target journal, author metadata, funding, archive DOI | **PENDING** | Reserved for human authors; checklist provided in missing evidence log |
 
 ### Gate Verdict:
-**SUBMISSION READINESS: CLEARED.**  
-All critical numerical discrepancies, inference method concerns, causal overclaims, and deliverable synchronizations have been rigorously and deterministically resolved.
+**SUBMISSION GATE: NOT YET VERIFIED — PENDING AUTHOR AND JOURNAL ACTIONS.**  
+While all internal algorithmic, statistical, and deliverable reconciliation criteria (G1–G9) have been rigorously verified and resolved, the formal publication submission gate is held at **NOT YET VERIFIED — PENDING AUTHOR AND JOURNAL ACTIONS** until the human authors complete the essential pre-submission items: selecting the target journal, finalizing author names and affiliations, inserting grant funding numbers, confirming institutional ethics declarations, and depositing reproducibility artifacts to obtain a permanent archive DOI.

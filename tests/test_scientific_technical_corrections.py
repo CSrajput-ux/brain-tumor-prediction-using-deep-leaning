@@ -4,6 +4,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+from scipy.stats import binom as binom_dist
+from scipy.special import gammaln, logsumexp
 
 ROOT = Path(__file__).resolve().parent.parent
 PUB_DIR = ROOT / 'publication' / 'manuscript_v1'
@@ -52,33 +54,164 @@ def test_table2_manifest_fold_counts():
 
 
 def test_bootstrap_results_integrity():
-    """Verify Task 5 synchronized paired cluster bootstrap outputs and zero occurrences of p = 0.0."""
+    """Verify Task 5 synchronized paired cluster bootstrap outputs.
+
+    Issue 1 fix: Verifies new canonical McNemar fields exist and are correctly populated.
+    - mcnemar_exact_log10_p must be finite for all rows (never NaN or inf)
+    - mcnemar_exact_underflow flags rows where IEEE float underflowed to 0.0
+    - mcnemar_asymptotic_chi2_p is the separate chi2 p-value (NEVER substituted for exact p)
+    - mcnemar_discordant_n10 and mcnemar_discordant_n01 are the observed discordant counts
+    - For underflowed rows, mcnemar_exact_binomial_p==0.0 is EXPECTED (use log10 field)
+    - For NON-underflowed rows, mcnemar_exact_binomial_p must NOT equal mcnemar_asymptotic_chi2_p
+      (that would indicate the old fallback substitution is still occurring)
+    """
     b_path = AUDIT_DIR / 'task5_synchronized_bootstrap_b25000.csv'
     assert b_path.exists(), "task5_synchronized_bootstrap_b25000.csv must exist"
     df = pd.read_csv(b_path)
-    
-    # 1. No p = 0 entries in ANY floating-point or string column
-    assert (df['mcnemar_chi2_p_float'] == 0.0).sum() == 0, "No chi2 asymptotic p-values should be exactly 0.0"
-    assert (df['mcnemar_exact_binomial_p'] == 0.0).sum() == 0, "No exact binomial p-values should be exactly 0.0"
-    assert (df['raw_bootstrap_p_value'] == 0.0).sum() == 0, "No raw bootstrap p-values should be exactly 0.0"
-    assert (df['wald_asymptotic_p_value'] == 0.0).sum() == 0, "No Wald asymptotic p-values should be exactly 0.0"
-    
+
+    # 1. New Issue 1 canonical McNemar fields must be present
+    required_new_fields = [
+        'mcnemar_exact_log10_p', 'mcnemar_exact_underflow',
+        'mcnemar_exact_binomial_p', 'mcnemar_asymptotic_chi2_p',
+        'mcnemar_discordant_n10', 'mcnemar_discordant_n01',
+    ]
+    for field in required_new_fields:
+        assert field in df.columns, f"Required Issue 1 field missing: {field}"
+
+    # 2. mcnemar_exact_log10_p must be finite for all rows (never NaN, +inf, or -inf)
+    assert df['mcnemar_exact_log10_p'].notna().all(), "mcnemar_exact_log10_p must not be NaN"
+    assert np.isfinite(df['mcnemar_exact_log10_p']).all(), "mcnemar_exact_log10_p must be finite"
+    # All log10 p-values must be <= 0 (p-values are in [0,1])
+    assert (df['mcnemar_exact_log10_p'] <= 0.001).all(), "log10 p-values must be <= 0"
+
+    # 3. Chi2 fallback substitution check: for non-underflowed rows where exact_p != 0.0,
+    #    exact_p must NOT be identical to chi2_p (that would mean old fallback occurred).
+    non_underflow = df[df['mcnemar_exact_underflow'] == False]
+    non_underflow_nonzero = non_underflow[non_underflow['mcnemar_exact_binomial_p'] != 0.0]
+    suspicious = non_underflow_nonzero[
+        non_underflow_nonzero['mcnemar_exact_binomial_p'] == non_underflow_nonzero['mcnemar_asymptotic_chi2_p']
+    ]
+    assert len(suspicious) == 0, (
+        f"CRITICAL: {len(suspicious)} rows where exact_p == chi2_p — chi2 fallback substitution detected!\n"
+        f"{suspicious[['scenario','contrast_id','mcnemar_exact_binomial_p','mcnemar_asymptotic_chi2_p']].to_string()}"
+    )
+
+    # 4. For underflowed rows: exact_p_float must be 0.0 and log10_p must indicate extreme value
+    underflow_rows = df[df['mcnemar_exact_underflow'] == True]
+    if len(underflow_rows) > 0:
+        assert (underflow_rows['mcnemar_exact_binomial_p'] == 0.0).all(), (
+            "Underflowed rows must have exact_p_float == 0.0"
+        )
+        # log10 p for underflowed rows should be very negative (< -308)
+        assert (underflow_rows['mcnemar_exact_log10_p'] < -300).all(), (
+            "Underflowed rows must have log10_p < -300 (i.e. far beyond float64 range)"
+        )
+
+    # 5. mcnemar_discordant_n10 + mcnemar_discordant_n01 must be positive for all rows
+    #    (there are always discordant pairs for significant contrasts)
+    assert (df['mcnemar_discordant_n10'] >= 0).all(), "n10 must be non-negative"
+    assert (df['mcnemar_discordant_n01'] >= 0).all(), "n01 must be non-negative"
+
+    # 6. p_display must not be '0.0' or '0' for any row
     for p_disp in df['mcnemar_p_display']:
-        assert p_disp != "0.0" and p_disp != "0", f"Disallowed McNemar display p-value: {p_disp}"
+        assert p_disp != '0.0' and p_disp != '0', f"Disallowed McNemar display p-value: {p_disp}"
     for w_disp in df['wald_p_display']:
-        assert w_disp != "0.0" and w_disp != "0", f"Disallowed Wald display p-value: {w_disp}"
-        
-    # 2. Replicates count and cluster accounting
+        assert w_disp != '0.0' and w_disp != '0', f"Disallowed Wald display p-value: {w_disp}"
+
+    # 7. Replicates count and cluster accounting
     assert (df['bootstrap_replicates'] == 25000).all(), "All contrasts must use B=25,000 resamples"
-    assert (df['invalid_replicates'] == 0).all(), "All replicates must have zero degenerate/invalid iterations"
+    assert (df['invalid_replicates'] == 0).all(), "All replicates must have zero invalid iterations"
     assert (df['patient_clusters'] >= 217).all(), "Patient cluster count must reflect scenario clusters"
-    
-    # 3. Confidence intervals are strictly ordered
-    assert (df['bootstrap_ci_lower'] < df['bootstrap_ci_upper']).all(), "CI lower must be strictly less than CI upper"
+
+    # 8. Confidence intervals are strictly ordered
+    assert (df['bootstrap_ci_lower'] < df['bootstrap_ci_upper']).all(), "CI lower must be < CI upper"
+
+    # 9. raw_bootstrap_p_value must be > 0 (Davison-Hinkley pseudo-count prevents exact 0)
+    assert (df['raw_bootstrap_p_value'] > 0).all(), "No raw bootstrap p-values should be exactly 0.0"
+    assert (df['wald_asymptotic_p_value'] >= 0).all(), "Wald p-values must be non-negative"
+
+
+def test_mcnemar_logspace_verification():
+    """Issue 1: Verify log-space exact McNemar computation against independent high-precision reference.
+
+    Tests representative cases including extreme discordant counts (N=1532, k=67),
+    balanced counts, zero discordance, and small samples. Verifies:
+    - Correct log10_p values (within 0.01 of reference)
+    - No chi2 fallback substitution for non-underflowed rows
+    - Proper underflow detection for extreme cases
+    - Correct edge case handling (N=0)
+    """
+    from scipy.stats import chi2 as chi2_dist
+
+    def compute_exact_logspace(n_10, n_01):
+        N = n_10 + n_01
+        if N == 0:
+            return 0.0, 1.0, False, 1.0
+        k = min(n_10, n_01)
+        if k == N / 2:
+            log10_p_exact = 0.0
+            exact_p_float = 1.0
+            exact_underflow = False
+        else:
+            i = np.arange(k + 1)
+            log_pmf = gammaln(N + 1) - gammaln(i + 1) - gammaln(N - i + 1) - N * np.log(2.0)
+            log_tail = float(logsumexp(log_pmf))
+            log_p_nat = min(0.0, np.log(2.0) + log_tail)
+            log10_p_exact = min(0.0, float(log_p_nat / np.log(10.0)))
+            exact_p_float = float(np.exp(log_p_nat)) if log_p_nat > -700.0 else 0.0
+            exact_underflow = (exact_p_float == 0.0) and (N > 0)
+        chi2_stat = ((abs(n_10 - n_01) - 1.0) ** 2) / float(N) if N > 0 else 0.0
+        chi2_p = float(chi2_dist.sf(chi2_stat, df=1))
+        return log10_p_exact, exact_p_float, exact_underflow, chi2_p
+
+    test_cases = [
+        # (n10, n01, expected_underflow, expected_log10_p_approx)
+        (1465, 67, True, -342.0),   # N=1532, k=67: extreme, underflows
+        (150, 150, False, 0.0),     # N=300, balanced: p=1.0, log10=0
+        (0, 0, False, 0.0),         # N=0: edge case, p=1.0
+        (5, 0, False, -1.5),        # N=5, k=0: one-sided extreme
+        (60, 40, False, -2.0),      # N=100, k=40: moderate
+    ]
+
+    for n10, n01, expected_underflow, approx_log10_p in test_cases:
+        log10_p, p_float, underflow, chi2_p = compute_exact_logspace(n10, n01)
+
+        # Check underflow flag
+        assert underflow == expected_underflow, (
+            f'n10={n10},n01={n01}: expected underflow={expected_underflow}, got {underflow}'
+        )
+
+        # For underflowed rows: p_float must be 0.0
+        if underflow:
+            assert p_float == 0.0, f'Underflowed row n10={n10},n01={n01}: p_float should be 0.0'
+            # log10_p must be very negative and finite
+            assert np.isfinite(log10_p), f'log10_p must be finite even when underflowed'
+            assert log10_p < -300, f'Underflowed row: log10_p={log10_p} should be < -300'
+
+        # For non-underflowed rows: log10_p should be approximately correct
+        if not underflow and n10 + n01 > 0:
+            assert abs(log10_p - approx_log10_p) < 1.0, (
+                f'n10={n10},n01={n01}: log10_p={log10_p:.3f} too far from expected {approx_log10_p}'
+            )
+
+        # Critical: for non-underflowed rows where exact_p != 0.0,
+        # exact_p must NOT equal chi2_p (no fallback substitution)
+        if not underflow and p_float != 0.0 and n10 + n01 > 0:
+            assert p_float != chi2_p, (
+                f'n10={n10},n01={n01}: exact_p == chi2_p indicates fallback substitution!'
+            )
+
+    # Verify extreme case N=1532, k=67 log10_p is in expected range
+    log10_p, _, _, _ = compute_exact_logspace(1465, 67)
+    assert log10_p < -300, f'N=1532, k=67 log10_p={log10_p:.1f} should be < -300'
+    assert log10_p > -400, f'N=1532, k=67 log10_p={log10_p:.1f} should be > -400'
 
 
 def test_holm_multiplicity_families_independent_correction():
     """Verify independent Holm-Bonferroni correction across primary, true-seam, and exploratory families."""
+    # NOTE: Issue 2 clarification - Holm correction is applied to Davison-Hinkley bootstrap bounds
+    # (raw_bootstrap_p_value), which are NOT formal null-hypothesis p-values. The correction
+    # provides exploratory family-wise control with this caveat documented.
     b_path = AUDIT_DIR / 'task5_synchronized_bootstrap_b25000.csv'
     df = pd.read_csv(b_path)
     

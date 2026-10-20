@@ -1,5 +1,6 @@
-# Shortlist of Target Springer Journals for Manuscript Submission
+# Candidate Target Journals for Manuscript Submission (Pending Author Selection)
 
+**Status:** **PENDING AUTHOR SELECTION** (Candidate options provided for author consideration; neither journal nor template is finalized).  
 **Scope of Study:** Controlled evaluation of shortcut learning, spatial-context sensitivity, and synthetic boundary artifacts in deep CNN brain MRI classification on the Figshare 1512427 cohort.
 
 ---
