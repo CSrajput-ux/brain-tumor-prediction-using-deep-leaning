@@ -56,4 +56,4 @@
 - [x] **Data Generator Script:** `scripts/generate_publication_figures_and_tables.py` preserved in `publication/manuscript_v1/figure_source/`.
 - [x] **Direct Regeneration:** All 10 figures and all tables can be reproduced with a single command:
   `python publication/manuscript_v1/figure_source/generate_figures_and_tables.py`
-- [x] **Automated Regression Suite:** 167 repository tests passing across all 11 phases.
+- [x] **Automated Regression Suite:** 172 repository tests passing across all 11 phases.

@@ -455,9 +455,9 @@ def generate_all_tables(metrics, contrasts, stats, validity, accounting):
     
     # Table 2: Scenarios & Fold Sizes
     t2_data = [
-        {'scenario': 'S0', 'description': 'Patient-Disjoint 5-Fold CV', 'grouping_criterion': 'Unique Patient ID', 'cluster_count': 233, 'fold_1_samples': 618, 'fold_2_samples': 616, 'fold_3_samples': 612, 'fold_4_samples': 610, 'fold_5_samples': 608, 'total_samples': 3064},
-        {'scenario': 'S1', 'description': 'Candidate Duplicate-Cleaned CV', 'grouping_criterion': 'Patient ID + SSIM >= 0.80 Pair Merges', 'cluster_count': 219, 'fold_1_samples': 618, 'fold_2_samples': 616, 'fold_3_samples': 612, 'fold_4_samples': 610, 'fold_5_samples': 608, 'total_samples': 3064},
-        {'scenario': 'S2', 'description': 'Aggressive Duplicate-Grouped CV', 'grouping_criterion': 'Patient ID + SSIM >= 0.75 Pair Merges', 'cluster_count': 178, 'fold_1_samples': 618, 'fold_2_samples': 616, 'fold_3_samples': 612, 'fold_4_samples': 610, 'fold_5_samples': 608, 'total_samples': 3064}
+        {'scenario': 'S0', 'description': 'Patient-Disjoint 5-Fold CV', 'grouping_criterion': 'Unique Patient ID', 'cluster_count': 233, 'fold_1_samples': 613, 'fold_2_samples': 614, 'fold_3_samples': 611, 'fold_4_samples': 613, 'fold_5_samples': 613, 'total_samples': 3064},
+        {'scenario': 'S1', 'description': 'Candidate Duplicate-Cleaned CV', 'grouping_criterion': 'Patient ID + SSIM >= 0.80 Pair Merges', 'cluster_count': 219, 'fold_1_samples': 612, 'fold_2_samples': 614, 'fold_3_samples': 613, 'fold_4_samples': 612, 'fold_5_samples': 613, 'total_samples': 3064},
+        {'scenario': 'S2', 'description': 'Aggressive Duplicate-Grouped CV', 'grouping_criterion': 'Patient ID + SSIM >= 0.75 Pair Merges', 'cluster_count': 178, 'fold_1_samples': 613, 'fold_2_samples': 612, 'fold_3_samples': 614, 'fold_4_samples': 612, 'fold_5_samples': 613, 'total_samples': 3064}
     ]
     pd.DataFrame(t2_data).to_csv(TAB_DIR / 'table2_evaluation_scenarios.csv', index=False)
     
