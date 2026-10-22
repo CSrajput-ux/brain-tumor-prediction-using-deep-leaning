@@ -229,7 +229,7 @@ The repository contains diagnostics for source resolution and the $224 \times 22
 Analysis of confusion matrices (Figure 7) and class transitions (Figure 9) uncovered the underlying representational mechanism:
 - Under baseline conditions ($C_0$), glioma classification is near-flawless: glioma recall is 95.0%, with only 2 out of 1,426 gliomas misclassified as pituitary tumour (0.14%).
 - Under pure boundary seams ($C_{1\text{,true\_seam\_w2}}$), glioma-to-pituitary misclassification rises to 16.48% (235 / 1,426).
-- Under 3-pixel boundary seams ($C_{1\text{,true\_seam\_w3}}$), it reaches 23.35% (333 / 1,426).
+- Under the amplified seam-only control (gain 1.8; legacy identifier $C_{1\text{,true\_seam\_w3}}$), it reaches 23.35% (333 / 1,426).
 - Under whole-tile DC offsets ($C_{1\text{,historical\_dc\_offset}}$), 31.28% of gliomas flip to pituitary tumour (446 / 1,426).
 - Under raw scrambling ($C_{3\text{,c5lp\_scramble}}$), glioma recall collapses to 30.76%, with 56.45% of gliomas misclassified as pituitary tumour (805 / 1,426).
 - Under seam-suppressed scrambling ($C_{2\text{,seam\_suppressed}}$), glioma recall catastrophically collapses to **8.63%**, with **63.53% of true gliomas misclassified as pituitary tumour** (906 / 1,426).
