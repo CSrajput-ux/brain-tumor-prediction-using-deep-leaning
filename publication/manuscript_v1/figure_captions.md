@@ -20,7 +20,7 @@ Vector schematic illustrating the complete experimental methodology: (1) Data go
 Visual panels demonstrating representative experimental conditions on a single representative patient slice:  
 **(A) Condition $C_0$ (Baseline):** Original, unmodified slice evaluated through standard preprocessing.  
 **(B) Condition $C_{1\text{,true\_seam\_w2}}$:** Pure boundary step adjustments restricted strictly to a 1-pixel boundary strip on each side of adjacent tile interfaces ($w=2$), preserving 81.35% of pixels bit-for-bit.  
-**(C) Condition $C_{1\text{,true\_seam\_w3}}$:** Amplified amplified boundary step adjustments (gain 1.8; legacy identifier w3) along tile interfaces ($w=3$), testing sensitivity to seam-adjustment gain while preserving 81.35% of pixels.  
+**(C) Condition $C_{1\text{,true\_seam\_w3}}$:** Amplified boundary-step adjustments (gain 1.8; legacy identifier w3) along tile interfaces, using the same two-pixel-wide modification as the gain-1.0 condition and preserving 81.35% of source pixels.  
 **(D) Condition $C_{1\text{,historical\_dc\_offset}}$:** Inter-tile DC offsets matching the scrambling intervention injected across entire $16\times16$ tiles while holding underlying anatomical structures stationary.  
 **(E) Condition $C_2$ (Seam-Suppressed Rearrangement):** Eligible distant-context $16\times16$ tiles are permuted with distance-weighted Gaussian cross-fading, suppressing tile boundary step energy.  
 **(F) Condition $C_3$ (Raw Scramble):** Historical tile scramble, in which distant tiles are permuted without boundary smoothing (introducing 1-pixel hard step edges).  
@@ -34,7 +34,7 @@ Classification metrics of frozen ResNet-50 models under baseline conditions ($C_
 ---
 
 ### Figure 5: Multi-Condition Macro-F1 Performance Across Six Standardized Conditions.
-Classification performance across experimental conditions in scenarios $S_0, S_1,$ and $S_2$. Condition bars: $C_0$ Original Baseline (blue), $C_{1\text{,true\_seam\_w2}}$ Pure Boundary Seam w=2 (teal), $C_{1\text{,true\_seam\_w3}}$ Amplified Boundary Seam (gain 1.8; legacy identifier w3) (gold), $C_{1\text{,historical\_dc\_offset}}$ Whole-Tile DC (orange), $C_2$ Seam-Suppressed Rearrangement (purple), and $C_3$ Raw Scramble (pink). In all scenarios, pure boundary seams alone ($C_{1\text{,true\_seam\_w2}}$) induce a moderate decline ($\Delta = +0.1206$ in $S_0$), whereas rearranging tiles under suppressed seams ($C_2$) results in a severe collapse ($\Delta = +0.4808$), showing a larger observed decrement than the gain-1.0 seam-only control; this descriptive ratio is not a causal decomposition because the controls are not energy-matched and C2 seam attenuation is pending.
+Classification performance across experimental conditions in scenarios $S_0, S_1,$ and $S_2$. Condition bars: $C_0$ Original Baseline (blue), $C_{1\text{,true\_seam\_w2}}$ Pure Boundary Seam w=2 (teal), $C_{1\text{,true\_seam\_w3}}$ Amplified Boundary Seam (gain 1.8; legacy identifier w3) (gold), $C_{1\text{,historical\_dc\_offset}}$ Whole-Tile DC (orange), $C_2$ Seam-Suppressed Rearrangement (purple), and $C_3$ Raw Scramble (pink). In all scenarios, pure boundary seams alone ($C_{1\text{,true\_seam\_w2}}$) induce a moderate decline ($\Delta = +0.1206$ in $S_0$), whereas rearranging tiles under local boundary blending ($C_2$) results in a severe collapse ($\Delta = +0.4808$), showing a larger observed decrement than the gain-1.0 seam-only control; this descriptive ratio is not a causal decomposition because the controls are not energy-matched and C2 seam attenuation is pending.
 
 ---
 
@@ -43,7 +43,7 @@ Paired performance differences ($\Delta = \text{Macro-F1}_A - \text{Macro-F1}_B$
 - **$C_3 \text{ vs } C_0$:** Raw scrambling drop replicating historical benchmarks ($\Delta = +0.4215, p < 10^{-15}$).  
 - **$C_{1\text{,hist}} \text{ vs } C_0$:** Historical whole-tile DC-offset perturbation effect ($\Delta = +0.3043, p < 10^{-15}$).  
 - **$C_{1\text{,true\_w2}} \text{ vs } C_0$:** Pure 2-pixel boundary seam effect ($\Delta = +0.1206, p < 10^{-15}$).  
-- **$C_{1\text{,true\_w3}} \text{ vs } C_0$:** Amplified amplified boundary seam (gain 1.8; legacy identifier w3) effect ($\Delta = +0.1522, p < 10^{-15}$).  
+- **$C_{1\text{,true\_seam\_w3}} \text{ vs } C_0$:** Amplified boundary-seam effect (gain 1.8; legacy identifier w3) ($\Delta = +0.1522, p < 10^{-15}$).  
 - **$C_2 \text{ vs } C_0$:** Seam-suppressed spatial rearrangement effect ($p < 10^{-15}$, substantially exceeding the pre-defined 0.150 threshold indicated by the red dotted line).  
 - **$C_3 \text{ vs } C_2$:** Sensitivity to seam smoothing (negative in $S_0$ indicating $C_2$ was worse than $C_3$; non-significant in $S_1$ and $S_2$).  
 - **$C_3 \text{ vs } C_{1\text{,true\_w2}}$:** Incremental scrambling effect beyond pure boundary seams alone ($\Delta = +0.3009, p < 10^{-15}$).
