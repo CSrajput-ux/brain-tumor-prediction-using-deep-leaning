@@ -54,10 +54,10 @@ CONDITION_ORDER = [
 
 CONDITION_LABELS = {
     'C0_orig': 'C0: Baseline',
-    'C1_true_seam_w2': 'C1: True Seam (w=2)',
-    'C1_true_seam_w3': 'C1: True Seam (w=3)',
+    'C1_true_seam_w2': 'C1: Seam Control (gain=1.0; legacy w2)',
+    'C1_true_seam_w3': 'C1: Amplified Seam (gain=1.8; legacy w3)',
     'C1_historical_dc_offset': 'C1: Hist. DC-Offset',
-    'C2_seam_suppressed': 'C2: Seam-Suppressed',
+    'C2_seam_suppressed': 'C2: Locally Blended Permutation',
     'C3_c5lp_scramble': 'C3: Raw Scramble'
 }
 
@@ -135,7 +135,7 @@ def generate_figure_2():
     boxes = [
         ("1. Dataset & Split Audit", "Cheng Figshare (3,064 slices, 233 patients)\nS0: Patient-Disjoint 5-Fold\nS1: Cleaned SSIM 0.80 | S2: Grouped SSIM 0.75", 0.05, 0.55, 0.25, 0.35, '#e8f4f8'),
         ("2. Model Training & Freezing", "ResNet-50 (15 Checkpoints)\n5 Folds x 3 Scenarios\nWeights Frozen from Phase 2 Baseline", 0.37, 0.55, 0.25, 0.35, '#e8f8f0'),
-        ("3. 6 Evaluated Conditions", "Tumour Core & 15px Margin 100% Protected\nC0: Baseline | C1: Seam Controls (Hist, w2, w3)\nC2: Seam-Suppressed | C3: Raw Scramble", 0.69, 0.55, 0.26, 0.35, '#fff4e6'),
+        ("3. 6 Evaluated Conditions", "Tumour Core & 15px Margin 100% Protected\nC0: Baseline | C1: Seam Controls (Hist, gain 1.0 and 1.8)\nC2: Locally Blended Permutation | C3: Raw Scramble", 0.69, 0.55, 0.26, 0.35, '#fff4e6'),
         ("4. Matched Inference", "55,152 Out-of-Fold Predictions\nZero Test Leakage | 15 Frozen Checkpoints\nStrict Cross-Validation Inference", 0.20, 0.08, 0.26, 0.32, '#f3e8f8'),
         ("5. Statistical Disentanglement", "Synchronized Paired Cluster Bootstrap (B=25,000)\nExact Binomial McNemar Test\nHolm FWER Multiplicity Control", 0.54, 0.08, 0.28, 0.32, '#fbe8e8')
     ]
@@ -270,9 +270,9 @@ def generate_figure_6(contrasts):
     c_labels = {
         'C3_vs_C0': 'C3 vs C0: Raw Scramble Effect',
         'C1_hist_vs_C0': 'C1_hist vs C0: Historical DC-Offset Effect',
-        'C1_true_w2_vs_C0': 'C1_true_w2 vs C0: Pure Boundary Seam (w=2)',
-        'C1_true_w3_vs_C0': 'C1_true_w3 vs C0: Pure Boundary Seam (w=3)',
-        'C2_vs_C0': 'C2 vs C0: Seam-Suppressed Rearrangement',
+        'C1_true_w2_vs_C0': 'C1_true_w2 vs C0: Seam Control (gain=1.0; legacy w2)',
+        'C1_true_w3_vs_C0': 'C1_true_w3 vs C0: Amplified Seam (gain=1.8; legacy w3)',
+        'C2_vs_C0': 'C2 vs C0: Locally Blended Permutation',
         'C3_vs_C2': 'C3 vs C2: Sensitivity to Seam Smoothing',
         'C3_vs_C1_true_w2': 'C3 vs C1_true_w2: Scrambling beyond Seams'
     }
@@ -487,7 +487,7 @@ def generate_figure_10(contrasts, preds):
         
     ax.axhline(0.150, color='red', linestyle=':', label='Pre-defined Threshold (0.150)', linewidth=1.2)
     ax.set_ylabel(r'Performance Drop $\Delta \mathrm{MacroF1}$', fontsize=10.5, fontweight='bold')
-    ax.set_title(r'Cross-Validation Stability of Seam-Suppressed Scrambling ($C_2 \mathrm{\ vs\ } C_0$)', fontsize=12, fontweight='bold', pad=12)
+    ax.set_title(r'Cross-Validation Stability of Locally Blended Spatial Permutation ($C_2 \mathrm{\ vs\ } C_0$)', fontsize=12, fontweight='bold', pad=12)
     ax.set_xticks(x)
     ax.set_xticklabels(folds, fontsize=10)
     ax.set_ylim(0.25, 0.65)
