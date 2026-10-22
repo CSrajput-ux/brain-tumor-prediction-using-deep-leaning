@@ -47,10 +47,10 @@ Within each tile, the internal gradient is identical to original tissue ($\nabla
 ### 2.3 Condition $C_{1\text{,true\_seam\_w2}}$ — Pure 2-Pixel Boundary Seam Control
 Condition $C_{1\text{,true\_seam\_w2}}$ restricts synthetic step adjustments strictly to a 1-pixel boundary strip on each side of adjacent tile interfaces ($w = 2$). The inner $14 \times 14$ pixels of every distant tile, the tumour core, and the 15-pixel margin ring remain 100% bit-for-bit identical to baseline $C_0$ (81.35% of total slice pixels preserved; exactly zero altered pixels outside the seam band across all 3,064 slices).
 
-### 2.4 Condition $C_{1\text{,true\_seam\_w3}}$ — Amplified 3-Pixel Boundary Seam Control
-Condition $C_{1\text{,true\_seam\_w3}}$ applies synthetic step adjustments across a 3-pixel boundary band ($w = 3$) with amplification gain $\alpha = 1.8$, matching the elevated seam Sobel energy of raw scrambling while strictly preserving tile interior anatomy.
+### 2.4 Condition $C_{1\text{,true\_seam\_w3}}$ — Amplified Seam Control (Legacy Identifier)
+Condition $C_{1\text{,true\_seam\_w3}}$ applies the same two-pixel-wide boundary modification as the gain-1.0 control, but with amplification gain $\alpha = 1.8$. The `_w3` suffix is a legacy code identifier; it does not denote a three-pixel-wide modification. The control preserves tile-interior anatomy, the tumour core and the protected margin.
 
-### 2.5 Condition $C_2$ — Seam-Suppressed Spatial Rearrangement
+### 2.5 Condition $C_2$ — Locally Blended Spatial Rearrangement
 Condition $C_2$ permutes the distant-context tiles according to $\pi$, but suppresses artificial tile-boundary discontinuities using a distance-weighted Gaussian cross-fade along tile borders.
 Along all adjacent boundaries between distant tiles, a boundary transition strip of half-width $w = 4$ pixels is cross-faded using a distance weight:
 $$\alpha(d) = \frac{1}{2} \left[1 + \text{erf}\left(\frac{d}{\sigma \sqrt{2}}\right)\right], \quad \sigma = 2.5$$
