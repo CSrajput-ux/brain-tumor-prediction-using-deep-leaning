@@ -7,6 +7,9 @@
 **Execution Environment:** Windows x64, Python 3.14.6, PyTorch 2.15.0.dev, CUDA 12.6, NVIDIA GeForce RTX 4050 Laptop GPU  
 **Audit Gate Status: **NOT YET VERIFIED — PENDING AUTHOR AND JOURNAL ACTIONS**
 
+> **Correction notice (2026-10-22):** The C2 attenuation figures recorded in this historical audit (26.0%, 53.9%, 10.5%, and 41.2%) are **withdrawn**. A later audit found that the dual-resolution diagnostic generator used a different C2 blur/blending operator from the one used to generate evaluated predictions. The diagnostic source has now been corrected to match Phase 9, but the full rerun on all 3,064 slices has not yet been completed. Do not cite the earlier C2 attenuation values or derived claims; they remain superseded until new outputs are regenerated and reconciled.
+
+
 ---
 
 ## 1. Executive Summary
@@ -70,22 +73,17 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
      - **Source Resolution ($512\times512$):** Seam Sobel gradient, interior texture gradient, Fourier high-frequency energy, and unchanged area fraction.
      - **Model Input Resolution ($224\times224$):** Bilinear resized images fed directly to the ResNet-50 input stem.
 - **Key Dual-Resolution Findings (Table 7):**
-  - **Source $512\times512$:** Seam Sobel rises from $31.50$ ($C_0$) to $88.12$ ($C_{1\text{,w2}}$), $137.13$ ($C_{1\text{,w3}}$), $163.42$ ($C_{1\text{,hist}}$), and $174.37$ ($C_3$). Seam suppression in $C_2$ achieves $137.21$ (**$26.0\%$ excess reduction** of boundary gradient relative to $C_3$). High-frequency Fourier energy drops from $2598.35$ ($C_3$) to $1402.61$ ($C_2$, baseline $379.79$), achieving a **$53.9\%$ excess reduction**.
-  - **Model Input $224\times224$:** Seam Sobel is $50.97$ ($C_0$), $68.31$ ($C_{1\text{,w2}}$), $85.75$ ($C_{1\text{,w3}}$), $169.74$ ($C_2$), and $183.70$ ($C_3$), an excess seam reduction of **$10.5\%$**. High-frequency Fourier energy in $224\times224$ space drops from $2,410.10$ ($C_3$) to $1,852.19$ ($C_2$, baseline $1055.88$), an excess high-frequency reduction of **$41.2\%$**, confirming robust artifact attenuation through the model's receptive fields.
+  - The previously reported C2 diagnostics and attenuation percentages have been withdrawn because the diagnostic generation operator did not match the evaluated C2 operator.
+  - The source code now uses the evaluated 9×9 Gaussian blur (σ = 2.5) and distance-weighted blending. A full run on all 3,064 slices is still required before C2 seam attenuation can be quantified.
+  - The other condition values remain available provisionally in Table 7; they should be rechecked as part of the same reproducibility run.
 
 ---
 
 ### Domain 4: Reconciliation of Percentages in Table 8 Claim-Evidence Matrix
 - **Defect Identified:** Conflicting percentages (54.8% vs 84.9%, 28.6% vs 72.2%, 0.14% to 63.53%) previously reflected single-run pilot scratch values rather than the authoritative dataset-wide metrics from all 3,064 slices.
 - **Corrections Implemented & Mathematical Definitions Ratified Directly from Canonical Table 7:**
-  1. **26.0% (Excess Seam Sobel Suppression at Source $512\times512$):**
-     $$\text{Excess Sobel Reduction} = \frac{\text{Sobel}(C_3) - \text{Sobel}(C_2)}{\text{Sobel}(C_3) - \text{Sobel}(C_0)} = \frac{174.3750 - 137.2094}{174.3750 - 31.4969} = \frac{37.1656}{142.8781} = 26.01\% \approx 26.0\%$$
-  2. **53.9% (Excess Fourier High-Frequency Suppression at Source $512\times512$):**
-     $$\text{Excess HF Reduction} = \frac{\text{HF}(C_3) - \text{HF}(C_2)}{\text{HF}(C_3) - \text{HF}(C_0)} = \frac{2,598.3540 - 1,402.6096}{2,598.3540 - 379.7889} = \frac{1,195.7444}{2,218.5651} = 53.90\% \approx 53.9\%$$
-  3. **10.5% (Excess Seam Sobel Suppression at Model Input $224\times224$):**
-     $$\text{Excess Sobel Reduction}_{224} = \frac{183.7047 - 169.7377}{183.7047 - 50.9699} = \frac{13.9670}{132.7348} = 10.52\% \approx 10.5\%$$
-  4. **41.2% (Excess Fourier High-Frequency Suppression at Model Input $224\times224$):**
-     $$\text{Excess HF Reduction}_{224} = \frac{2,410.1014 - 1,852.1867}{2,410.1014 - 1,055.8781} = \frac{557.9147}{1,354.2233} = 41.20\% \approx 41.2\%$$
+  1. **C2 attenuation figures — WITHDRAWN:** The earlier 26.0% (source seam Sobel), 53.9% (source Fourier), 10.5% (224×224 seam Sobel), and 41.2% (224×224 Fourier) calculations were derived from diagnostics generated with a different C2 operator. They must not be used or cited.
+  2. **Recomputation required:** Run the corrected `scripts/run_dual_resolution_diagnostics.py` on the prepared 3,064-slice dataset, then regenerate Table 7/Figure 8 and reconcile all manuscript references before restoring any C2 attenuation values.
   3. **28.6% (True-Seam Empirical Ratio in $S_0$):**
      $$\text{Ratio}_{\text{true\_seam}} = \frac{\Delta \text{MacroF1}(C_0 - C_{1\text{,true\_seam\_w2}})}{\Delta \text{MacroF1}(C_0 - C_3)} = \frac{0.9333 - 0.8127}{0.9333 - 0.5118} = \frac{0.1206}{0.4215} = 28.61\% \approx 28.6\%$$
   4. **72.2% (Historical DC-Offset Empirical Ratio in $S_0$):**
