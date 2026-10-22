@@ -1,8 +1,8 @@
 """
 Experiment 2: True Seam-Only Control Implementation & Evaluation
 Generates:
-1. C1_true_seam_w2: 2-pixel grid boundary step discontinuity matching C3 boundary jumps
-2. C1_true_seam_w3: 3-pixel grid boundary discontinuity with energy gain matching C3 seam distribution
+1. C1_true_seam_w2: gain-1.0 grid-boundary step control (two pixels adjacent to each seam)
+2. C1_true_seam_w3: legacy identifier for a gain-1.8 control; it modifies the same two pixels and is not a 3-pixel width
 Evaluates on all 15 frozen ResNet-50 checkpoints across S0, S1, S2 using GPU inference.
 Computes pixel preservation diagnostics, out-of-fold predictions, and paired contrasts.
 """
@@ -107,7 +107,7 @@ def generate_true_seam_conditions(meta_df):
         i_ts_w2 = img.copy().astype(np.float32)
         seam_mask_w2 = np.zeros_like(img, dtype=bool)
         
-        # Build True Seam w=3 (gain alpha=2.0)
+        # Build amplified seam-only control (legacy variable w3; gain alpha=1.8; same image-modification width as w2)
         i_ts_w3 = img.copy().astype(np.float32)
         seam_mask_w3 = np.zeros_like(img, dtype=bool)
         
