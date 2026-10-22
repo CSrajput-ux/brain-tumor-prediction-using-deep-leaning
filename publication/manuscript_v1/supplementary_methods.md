@@ -53,10 +53,16 @@ Condition $C_{1\text{,true\_seam\_w3}}$ applies the same two-pixel-wide boundary
 
 
 ### 2.5 Condition $C_2$ — Locally Blended Spatial Rearrangement
-Condition $C_2$ permutes the distant-context tiles according to $\pi$, but applies distance-weighted Gaussian blending near artificial tile boundaries using a distance-weighted Gaussian cross-fade along tile borders.
-Along all adjacent boundaries between distant tiles, a boundary transition strip of half-width $w = 4$ pixels is cross-faded using a distance weight:
-$$\alpha(d) = \frac{1}{2} \left[1 + \text{erf}\left(\frac{d}{\sigma \sqrt{2}}\right)\right], \quad \sigma = 2.5$$
-where $d \in [-w, w]$ is the signed Euclidean distance to the 1-pixel seam interface. Outside the blending strip, $I_{C2}$ contains the permuted tile. Within the strip, pixels smoothly interpolate between the adjacent permuted tiles, eliminating step discontinuities.
+
+Condition $C_2$ permutes eligible distant-context tiles as in $C_3$, then blends pixels near tile seams with a Gaussian-blurred version of the permuted image. The implementation uses a $9\times9$ Gaussian kernel with $\sigma=2.5$ and a seam-distance weight. Let $D(x,y)$ be the distance-transform value from the one-pixel seam mask and let $M_{\mathrm{protected}}$ be the tumour-plus-margin protected region. The implemented weight is
+
+$$w(x,y)=\begin{cases}\mathrm{clip}\left(1-\frac{D(x,y)}{4},0,1\right), &(x,y)\notin M_{\mathrm{protected}}\\0, &(x,y)\in M_{\mathrm{protected}}.\end{cases}$$
+
+With $I_{C_3}$ denoting the permuted image and $G_{9,\sigma=2.5}(I_{C_3})$ its Gaussian-blurred version, the output is
+
+$$I_{C_2}(x,y)=\mathrm{uint8}\left[(1-w(x,y))I_{C_3}(x,y)+w(x,y)G_{9,\sigma=2.5}(I_{C_3})(x,y)\right],$$
+
+followed by explicit restoration of the protected pixels from the original image. C2 seam-attenuation values are not reported until the diagnostics have been rerun using this exact operator on all 3,064 slices.
 
 ### 2.6 Condition $C_3$ — Raw Historical Scrambling ($C_{5\text{LP}}$)
 For each tile index $i \in \{1, \dots, K\}$ with grid coordinate $(g_y, g_x) = \Omega_{\text{distant}}(i)$, the image pixels are replaced by the corresponding permuted tile $\pi(i)$:
