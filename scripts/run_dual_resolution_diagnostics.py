@@ -186,13 +186,27 @@ def main():
         i_ts_w2[m_dil15 > 0] = img[m_dil15 > 0]
         i_ts_w3[m_dil15 > 0] = img[m_dil15 > 0]
         
-        # 6. C2_seam_suppressed (Gaussian cross-fade on seams)
-        i_c2 = i_c3.copy().astype(np.float32)
-        # Apply Gaussian blending along seam band
-        blurred_c3 = cv2.GaussianBlur(i_c3, (5, 5), sigmaX=1.5, sigmaY=1.5).astype(np.float32)
-        # Blend strictly on seam band
-        i_c2[seam_mask_w3] = 0.5 * i_c2[seam_mask_w3] + 0.5 * blurred_c3[seam_mask_w3]
-        i_c2 = np.clip(i_c2, 0, 255).astype(np.uint8)
+        # 6. C2_seam_suppressed — MUST match the operator used by
+        # scripts/run_phase_9_seam_spatial_disentanglement.py.
+        # Do not report C2 diagnostic values from older runs using a different blur.
+        seam_1px = np.zeros_like(img, dtype=np.uint8)
+        for gy, gx in pure_distant_coords:
+            y1, y2 = gy * PATCH_SIZE, (gy + 1) * PATCH_SIZE
+            x1, x2 = gx * PATCH_SIZE, (gx + 1) * PATCH_SIZE
+            if (gy, gx + 1) in distant_set:
+                seam_1px[y1:y2, x2-1:x2] = 1
+            if (gy + 1, gx) in distant_set:
+                seam_1px[y2-1:y2, x1:x2] = 1
+        seam_1px[m_dil15 > 0] = 0
+
+        blurred_c3 = cv2.GaussianBlur(i_c3, (9, 9), sigmaX=2.5)
+        dist_to_seam = cv2.distanceTransform(1 - seam_1px, cv2.DIST_L2, 3)
+        blend_weight = np.clip(1.0 - dist_to_seam / 4.0, 0.0, 1.0)
+        blend_weight[m_dil15 > 0] = 0.0
+        i_c2 = (
+            i_c3.astype(np.float32) * (1.0 - blend_weight)
+            + blurred_c3.astype(np.float32) * blend_weight
+        ).astype(np.uint8)
         i_c2[m_dil15 > 0] = img[m_dil15 > 0]
 
         # Interior mask (distant tiles away from seams)
