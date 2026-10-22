@@ -30,8 +30,8 @@
 - [x] **Protected Zone Verified:** Exactly 0 pixels altered within the tumour core and within the 15-pixel dilation margin ring across all 3,064 slices in all conditions.
 - [x] **Deterministic Permutation:** Permutations seeded per slice using SHA-256 slice hash + fixed master seed (42).
 - [x] **Within-Tile Texture Preservation:** Inside $16\times16$ tiles, Sobel energy in $C_3$ is bit-for-bit identical to baseline natural brain tissue ($30.892316 \equiv 30.892316$).
-- [x] **Boundary Seam Controls in $C_{1\text{,w2}}$ and $C_{1\text{,w3}}$:** 81.35% pixel preservation; inner $14\times14$ tile pixels completely unaltered.
-- [x] **Seam Suppression in $C_2$:** At source $512\times512$, excess boundary seam Sobel reduced by 26.0% and excess HF Fourier energy reduced by 53.9%. At model input $224\times224$, excess seam Sobel reduced by 10.5% and excess HF Fourier energy reduced by 41.2%.
+- [x] **True Seam-Only Controls:** Gain-1.0 and gain-1.8 controls preserve approximately 81.35% of source pixels; both modify the same two pixels adjacent to a seam. The `_w3` suffix is a legacy identifier, not a three-pixel modification width.
+- [ ] **C2 seam attenuation diagnostics:** The previous dual-resolution diagnostic used a different C2 operator from the evaluated predictions. The diagnostic code has been corrected to match the 9 × 9, $\sigma=2.5$, distance-weighted blend; regenerate outputs across all 3,064 slices before reporting any C2 attenuation percentage.
 
 ---
 
