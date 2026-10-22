@@ -35,7 +35,7 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
   1. `C0_orig`: Natural unaltered baseline slice.
   2. `C1_historical_dc_offset`: Historical whole-tile uniform intensity perturbation.
   3. `C1_true_seam_w2`: Pure boundary step discontinuity ($w = 2\text{ px}$ band, 81.35% pixel preservation).
-  4. `C1_true_seam_w3`: Pure boundary step discontinuity ($gain = 1.8\text{ px}$ band, 81.35% pixel preservation).
+  4. `C1_true_seam_w3`: Amplified boundary-step adjustment (gain 1.8; same two-pixel-wide modification as gain-1.0 control; 81.35% source pixel preservation).
   5. `C2_seam_suppressed`: Distant-tile scrambling with Gaussian seam boundary blending.
   6. `C3_c5lp_scramble`: Raw distant-tile spatial scrambling (unconstrained boundary steps).
 - **Files Standardized:** `table5_intervention_metrics.csv`, `table6_canonical_contrasts.csv`, `table7_image_diagnostics.csv`, `table8_claim_evidence_matrix.csv`, `table_s1_prediction_accounting.csv`, `manuscript.md`, `abstract.md`, `figure_captions.md`, `generate_publication_figures_and_tables.py`.
@@ -166,10 +166,10 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
 
 | Audit Gate Item | Verification Criterion | Status | Evidence / Notes |
 | :--- | :--- | :--- | :--- |
-| **G1: Historical vs True Seams** | Disentangled and consistently named across all deliverables | **PASS** | `C1_historical_dc_offset`, `C1_true_seam_w2`, `C1_true_seam_w3` used uniformly |
+| **G1: Historical vs True Seams** | Condition labels clarified; gain-1.8 code suffix documented as legacy | **PASS WITH WORDING CORRECTIONS** | `C1_historical_dc_offset`, `C1_true_seam_w2` (gain 1.0), `C1_true_seam_w3` (gain 1.8; same two-pixel width) |
 | **G2: Bootstrap Statistical Soundness** | Primary percentile CIs, exact log-space McNemar, no chi2 fallback | **PASS** | $B=25,000$ paired cluster CIs, log-space exact McNemar, separate chi2, $M=12$ Holm FWER |
 | **G3: Dual-Resolution Diagnostics** | Audited at both source $512^2$ and input $224^2$ | **PASS** | Evaluated on all 3,064 slices; Table 7 and Figure 8 updated |
-| **G4: Claim-Evidence Matrix (Table 8)** | All percentages mathematically reconciled with exact definitions | **PASS** | 26.0%, 53.9%, 10.5%, 41.2%, 28.6%, 72.2%, and 0.14%–63.53% dose-response verified |
+| **G4: Claim-Evidence Matrix (Table 8)** | C2 attenuation claims withdrawn pending matched rerun; non-C2 reported metrics retained with caveats | **PENDING** | C2 attenuation values are withdrawn; rerun diagnostics and reconcile Table 7/Figure 8 before closing this gate |
 | **G5: Epistemic & Causal Boundaries** | Unsupported causal/preregistration claims removed; 4 factors explained | **PASS** | Overclaims excised; four-factor confounding mechanism detailed; $H_3$ operationally calibrated |
 | **G6: Deliverable Parity** | 10 figures (PNG/PDF), Tables 1–8, S1, S2, DOCX regenerated | **PASS** | All generated without error; `test_publication_package_v1.py` 100% pass |
 | **G7: Automated Regression Testing** | All unit/integration tests pass with zero failures | **PASS** | **178 / 178 tests passed** across all test suites |
