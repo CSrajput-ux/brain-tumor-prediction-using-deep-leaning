@@ -12,7 +12,7 @@
    - **Tumour Core:** 0 pixels altered across all 3,064 slices (100% bit-for-bit preserved).
    - **Protected 15px Margin Ring:** 0 pixels altered across all 3,064 slices.
    - **Tile Interior Anatomy:** The inner $14 \times 14$ pixels of each distant $16 \times 16$ tile remain completely untouched.
-   - **Unchanged Area Fraction:** Mean across dataset is **81.35%** for $w=2$ and **81.35%** for $gain=1.8$.
+   - **Unchanged Area Fraction:** Mean across dataset is **81.35%** for both the gain-1.0 control (legacy identifier w2) and the gain-1.8 control (legacy identifier w3).
    - **Violations outside authorized band:** **0 across all 3,064 slices**.
 
 2. **Seam Energy Comparison:**
@@ -20,7 +20,7 @@
    - C1 (Historical DC Offset): 120.58
    - C3 (Tile Scrambling): 174.37
    - **C1 True Seam (w=2):** 88.12
-   - **C1 True Seam (gain=1.8, gain 1.8):** 135.17
+   - **C1 amplified seam (gain 1.8; legacy identifier w3):** 135.17
 
 ---
 
