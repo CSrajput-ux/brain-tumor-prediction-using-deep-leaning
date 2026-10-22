@@ -47,11 +47,13 @@ Within each tile, the internal gradient is identical to original tissue ($\nabla
 ### 2.3 Condition $C_{1\text{,true\_seam\_w2}}$ — Pure 2-Pixel Boundary Seam Control
 Condition $C_{1\text{,true\_seam\_w2}}$ restricts synthetic step adjustments strictly to a 1-pixel boundary strip on each side of adjacent tile interfaces ($w = 2$). The inner $14 \times 14$ pixels of every distant tile, the tumour core, and the 15-pixel margin ring remain 100% bit-for-bit identical to baseline $C_0$ (81.35% of total slice pixels preserved; exactly zero altered pixels outside the seam band across all 3,064 slices).
 
-### 2.4 Condition $C_{1\text{,true\_seam\_w3}}$ — Amplified Seam Control (Legacy Identifier)
-Condition $C_{1\text{,true\_seam\_w3}}$ applies the same two-pixel-wide boundary modification as the gain-1.0 control, but with amplification gain $\alpha = 1.8$. The `_w3` suffix is a legacy code identifier; it does not denote a three-pixel-wide modification. The control preserves tile-interior anatomy, the tumour core and the protected margin.
+### 2.4 Condition $C_{1\text{,true\_seam\_w3}}$ — Amplified Boundary-Seam Control (Legacy Identifier)
+
+Condition $C_{1\text{,true\_seam\_w3}}$ applies the same two-pixel-wide boundary modification as the gain-1.0 control, but with amplification gain $\alpha = 1.8$. The `_w3` suffix is a legacy code identifier; it does not denote a three-pixel-wide modification. This higher-gain control is not energy-matched to raw scrambling, particularly at the $224\times224$ model-input resolution.
+
 
 ### 2.5 Condition $C_2$ — Locally Blended Spatial Rearrangement
-Condition $C_2$ permutes the distant-context tiles according to $\pi$, but suppresses artificial tile-boundary discontinuities using a distance-weighted Gaussian cross-fade along tile borders.
+Condition $C_2$ permutes the distant-context tiles according to $\pi$, but applies distance-weighted Gaussian blending near artificial tile boundaries using a distance-weighted Gaussian cross-fade along tile borders.
 Along all adjacent boundaries between distant tiles, a boundary transition strip of half-width $w = 4$ pixels is cross-faded using a distance weight:
 $$\alpha(d) = \frac{1}{2} \left[1 + \text{erf}\left(\frac{d}{\sigma \sqrt{2}}\right)\right], \quad \sigma = 2.5$$
 where $d \in [-w, w]$ is the signed Euclidean distance to the 1-pixel seam interface. Outside the blending strip, $I_{C2}$ contains the permuted tile. Within the strip, pixels smoothly interpolate between the adjacent permuted tiles, eliminating step discontinuities.
