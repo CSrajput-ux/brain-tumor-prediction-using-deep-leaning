@@ -20,7 +20,7 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
    - Convolutional neural networks exhibit acute vulnerability to high-frequency boundary step artifacts ($\Delta = +0.1206$ Macro-F1 drop for pure 2-pixel boundary steps, condition $C_{1\text{,true\_seam\_w2}}$), representing an empirical ratio of **28.6%** of the raw scrambling drop ($\Delta = +0.4215$).
    - However, suppressing boundary seam gradients in condition $C_{2\text{,seam\_suppressed}}$ does not rescue the model: permuting distant tiles under suppressed seams still results in a massive performance collapse ($\Delta = +0.4808$), an effect **4.0 times larger** than the pure boundary seam effect alone.
    - *Operational Nuance:* While both boundary noise and spatial disruption independently degrade performance (supporting the operational dual-factor hypothesis), tile scrambling cannot be claimed as "confirming" reliance on continuous anatomical coordinates because scrambling jointly alters macroscopic layout, local texture, tissue adjacency, boundary artifacts, and the input manifold distribution.
-2. **Causal Refinement (No Independent Stereotactic Coordinate Reliance):** Model degradation under tile scrambling does **not** prove reliance on continuous stereotactic anatomical coordinates. Instead, spatial permutation inherently conflates four inseparable factors: (1) altered macroscopic cranial layout, (2) non-local tissue juxtapositions (e.g. scalp adjacent to ventricle), (3) residual boundary discontinuities, and (4) out-of-distribution topological inputs. Under this compound disorientation, models with 100% lesion visibility collapse into an uninformative skull-base pituitary prior (glioma-to-pituitary misclassification monotonically rises from 0.14% at baseline to 16.48% for $w=2$ seams, 23.35% for $w=3$ seams, 31.28% for historical DC-offsets, 56.45% for raw scrambling, and 63.53% for seam-suppressed scrambling).
+2. **Causal Refinement (No Independent Stereotactic Coordinate Reliance):** Model degradation under tile scrambling does **not** prove reliance on continuous stereotactic anatomical coordinates. Instead, spatial permutation inherently conflates four inseparable factors: (1) altered macroscopic cranial layout, (2) non-local tissue juxtapositions (e.g. scalp adjacent to ventricle), (3) residual boundary discontinuities, and (4) out-of-distribution topological inputs. Under this compound disorientation, models with 100% lesion visibility collapse into an uninformative skull-base pituitary prior (glioma-to-pituitary misclassification monotonically rises from 0.14% at baseline to 16.48% for $w=2$ seams, 23.35% for $gain=1.8$ seams, 31.28% for historical DC-offsets, 56.45% for raw scrambling, and 63.53% for seam-suppressed scrambling).
 3. **Full Multi-Split Reproducibility:** Findings remain statistically significant across all 3 patient-level evaluation scenarios ($S_0$: Patient-Disjoint 5-Fold, $S_1$: Duplicate-Cleaned $\text{SSIM} \ge 0.80$, $S_2$: Duplicate-Grouped $\text{SSIM} \ge 0.75$) after family-wise Holm FWER multiplicity control ($M=12$ primary contrasts, all $p < 10^{-15}$).
 
 ---
@@ -33,7 +33,7 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
   1. `C0_orig`: Natural unaltered baseline slice.
   2. `C1_historical_dc_offset`: Historical whole-tile uniform intensity perturbation.
   3. `C1_true_seam_w2`: Pure boundary step discontinuity ($w = 2\text{ px}$ band, 81.35% pixel preservation).
-  4. `C1_true_seam_w3`: Pure boundary step discontinuity ($w = 3\text{ px}$ band, 81.35% pixel preservation).
+  4. `C1_true_seam_w3`: Pure boundary step discontinuity ($gain = 1.8\text{ px}$ band, 81.35% pixel preservation).
   5. `C2_seam_suppressed`: Distant-tile scrambling with Gaussian seam boundary blending.
   6. `C3_c5lp_scramble`: Raw distant-tile spatial scrambling (unconstrained boundary steps).
 - **Files Standardized:** `table5_intervention_metrics.csv`, `table6_canonical_contrasts.csv`, `table7_image_diagnostics.csv`, `table8_claim_evidence_matrix.csv`, `table_s1_prediction_accounting.csv`, `manuscript.md`, `abstract.md`, `figure_captions.md`, `generate_publication_figures_and_tables.py`.
@@ -64,7 +64,7 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
 ### Domain 3: True-Seam Controls & Dual-Resolution Diagnostics
 - **Defect Identified:** Seam diagnostics were previously reported only on downsampled images or without dual-resolution verification.
 - **Correction Implemented:**
-  1. Evaluated true-seam controls ($w=2, w=3$) across all 15 frozen checkpoints using exact out-of-fold inference on 18,384 predictions.
+  1. Evaluated true-seam controls ($w=2, gain=1.8$) across all 15 frozen checkpoints using exact out-of-fold inference on 18,384 predictions.
   2. Validated strict anatomical invariants: exactly 0 altered pixels in the tumour core and 15px margin ring across all 3,064 slices ($100\%$ protection).
   3. Implemented `scripts/run_dual_resolution_diagnostics.py` to evaluate all 3,064 slices in both:
      - **Source Resolution ($512\times512$):** Seam Sobel gradient, interior texture gradient, Fourier high-frequency energy, and unchanged area fraction.
