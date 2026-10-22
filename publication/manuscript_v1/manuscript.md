@@ -151,19 +151,19 @@ Evaluating the frozen checkpoints across all six standardized conditions reveale
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: |
 | **$S_0$** | $C_{0\text{,orig}}$ (Baseline) | **0.9333** | 0.9409 | 0.8850 | 0.9610 | 0.9539 |
 | **$S_0$** | $C_{1\text{,true\_seam\_w2}}$ (True Seam w=2) | **0.8127** | 0.8260 | 0.7564 | 0.8838 | 0.7977 |
-| **$S_0$** | $C_{1\text{,true\_seam\_w3}}$ (True Seam w=3) | **0.7811** | 0.7901 | 0.7414 | 0.8436 | 0.7583 |
+| **$S_0$** | $C_{1\text{,true\_seam\_w3}}$ (Amplified seam; gain 1.8; legacy identifier w3) | **0.7811** | 0.7901 | 0.7414 | 0.8436 | 0.7583 |
 | **$S_0$** | $C_{1\text{,historical\_dc\_offset}}$ (Historical DC) | **0.6290** | 0.6276 | 0.6598 | 0.5687 | 0.6583 |
 | **$S_0$** | $C_{2\text{,seam\_suppressed}}$ (Seam-Suppressed) | **0.4525** | 0.4847 | 0.6187 | 0.1588 | 0.5800 |
 | **$S_0$** | $C_{3\text{,c5lp\_scramble}}$ (Raw Scramble) | **0.5118** | 0.5255 | 0.6389 | 0.3076 | 0.5889 |
 | **$S_1$** | $C_{0\text{,orig}}$ (Baseline) | **0.9332** | 0.9419 | 0.8832 | 0.9648 | 0.9514 |
 | **$S_1$** | $C_{1\text{,true\_seam\_w2}}$ (True Seam w=2) | **0.8613** | 0.8822 | 0.7795 | 0.9427 | 0.8618 |
-| **$S_1$** | $C_{1\text{,true\_seam\_w3}}$ (True Seam w=3) | **0.8341** | 0.8600 | 0.7337 | 0.9239 | 0.8447 |
+| **$S_1$** | $C_{1\text{,true\_seam\_w3}}$ (Amplified seam; gain 1.8; legacy identifier w3) | **0.8341** | 0.8600 | 0.7337 | 0.9239 | 0.8447 |
 | **$S_1$** | $C_{1\text{,historical\_dc\_offset}}$ (Historical DC) | **0.6094** | 0.6106 | 0.6347 | 0.5534 | 0.6402 |
 | **$S_1$** | $C_{2\text{,seam\_suppressed}}$ (Seam-Suppressed) | **0.4941** | 0.5085 | 0.6029 | 0.3054 | 0.5741 |
 | **$S_1$** | $C_{3\text{,c5lp\_scramble}}$ (Raw Scramble) | **0.4884** | 0.5007 | 0.5985 | 0.3072 | 0.5595 |
 | **$S_2$** | $C_{0\text{,orig}}$ (Baseline) | **0.9273** | 0.9354 | 0.8720 | 0.9550 | 0.9548 |
 | **$S_2$** | $C_{1\text{,true\_seam\_w2}}$ (True Seam w=2) | **0.8758** | 0.8900 | 0.8150 | 0.9340 | 0.8783 |
-| **$S_2$** | $C_{1\text{,true\_seam\_w3}}$ (True Seam w=3) | **0.8580** | 0.8724 | 0.7997 | 0.9173 | 0.8570 |
+| **$S_2$** | $C_{1\text{,true\_seam\_w3}}$ (Amplified seam; gain 1.8; legacy identifier w3) | **0.8580** | 0.8724 | 0.7997 | 0.9173 | 0.8570 |
 | **$S_2$** | $C_{1\text{,historical\_dc\_offset}}$ (Historical DC) | **0.6385** | 0.6439 | 0.6620 | 0.5248 | 0.7288 |
 | **$S_2$** | $C_{2\text{,seam\_suppressed}}$ (Seam-Suppressed) | **0.5159** | 0.5385 | 0.6387 | 0.2745 | 0.6345 |
 | **$S_2$** | $C_{3\text{,c5lp\_scramble}}$ (Raw Scramble) | **0.5303** | 0.5463 | 0.6546 | 0.3124 | 0.6240 |
@@ -216,7 +216,7 @@ Under this design, synthetic step adjustments were restricted strictly to a boun
 
 Evaluating all 15 frozen checkpoints under this control revealed:
 1. **Pure Boundary Seams Alone ($w=2$):** In $S_0$, Macro-F1 dropped from 0.9333 to **0.8127** ($\Delta = +0.1206$), showing that high-frequency edge steps alone induce a moderate performance decline. In $S_1$ and $S_2$, true boundary steps produced even smaller drops: Macro-F1 was **0.8613** in $S_1$ ($\Delta = +0.0719$) and **0.8758** in $S_2$ ($\Delta = +0.0515$).
-2. **Amplified Boundary Seams ($w=3$):** Increasing seam step gain to match $C_3$ seam Sobel energy reduced Macro-F1 to **0.7811** in $S_0$ ($\Delta = +0.1522$), **0.8341** in $S_1$ ($\Delta = +0.0991$), and **0.8580** in $S_2$ ($\Delta = +0.0693$).
+2. **Amplified Boundary-Seam Control (gain 1.8; legacy identifier w3):** Applying the higher gain to the same two-pixel-wide boundary modification produced Macro-F1 **0.7811** in $S_0$ ($\Delta = +0.1522$), **0.8341** in $S_1$ ($\Delta = +0.0991$), and **0.8580** in $S_2$ ($\Delta = +0.0693$).
 3. **Observed Contrast Across Conditions:** The locally blended permutation condition ($C_2$) yielded Macro-F1 **0.4525** in $S_0$ ($\Delta = +0.4808$), compared with **0.8127** under the gain-1.0 seam-only control. This comparison is descriptive: C2's seam attenuation has not yet been correctly quantified, and the seam-only controls are not energy-matched to the scramble.
 
 In $S_0$, the observed C0-to-C2 performance decrement is four times the C0-to-gain-1.0-seam-control decrement. This ratio is descriptive, not a causal decomposition. Because C2 attenuation diagnostics remain pending and the seam-only controls are not energy-matched, the current results do not quantify the contribution of residual seams versus rearranged content.
@@ -244,7 +244,7 @@ Crucially, this monotonic dose-response gradient demonstrates that cranial disor
 ### 6.1 Disentangling the Dual Mechanisms of Spatial Degradation
 Our experimental findings resolve the core controversy surrounding distant-context perturbation in brain tumour classification. The observed performance collapse under tile scrambling is governed by a **mixed, dual-factor mechanism ($H_3$)**:
 1. **The Synthetic Seam Vulnerability:** Condition $C_{1\text{,historical\_dc\_offset}}$ demonstrates that convolutional hierarchies are acutely fragile to synthetic grid perturbations; shifting inter-tile DC offsets without permuting anatomy causes a substantial decline ($\Delta = +0.3043$). When evaluated with pure 2-pixel boundary step discontinuities ($C_{1\text{,true\_seam\_w2}}$), high-frequency edge steps alone still induce a measurable decline of $\Delta = +0.1206$ in $S_0$ (an empirical ratio of 28.6% of the raw scrambling drop). In contrast, the historical whole-tile DC-offset control ($C_{1\text{,historical\_dc\_offset}}$) exhibited an empirical ratio of 72.2% ($\Delta = +0.3043$ vs. $\Delta = +0.4215$).
-2. **The Spatial Rearrangement Collapse:** Crucially, suppressing seam gradients in condition $C_{2\text{,seam\_suppressed}}$ does not recover model performance. Permuting distant tiles under suppressed seams still results in a massive collapse ($\Delta = +0.4808$), a larger observed decrement than the gain-1.0 seam-only control; this descriptive contrast does not identify a causal allocation between seams and spatial rearrangement.
+2. **The Locally Blended Spatial-Permutation Condition:** The evaluated C2 condition uses distance-weighted blending near tile boundaries and has reported Macro-F1 0.4525 in $S_0$ ($\Delta = +0.4808$). Because the prior diagnostic operator did not match the evaluated operator, the magnitude of seam attenuation is unquantified; the comparison with seam-only controls is descriptive and does not identify a causal allocation between seam artifacts and spatial rearrangement.
 
 These findings are consistent with the gain-1.0 seam-only condition not reproducing the entire scrambling decline. However, the controls are not energy-matched, and the effect of residual seam energy in C2 is not yet quantified, so the current experiment does not establish a causal allocation between boundary artifacts and spatial rearrangement. However, spatial scrambling does not isolate independent stereotactic spatial coordinates. Instead, spatial scrambling conflates four inseparable factors:
 - **Altered Macroscopic Anatomical Layout:** Destruction of the global spatial configuration of cranial structures.
