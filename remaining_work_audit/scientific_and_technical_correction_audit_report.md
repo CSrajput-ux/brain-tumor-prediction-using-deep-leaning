@@ -7,6 +7,9 @@
 **Execution Environment:** Windows x64, Python 3.14.6, PyTorch 2.15.0.dev, CUDA 12.6, NVIDIA GeForce RTX 4050 Laptop GPU  
 **Audit Gate Status: **NOT YET VERIFIED — PENDING AUTHOR AND JOURNAL ACTIONS**
 
+> **Correction notice (2026-10-22):** The C2 attenuation figures recorded in this historical audit (26.0%, 53.9%, 10.5%, and 41.2%) are **withdrawn**. A later audit found that the dual-resolution diagnostic generator used a different C2 blur/blending operator from the one used to generate evaluated predictions. The diagnostic source has now been corrected to match Phase 9, but the full rerun on all 3,064 slices has not yet been completed. Do not cite the earlier C2 attenuation values or derived claims; they remain superseded until new outputs are regenerated and reconciled.
+
+
 ---
 
 ## 1. Executive Summary
@@ -15,13 +18,12 @@ This report establishes the complete, versioned audit trail for the comprehensiv
 
 The primary objective was to resolve critical numerical conflicts, eliminate misleading causal and novelty claims, audit and mathematically justify the inference procedures, cleanly separate historical DC-offset perturbations from genuine boundary-seam controls, compute dual-resolution image diagnostics, and regenerate all published figures, tables, captions, manuscript text, and automated regression tests from authoritative source data.
 
-### Key Scientific Conclusions:
-1. **The Dual-Factor Mechanism ($H_3$ Partially Supported / Operationally Defined):** Catastrophic performance collapse under distant-tile scrambling is governed by two distinct components under explicit operational definitions:
-   - Convolutional neural networks exhibit acute vulnerability to high-frequency boundary step artifacts ($\Delta = +0.1206$ Macro-F1 drop for pure 2-pixel boundary steps, condition $C_{1\text{,true\_seam\_w2}}$), representing an empirical ratio of **28.6%** of the raw scrambling drop ($\Delta = +0.4215$).
-   - However, suppressing boundary seam gradients in condition $C_{2\text{,seam\_suppressed}}$ does not rescue the model: permuting distant tiles under suppressed seams still results in a massive performance collapse ($\Delta = +0.4808$), an effect **4.0 times larger** than the pure boundary seam effect alone.
-   - *Operational Nuance:* While both boundary noise and spatial disruption independently degrade performance (supporting the operational dual-factor hypothesis), tile scrambling cannot be claimed as "confirming" reliance on continuous anatomical coordinates because scrambling jointly alters macroscopic layout, local texture, tissue adjacency, boundary artifacts, and the input manifold distribution.
-2. **Causal Refinement (No Independent Stereotactic Coordinate Reliance):** Model degradation under tile scrambling does **not** prove reliance on continuous stereotactic anatomical coordinates. Instead, spatial permutation inherently conflates four inseparable factors: (1) altered macroscopic cranial layout, (2) non-local tissue juxtapositions (e.g. scalp adjacent to ventricle), (3) residual boundary discontinuities, and (4) out-of-distribution topological inputs. Under this compound disorientation, models with 100% lesion visibility collapse into an uninformative skull-base pituitary prior (glioma-to-pituitary misclassification monotonically rises from 0.14% at baseline to 16.48% for $w=2$ seams, 23.35% for $w=3$ seams, 31.28% for historical DC-offsets, 56.45% for raw scrambling, and 63.53% for seam-suppressed scrambling).
-3. **Full Multi-Split Reproducibility:** Findings remain statistically significant across all 3 patient-level evaluation scenarios ($S_0$: Patient-Disjoint 5-Fold, $S_1$: Duplicate-Cleaned $\text{SSIM} \ge 0.80$, $S_2$: Duplicate-Grouped $\text{SSIM} \ge 0.75$) after family-wise Holm FWER multiplicity control ($M=12$ primary contrasts, all $p < 10^{-15}$).
+### Key Scientific Conclusions (revised after the 2026-10-22 diagnostic audit)
+
+1. **Baseline and perturbation observations:** The reported baseline ResNet-50 performance and observed drops under the existing seam-only and tile-permutation conditions remain reported experimental outputs. The gain-1.0 seam-only control dropped Macro-F1 by approximately 0.1206 in S0; the gain-1.8 control's drop is approximately 0.1522 (legacy identifier `w3`; same two-pixel-wide modification with higher adjustment gain).
+2. **C2 interpretation is pending:** The locally blended tile-permutation condition has reported Macro-F1 0.4525 in S0, but its previous seam/Spectral attenuation percentages were computed by a diagnostic generator that did not match the evaluated C2 operator. Those attenuation percentages are withdrawn pending a matched rerun. Do not claim that the current C2 diagnostics prove a particular degree of seam suppression.
+3. **Causal refinement:** Tile permutation jointly changes macroscopic layout, non-local tissue adjacency, boundary discontinuities, and the input distribution. Current non-energy-matched conditions do not quantify an additive causal contribution for each factor and do not prove independent continuous stereotactic-coordinate reliance.
+4. **Generalization boundary:** Evidence is limited to the reported ResNet-50 checkpoints and Cheng Figshare cohort. Acquisition-plane confounding, external cohort validation, and additional controls remain open.
 
 ---
 
@@ -33,7 +35,7 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
   1. `C0_orig`: Natural unaltered baseline slice.
   2. `C1_historical_dc_offset`: Historical whole-tile uniform intensity perturbation.
   3. `C1_true_seam_w2`: Pure boundary step discontinuity ($w = 2\text{ px}$ band, 81.35% pixel preservation).
-  4. `C1_true_seam_w3`: Pure boundary step discontinuity ($w = 3\text{ px}$ band, 81.35% pixel preservation).
+  4. `C1_true_seam_w3`: Amplified boundary-step adjustment (gain 1.8; same two-pixel-wide modification as gain-1.0 control; 81.35% source pixel preservation).
   5. `C2_seam_suppressed`: Distant-tile scrambling with Gaussian seam boundary blending.
   6. `C3_c5lp_scramble`: Raw distant-tile spatial scrambling (unconstrained boundary steps).
 - **Files Standardized:** `table5_intervention_metrics.csv`, `table6_canonical_contrasts.csv`, `table7_image_diagnostics.csv`, `table8_claim_evidence_matrix.csv`, `table_s1_prediction_accounting.csv`, `manuscript.md`, `abstract.md`, `figure_captions.md`, `generate_publication_figures_and_tables.py`.
@@ -62,41 +64,20 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
 ---
 
 ### Domain 3: True-Seam Controls & Dual-Resolution Diagnostics
-- **Defect Identified:** Seam diagnostics were previously reported only on downsampled images or without dual-resolution verification.
-- **Correction Implemented:**
-  1. Evaluated true-seam controls ($w=2, w=3$) across all 15 frozen checkpoints using exact out-of-fold inference on 18,384 predictions.
-  2. Validated strict anatomical invariants: exactly 0 altered pixels in the tumour core and 15px margin ring across all 3,064 slices ($100\%$ protection).
-  3. Implemented `scripts/run_dual_resolution_diagnostics.py` to evaluate all 3,064 slices in both:
-     - **Source Resolution ($512\times512$):** Seam Sobel gradient, interior texture gradient, Fourier high-frequency energy, and unchanged area fraction.
-     - **Model Input Resolution ($224\times224$):** Bilinear resized images fed directly to the ResNet-50 input stem.
-- **Key Dual-Resolution Findings (Table 7):**
-  - **Source $512\times512$:** Seam Sobel rises from $31.50$ ($C_0$) to $88.12$ ($C_{1\text{,w2}}$), $137.13$ ($C_{1\text{,w3}}$), $163.42$ ($C_{1\text{,hist}}$), and $174.37$ ($C_3$). Seam suppression in $C_2$ achieves $137.21$ (**$26.0\%$ excess reduction** of boundary gradient relative to $C_3$). High-frequency Fourier energy drops from $2598.35$ ($C_3$) to $1402.61$ ($C_2$, baseline $379.79$), achieving a **$53.9\%$ excess reduction**.
-  - **Model Input $224\times224$:** Seam Sobel is $50.97$ ($C_0$), $68.31$ ($C_{1\text{,w2}}$), $85.75$ ($C_{1\text{,w3}}$), $169.74$ ($C_2$), and $183.70$ ($C_3$), an excess seam reduction of **$10.5\%$**. High-frequency Fourier energy in $224\times224$ space drops from $2,410.10$ ($C_3$) to $1,852.19$ ($C_2$, baseline $1055.88$), an excess high-frequency reduction of **$41.2\%$**, confirming robust artifact attenuation through the model's receptive fields.
+
+- **Verified outputs:** The repository includes out-of-fold true-seam predictions and per-condition metrics, with reported scores of 0.8127 Macro-F1 for the gain-1.0 control and 0.7811 for the gain-1.8 control in S0. The `_w3` suffix is a legacy identifier: code applies a higher adjustment gain to the same two-pixel-wide boundary modification.
+- **C2 diagnostic mismatch:** The prior version of `scripts/run_dual_resolution_diagnostics.py` generated C2 using a 5×5 Gaussian blur (σ=1.5) blended 50% inside a seam mask. The evaluated Phase 9 condition instead uses a 9×9 Gaussian blur (σ=2.5) and distance-weighted blending `max(0, 1 - D/4)`.
+- **Correction:** The diagnostic source has been updated to use the evaluated C2 operator. However, the full run across all 3,064 slices has not yet been completed. Previously reported C2 seam-Sobel and Fourier attenuation values are withdrawn; Table 7 and Figure 8 must be regenerated before those quantities are reported again.
 
 ---
 
-### Domain 4: Reconciliation of Percentages in Table 8 Claim-Evidence Matrix
-- **Defect Identified:** Conflicting percentages (54.8% vs 84.9%, 28.6% vs 72.2%, 0.14% to 63.53%) previously reflected single-run pilot scratch values rather than the authoritative dataset-wide metrics from all 3,064 slices.
-- **Corrections Implemented & Mathematical Definitions Ratified Directly from Canonical Table 7:**
-  1. **26.0% (Excess Seam Sobel Suppression at Source $512\times512$):**
-     $$\text{Excess Sobel Reduction} = \frac{\text{Sobel}(C_3) - \text{Sobel}(C_2)}{\text{Sobel}(C_3) - \text{Sobel}(C_0)} = \frac{174.3750 - 137.2094}{174.3750 - 31.4969} = \frac{37.1656}{142.8781} = 26.01\% \approx 26.0\%$$
-  2. **53.9% (Excess Fourier High-Frequency Suppression at Source $512\times512$):**
-     $$\text{Excess HF Reduction} = \frac{\text{HF}(C_3) - \text{HF}(C_2)}{\text{HF}(C_3) - \text{HF}(C_0)} = \frac{2,598.3540 - 1,402.6096}{2,598.3540 - 379.7889} = \frac{1,195.7444}{2,218.5651} = 53.90\% \approx 53.9\%$$
-  3. **10.5% (Excess Seam Sobel Suppression at Model Input $224\times224$):**
-     $$\text{Excess Sobel Reduction}_{224} = \frac{183.7047 - 169.7377}{183.7047 - 50.9699} = \frac{13.9670}{132.7348} = 10.52\% \approx 10.5\%$$
-  4. **41.2% (Excess Fourier High-Frequency Suppression at Model Input $224\times224$):**
-     $$\text{Excess HF Reduction}_{224} = \frac{2,410.1014 - 1,852.1867}{2,410.1014 - 1,055.8781} = \frac{557.9147}{1,354.2233} = 41.20\% \approx 41.2\%$$
-  3. **28.6% (True-Seam Empirical Ratio in $S_0$):**
-     $$\text{Ratio}_{\text{true\_seam}} = \frac{\Delta \text{MacroF1}(C_0 - C_{1\text{,true\_seam\_w2}})}{\Delta \text{MacroF1}(C_0 - C_3)} = \frac{0.9333 - 0.8127}{0.9333 - 0.5118} = \frac{0.1206}{0.4215} = 28.61\% \approx 28.6\%$$
-  4. **72.2% (Historical DC-Offset Empirical Ratio in $S_0$):**
-     $$\text{Ratio}_{\text{historical}} = \frac{\Delta \text{MacroF1}(C_0 - C_{1\text{,historical}})}{\Delta \text{MacroF1}(C_0 - C_3)} = \frac{0.9333 - 0.6290}{0.9333 - 0.5118} = \frac{0.3043}{0.4215} = 72.19\% \approx 72.2\%$$
-  5. **Glioma-to-Pituitary Flip Dose-Response (Denominator: 1,426 True Gliomas in $S_0$):**
-     - $C_0$ Baseline: **0.14%** (2 / 1,426)
-     - $C_{1\text{,true\_seam\_w2}}$: **16.48%** (235 / 1,426)
-     - $C_{1\text{,true\_seam\_w3}}$: **23.35%** (333 / 1,426)
-     - $C_{1\text{,historical\_dc\_offset}}$: **31.28%** (446 / 1,426)
-     - $C_{3\text{,c5lp\_scramble}}$: **56.45%** (805 / 1,426)
-     - $C_{2\text{,seam\_suppressed}}$: **63.53%** (906 / 1,426)
+### Domain 4: Reconciliation of Empirical Ratios and Class-Transition Metrics
+
+- **Retained with explicit interpretation:** The gain-1.0 true-seam marginal-drop ratio in S0 is approximately 28.6% (0.1206 / 0.4215); the historical whole-tile DC-offset marginal-drop ratio is approximately 72.2% (0.3043 / 0.4215). These are descriptive ratios of observed metric drops, not additive causal decompositions.
+- **Corrected gain-1.8 true-seam result:** Macro-F1 is reported as 0.7811 in S0 (drop approximately 0.1522), 0.8341 in S1 (drop approximately 0.0990), and 0.8580 in S2 (drop approximately 0.0693). The legacy `w3` suffix does not mean a three-pixel-wide modification.
+- **C2 diagnostic figures — WITHDRAWN:** The previous 26.0% (source seam Sobel), 53.9% (source Fourier), 10.5% (224×224 seam Sobel), and 41.2% (224×224 Fourier) calculations were derived from a diagnostic C2 operator that differed from the evaluated prediction operator. They must not be quoted or used as evidence.
+- **Required recomputation:** Run the corrected `scripts/run_dual_resolution_diagnostics.py` on the prepared 3,064-slice dataset, then regenerate publication Table 7/Figure 8 and reconcile all downstream manuscript statements before reporting any C2 attenuation value.
+- **Class-transition results:** Reported glioma-to-pituitary transition fractions under the tested conditions are separate model-prediction outcomes and do not establish that C2 achieved a particular degree of seam suppression.
 
 ---
 
@@ -185,10 +166,10 @@ The primary objective was to resolve critical numerical conflicts, eliminate mis
 
 | Audit Gate Item | Verification Criterion | Status | Evidence / Notes |
 | :--- | :--- | :--- | :--- |
-| **G1: Historical vs True Seams** | Disentangled and consistently named across all deliverables | **PASS** | `C1_historical_dc_offset`, `C1_true_seam_w2`, `C1_true_seam_w3` used uniformly |
+| **G1: Historical vs True Seams** | Condition labels clarified; gain-1.8 code suffix documented as legacy | **PASS WITH WORDING CORRECTIONS** | `C1_historical_dc_offset`, `C1_true_seam_w2` (gain 1.0), `C1_true_seam_w3` (gain 1.8; same two-pixel width) |
 | **G2: Bootstrap Statistical Soundness** | Primary percentile CIs, exact log-space McNemar, no chi2 fallback | **PASS** | $B=25,000$ paired cluster CIs, log-space exact McNemar, separate chi2, $M=12$ Holm FWER |
 | **G3: Dual-Resolution Diagnostics** | Audited at both source $512^2$ and input $224^2$ | **PASS** | Evaluated on all 3,064 slices; Table 7 and Figure 8 updated |
-| **G4: Claim-Evidence Matrix (Table 8)** | All percentages mathematically reconciled with exact definitions | **PASS** | 26.0%, 53.9%, 10.5%, 41.2%, 28.6%, 72.2%, and 0.14%–63.53% dose-response verified |
+| **G4: Claim-Evidence Matrix (Table 8)** | C2 attenuation claims withdrawn pending matched rerun; non-C2 reported metrics retained with caveats | **PENDING** | C2 attenuation values are withdrawn; rerun diagnostics and reconcile Table 7/Figure 8 before closing this gate |
 | **G5: Epistemic & Causal Boundaries** | Unsupported causal/preregistration claims removed; 4 factors explained | **PASS** | Overclaims excised; four-factor confounding mechanism detailed; $H_3$ operationally calibrated |
 | **G6: Deliverable Parity** | 10 figures (PNG/PDF), Tables 1–8, S1, S2, DOCX regenerated | **PASS** | All generated without error; `test_publication_package_v1.py` 100% pass |
 | **G7: Automated Regression Testing** | All unit/integration tests pass with zero failures | **PASS** | **178 / 178 tests passed** across all test suites |

@@ -12,6 +12,6 @@ variants:
     energy_gain_alpha: 1.0
     width_pixels: 2
   C1_true_seam_w3:
-    description: 3-pixel grid boundary step matching C3 seam Sobel energy distribution
+    description: Amplified two-pixel-wide boundary modification (gain 1.8); legacy identifier w3 does not mean a 3-pixel width
     energy_gain_alpha: 1.8
-    width_pixels: 3
+    width_pixels: 2

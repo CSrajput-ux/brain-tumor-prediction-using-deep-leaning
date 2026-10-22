@@ -47,14 +47,22 @@ Within each tile, the internal gradient is identical to original tissue ($\nabla
 ### 2.3 Condition $C_{1\text{,true\_seam\_w2}}$ — Pure 2-Pixel Boundary Seam Control
 Condition $C_{1\text{,true\_seam\_w2}}$ restricts synthetic step adjustments strictly to a 1-pixel boundary strip on each side of adjacent tile interfaces ($w = 2$). The inner $14 \times 14$ pixels of every distant tile, the tumour core, and the 15-pixel margin ring remain 100% bit-for-bit identical to baseline $C_0$ (81.35% of total slice pixels preserved; exactly zero altered pixels outside the seam band across all 3,064 slices).
 
-### 2.4 Condition $C_{1\text{,true\_seam\_w3}}$ — Amplified 3-Pixel Boundary Seam Control
-Condition $C_{1\text{,true\_seam\_w3}}$ applies synthetic step adjustments across a 3-pixel boundary band ($w = 3$) with amplification gain $\alpha = 1.8$, matching the elevated seam Sobel energy of raw scrambling while strictly preserving tile interior anatomy.
+### 2.4 Condition $C_{1\text{,true\_seam\_w3}}$ — Amplified Boundary-Seam Control (Legacy Identifier)
 
-### 2.5 Condition $C_2$ — Seam-Suppressed Spatial Rearrangement
-Condition $C_2$ permutes the distant-context tiles according to $\pi$, but suppresses artificial tile-boundary discontinuities using a distance-weighted Gaussian cross-fade along tile borders.
-Along all adjacent boundaries between distant tiles, a boundary transition strip of half-width $w = 4$ pixels is cross-faded using a distance weight:
-$$\alpha(d) = \frac{1}{2} \left[1 + \text{erf}\left(\frac{d}{\sigma \sqrt{2}}\right)\right], \quad \sigma = 2.5$$
-where $d \in [-w, w]$ is the signed Euclidean distance to the 1-pixel seam interface. Outside the blending strip, $I_{C2}$ contains the permuted tile. Within the strip, pixels smoothly interpolate between the adjacent permuted tiles, eliminating step discontinuities.
+Condition $C_{1\text{,true\_seam\_w3}}$ applies the same two-pixel-wide boundary modification as the gain-1.0 control, but with amplification gain $\alpha = 1.8$. The `_w3` suffix is a legacy code identifier; it does not denote a three-pixel-wide modification. This higher-gain control is not energy-matched to raw scrambling, particularly at the $224\times224$ model-input resolution.
+
+
+### 2.5 Condition $C_2$ — Locally Blended Spatial Rearrangement
+
+Condition $C_2$ permutes eligible distant-context tiles as in $C_3$, then blends pixels near tile seams with a Gaussian-blurred version of the permuted image. The implementation uses a $9\times9$ Gaussian kernel with $\sigma=2.5$ and a seam-distance weight. Let $D(x,y)$ be the distance-transform value from the one-pixel seam mask and let $M_{\mathrm{protected}}$ be the tumour-plus-margin protected region. The implemented weight is
+
+$$w(x,y)=\begin{cases}\mathrm{clip}\left(1-\frac{D(x,y)}{4},0,1\right), &(x,y)\notin M_{\mathrm{protected}}\\0, &(x,y)\in M_{\mathrm{protected}}.\end{cases}$$
+
+With $I_{C_3}$ denoting the permuted image and $G_{9,\sigma=2.5}(I_{C_3})$ its Gaussian-blurred version, the output is
+
+$$I_{C_2}(x,y)=\mathrm{uint8}\left[(1-w(x,y))I_{C_3}(x,y)+w(x,y)G_{9,\sigma=2.5}(I_{C_3})(x,y)\right],$$
+
+followed by explicit restoration of the protected pixels from the original image. C2 seam-attenuation values are not reported until the diagnostics have been rerun using this exact operator on all 3,064 slices.
 
 ### 2.6 Condition $C_3$ — Raw Historical Scrambling ($C_{5\text{LP}}$)
 For each tile index $i \in \{1, \dots, K\}$ with grid coordinate $(g_y, g_x) = \Omega_{\text{distant}}(i)$, the image pixels are replaced by the corresponding permuted tile $\pi(i)$:

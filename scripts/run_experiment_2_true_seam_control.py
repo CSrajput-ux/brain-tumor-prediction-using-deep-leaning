@@ -1,8 +1,8 @@
 """
 Experiment 2: True Seam-Only Control Implementation & Evaluation
 Generates:
-1. C1_true_seam_w2: 2-pixel grid boundary step discontinuity matching C3 boundary jumps
-2. C1_true_seam_w3: 3-pixel grid boundary discontinuity with energy gain matching C3 seam distribution
+1. C1_true_seam_w2: gain-1.0 grid-boundary step control (two pixels adjacent to each seam)
+2. C1_true_seam_w3: legacy identifier for a gain-1.8 control; it modifies the same two pixels and is not a 3-pixel width
 Evaluates on all 15 frozen ResNet-50 checkpoints across S0, S1, S2 using GPU inference.
 Computes pixel preservation diagnostics, out-of-fold predictions, and paired contrasts.
 """
@@ -107,7 +107,7 @@ def generate_true_seam_conditions(meta_df):
         i_ts_w2 = img.copy().astype(np.float32)
         seam_mask_w2 = np.zeros_like(img, dtype=bool)
         
-        # Build True Seam w=3 (gain alpha=2.0)
+        # Build amplified seam-only control (legacy variable w3; gain alpha=1.8; same image-modification width as w2)
         i_ts_w3 = img.copy().astype(np.float32)
         seam_mask_w3 = np.zeros_like(img, dtype=bool)
         
@@ -130,7 +130,7 @@ def generate_true_seam_conditions(meta_df):
                 i_ts_w2[y1:y2, x2] += 0.5 * step_w2
                 seam_mask_w2[y1:y2, x2-1:x2+1] = True
                 
-                # w=3: 1px left, center, 1px right
+                # gain=1.8: 1px left, center, 1px right
                 i_ts_w3[y1:y2, x2-1] -= 0.5 * step_w3
                 i_ts_w3[y1:y2, x2] += 0.5 * step_w3
                 seam_mask_w3[y1:y2, x2-1:x2+2] = True
@@ -368,9 +368,9 @@ def compute_metrics_and_report(true_seam_preds):
                 'description': 'Pure 2-pixel grid boundary step matching C3 inter-tile jump'
             },
             'C1_true_seam_w3': {
-                'width_pixels': 3,
+                'width_pixels': 2,
                 'energy_gain_alpha': 1.8,
-                'description': '3-pixel grid boundary step matching C3 seam Sobel energy distribution'
+                'description': 'Amplified two-pixel-wide boundary modification with gain 1.8; legacy identifier w3 does not mean a 3-pixel width'
             }
         },
         'invariants': {
@@ -400,15 +400,15 @@ def compute_metrics_and_report(true_seam_preds):
    - **Tumour Core:** 0 pixels altered across all 3,064 slices (100% bit-for-bit preserved).
    - **Protected 15px Margin Ring:** 0 pixels altered across all 3,064 slices.
    - **Tile Interior Anatomy:** The inner $14 \\times 14$ pixels of each distant $16 \\times 16$ tile remain completely untouched.
-   - **Unchanged Area Fraction:** Mean across dataset is **{audit_df['w2_unchanged_fraction'].mean()*100:.2f}%** for $w=2$ and **{audit_df['w3_unchanged_fraction'].mean()*100:.2f}%** for $w=3$.
+   - **Unchanged Area Fraction:** Mean across dataset is **{audit_df['w2_unchanged_fraction'].mean()*100:.2f}%** for $w=2$ and **{audit_df['w3_unchanged_fraction'].mean()*100:.2f}%** for $gain=1.8$.
    - **Violations outside authorized band:** **0 across all 3,064 slices**.
 
 2. **Seam Energy Comparison:**
    - Baseline Natural Seam Sobel: {diag_df['seam_sobel_orig'].mean():.2f}
    - C1 (Historical DC Offset): 120.58
    - C3 (Tile Scrambling): {diag_df['seam_sobel_c3'].mean():.2f}
-   - **C1 True Seam (w=2):** {diag_df['seam_sobel_true_seam_w2'].mean():.2f}
-   - **C1 True Seam (w=3, gain 1.8):** {diag_df['seam_sobel_true_seam_w3'].mean():.2f}
+   - **C1 seam control (gain 1.0; legacy identifier w2):** {diag_df['seam_sobel_true_seam_w2'].mean():.2f}
+   - **C1 amplified seam (gain 1.8; legacy identifier w3):** {diag_df['seam_sobel_true_seam_w3'].mean():.2f}
 
 ---
 
@@ -427,7 +427,7 @@ def compute_metrics_and_report(true_seam_preds):
 
 - **Historical C1 vs True Seam:**
   In historical Phase 9, C1 shifted the DC offset across the *entire* $16 \\times 16$ tile, modifying 100% of the pixels in the distant region.
-  The new **True Seam-Only Control** preserves over 82% of the slice's total pixel area and leaves the tile interiors completely untouched.
+  The true seam-only controls preserve over 81% of source-resolution pixels and leave tile interiors outside modified seam-adjacent pixels untouched. The gain-1.8 condition is the same two-pixel-wide modification with a larger adjustment; w3 is a legacy identifier, not a three-pixel width.
 - **Degradation Profile:**
   Evaluating models on True Seam demonstrates the degree to which synthetic edge steps alone induce classification performance degradation, cleanly disentangled from anatomical spatial rearrangement.
 """

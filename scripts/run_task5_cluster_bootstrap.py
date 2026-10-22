@@ -28,10 +28,10 @@ CONTRASTS = [
     {'contrast_id': 'C2_vs_C0', 'desc': 'Seam-Suppressed Spatial Rearrangement Effect', 'cond_A': 'C0_orig', 'cond_B': 'C2_seam_suppressed', 'family': 'primary_confirmatory'},
     {'contrast_id': 'C3_vs_C1_hist', 'desc': 'Incremental Scrambling vs Historical DC Offset', 'cond_A': 'C1_historical_dc_offset', 'cond_B': 'C3_c5lp_scramble', 'family': 'primary_confirmatory'},
     {'contrast_id': 'C1_true_w2_vs_C0', 'desc': 'Pure 2-Pixel Boundary Seam Effect', 'cond_A': 'C0_orig', 'cond_B': 'C1_true_seam_w2', 'family': 'true_seam_controls'},
-    {'contrast_id': 'C1_true_w3_vs_C0', 'desc': 'Amplified 3-Pixel Boundary Seam Effect', 'cond_A': 'C0_orig', 'cond_B': 'C1_true_seam_w3', 'family': 'true_seam_controls'},
-    {'contrast_id': 'C3_vs_C1_true_w2', 'desc': 'Incremental Scrambling vs Pure Boundary Seam (w=2)', 'cond_A': 'C1_true_seam_w2', 'cond_B': 'C3_c5lp_scramble', 'family': 'true_seam_controls'},
-    {'contrast_id': 'C2_vs_C1_true_w2', 'desc': 'Spatial Rearrangement vs Pure Boundary Seam (w=2)', 'cond_A': 'C1_true_seam_w2', 'cond_B': 'C2_seam_suppressed', 'family': 'true_seam_controls'},
-    {'contrast_id': 'C3_vs_C2', 'desc': 'Sensitivity to Seam Suppression', 'cond_A': 'C2_seam_suppressed', 'cond_B': 'C3_c5lp_scramble', 'family': 'exploratory'},
+    {'contrast_id': 'C1_true_w3_vs_C0', 'desc': 'Amplified Boundary-Seam Effect (gain 1.8; legacy w3)', 'cond_A': 'C0_orig', 'cond_B': 'C1_true_seam_w3', 'family': 'true_seam_controls'},
+    {'contrast_id': 'C3_vs_C1_true_w2', 'desc': 'Incremental Scrambling vs Seam Control (gain 1.0; legacy w2)', 'cond_A': 'C1_true_seam_w2', 'cond_B': 'C3_c5lp_scramble', 'family': 'true_seam_controls'},
+    {'contrast_id': 'C2_vs_C1_true_w2', 'desc': 'Spatial Rearrangement vs Seam Control (gain 1.0; legacy w2)', 'cond_A': 'C1_true_seam_w2', 'cond_B': 'C2_seam_suppressed', 'family': 'true_seam_controls'},
+    {'contrast_id': 'C3_vs_C2', 'desc': 'Sensitivity to Local Boundary Blending', 'cond_A': 'C2_seam_suppressed', 'cond_B': 'C3_c5lp_scramble', 'family': 'exploratory'},
 ]
 
 
