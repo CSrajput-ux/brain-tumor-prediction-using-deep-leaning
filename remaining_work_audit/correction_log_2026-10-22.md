@@ -11,7 +11,13 @@
 
 ### Still required before submission
 - Checkout this branch and run `python scripts/run_dual_resolution_diagnostics.py` against the full prepared dataset, then reconcile the new diagnostics CSV, publication Table 7, Figure 8 and manuscript. The prepared dataset was not available in this editing environment, so new diagnostic measurements have not been generated here.
-- `remaining_work_audit/true_seam_oof_predictions.csv` is empty on the current default branch. Regenerate true-seam OOF predictions before rerunning `scripts/run_task5_cluster_bootstrap.py`; configuration alone is not proof of a successful run.
+- **Correction:** `remaining_work_audit/true_seam_oof_predictions.csv` is not empty. GitHub's tree metadata reports a 3,486,798-byte blob; the repository regression test expects 18,384 rows, and the scientific audit inventory reports 18,384 rows. The file fetch helper returned empty text for this large CSV, which caused the earlier mistaken statement. The user reports rerunning the bootstrap from this file and matching the stored results within 0.001; this correction pass does not require regenerating these predictions or rerunning that bootstrap. Do not describe the OOF file as missing.
 - Preserve acquisition plane as an unresolved dataset limitation unless reliable plane metadata or a pre-specified expert-annotation protocol is available.
 - Verify every reference/DOI and confirm author contributions, ethics/funding declarations, journal choice and review policy with the human authors.
 - Keep the DOCX as a corrected working draft; do not mark the paper final until diagnostics and bootstrap outputs are rerun and reconciled.
+
+
+## Wording fixes confirmed after review
+- Removed the unsupported framing that tile-scrambling collapse was described by Vangala et al. [12]. The cited preprint is used only for benchmark-contamination/patient-level split context, not as evidence for a tile-scrambling result.
+- Reframed the abstract opening: tile scrambling is a context-reliance probe that also inserts artificial seam edges.
+- Reframed discussion text to motivate the work by intervention artifacts and the need for controls, rather than saying the Vangala audit motivated this study.
