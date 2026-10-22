@@ -58,7 +58,7 @@ Out-of-fold confusion matrices for the 3,064 slices of Scenario $S_0$ under base
 ### Figure 8: Edge, Spectral, and Area Preservation Diagnostics Across Conditions.
 Quantitative image diagnostics computed across all 3,064 slices in source $512\times512$ space and model input $224\times224$ space from canonical Table 7:  
 **C2 diagnostic status:** The previous Figure 8 diagnostics used a C2 generation operator that did not match the evaluated predictions. Figure 8 is withheld until the corrected `scripts/run_dual_resolution_diagnostics.py` has been run on all 3,064 slices and the regenerated table has been reconciled. Do not use or quote previous C2 seam/Spectral-energy values.  
-**(Right) Pixel Preservation Area Fraction:** True-seam controls ($w=2, w=3$) bit-for-bit preserve 81.35% of all image pixels (and 64.12% in $224\times224$ space) alongside 100% of tumour core and margin pixels, whereas tile permutation conditions ($C_2, C_3$) alter approximately 89% of image area.
+**(Right) Pixel Preservation Area Fraction:** The gain-1.0 and gain-1.8 true-seam controls (legacy identifiers w2 and w3) bit-for-bit preserve 81.35% of source-resolution pixels (and 64.12% at $224\times224$) alongside 100% of tumour core and margin pixels, whereas tile permutation conditions ($C_2, C_3$) alter approximately 89% of image area.
 
 ---
 
