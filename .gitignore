@@ -50,3 +50,15 @@ Thumbs.db
 scratch/
 *.tmp
 *.swp
+~$*
+paper_full_text.txt
+docx_extracted_text.txt
+draft_v2_extracted.txt
+temp_head.docx
+scratch_docx_imgs/
+build_final_docx.py
+check_final_docx.py
+fix_final_docx.py
+patch_table9_and_caveat.py
+scan_paper.py
+
