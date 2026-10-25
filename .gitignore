@@ -61,4 +61,8 @@ check_final_docx.py
 fix_final_docx.py
 patch_table9_and_caveat.py
 scan_paper.py
+apply_critical_revisions.py
+find_critiques.py
+find_stray.py
+
 
