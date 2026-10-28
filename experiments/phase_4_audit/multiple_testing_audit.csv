@@ -1,7 +1,0 @@
-test_name,tier,rank,raw_p_value,bh_adjusted_p_value,bh_significant_at_0_05,holm_adjusted_p_value,holm_significant_at_0_05
-S0_McNemar_removal,PRIMARY,1,1e-16,6e-16,True,6e-16,True
-S1_McNemar_removal,PRIMARY,2,1e-16,3e-16,True,5e-16,True
-S2_McNemar_removal,PRIMARY,3,1e-16,2e-16,True,4e-16,True
-S1_Wilcoxon_removal,PRIMARY,4,9.378759472240378e-16,1.4068139208360566e-15,True,2.8136278416721133e-15,True
-S0_Wilcoxon_removal,PRIMARY,5,5.540230715976948e-15,6.648276859172337e-15,True,1.1080461431953896e-14,True
-S2_Wilcoxon_removal,PRIMARY,6,5.439320667290238e-14,5.439320667290238e-14,True,5.439320667290238e-14,True

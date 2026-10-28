@@ -1,5 +1,0 @@
-tumor_class,class_id,slice_count,percentage,anatomical_predilection
-Meningioma,0,708,23.11%,"Dural-based, extra-axial (parasagittal, convexity, skull base)"
-Glioma,1,1426,46.54%,Intra-axial cerebral/cerebellar white matter and parenchyma
-Pituitary Tumour,2,930,30.35%,Sella turcica / suprasellar region at the skull base
-Total,All,3064,100.00%,233 distinct patient clusters

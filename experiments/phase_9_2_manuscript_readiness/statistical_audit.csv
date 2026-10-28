@@ -1,7 +1,0 @@
-audit_element,verified_implementation,epistemic_evaluation
-Resampling Cluster Unit,"Patient ID in S0 (233 clusters); Combined Group ID in S1 (SSIM 0.80, 219 clusters) and S2 (SSIM 0.75, 178 clusters)",SOUND: Completely preserves patient/group cluster independence in bootstrap resampling.
-Paired Synchronization,Identical resampled cluster index sequence used for condition A and condition B within every replicate,SOUND: Essential for paired comparison; eliminates inter-replicate cluster composition noise.
-Fold Aggregation Method,"Out-of-fold (OOF) pooling across 5 folds per scenario, accompanied by fold-specific delta breakdown (fold_std reported)",SOUND: Standard out-of-fold evaluation in 5-fold cross validation. Fold-level deltas confirm low fold variance.
-McNemar Test Formulation,"Discordant pair counts (n_10, n_01) with continuity correction: (|n_10 - n_01| - 1)^2 / (n_10 + n_01)","SOUND: Correctly tests sample-level disagreement symmetry, but must not be conflated with Macro-F1 CI."
-Multiplicity Control,Holm-Bonferroni step-down procedure applied across all 15 confirmatory contrasts simultaneously (FWER = 0.05),"SOUND: Confirms that C3 vs C0, C1 vs C0, C2 vs C0, and C3 vs C1 maintain decisive significance (p < 1e-15)."
-Preregistration Timing,Preregistration file locked in Phase 8 (experiments/phase_8_novelty_discovery/proposed_preregistration.md),"SOUND: Thresholds (delta >= 0.150 for H2, delta < 0.030 for H1) were preregistered before Phase 9 execution."

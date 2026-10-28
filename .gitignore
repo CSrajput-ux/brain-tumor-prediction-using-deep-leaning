@@ -64,5 +64,6 @@ scan_paper.py
 apply_critical_revisions.py
 find_critiques.py
 find_stray.py
-
-
+# Backups
+_BACKUP_*
+*.zip
