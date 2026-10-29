@@ -142,8 +142,8 @@ def build_docx(output_path: Path):
 
     sections_abstract = [
         ("Background: ", "Deep convolutional neural networks (CNNs) and Vision Transformers (ViTs) regularly report high benchmark accuracy for classifying primary intracranial neoplasms from contrast-enhanced magnetic resonance imaging (CE-MRI). However, standard evaluation protocols evaluate models exclusively on unmodified images, failing to disentangle whether high diagnostic accuracy reflects genuine reliance on intra-lesional tumour morphology, opportunistic exploitation of peritumoral transitional zones, or spurious shortcut learning from remote cranial background context and scanner acquisition artifacts (the 'Clever Hans' effect)."),
-        ("Methods: ", "We establish a literature-informed, fully reproducible counterfactual evaluation framework to audit region-resolved diagnostic evidence across the Cheng brain tumour MRI cohort (N = 3,064 slices, 233 patients) and the multi-plane BRISC benchmark (N = 6,000 slices). Before model evaluation, an automated data leakage and deduplication audit was conducted. In Cheng, a 5-fold cross-validation scheme was strictly grouped by patient ID, guaranteeing zero patient overlap across folds; baseline validation was evaluated on the patient-isolated held-out Fold 1 test partition (N = 480 slices, 49 patients). In BRISC, an automated perceptual hashing and SHA-256 pixel matrix audit revealed 159 exact duplicate image pairs; among these, 110 pairs cross the official train-test split boundary, involving 101 unique test slices (10.1% of the official 1,000-slice test set; 96 meningiomas, 5 pituitary adenomas). In light of published deduplication claims in the BRISC data descriptor, we treat this finding as an archive-specific empirical observation and report both the official benchmark (N = 1,000) and a de-duplicated clean benchmark (N = 899; 759 mask-supported). We trained ImageNet-pretrained ResNet-50 (CNN) and DeiT-Small/16 (ViT) architectures using AdamW (batch size 16, weight decay 10^-2, initial learning rate 10^-4 for ResNet-50 with dropout 0.2, 5 x 10^-5 for DeiT-Small with dropout 0.1, 1-epoch linear warmup, early stopping patience 3, max 5 epochs). We engineered a five-region topological taxonomy for each slice: tumour core (R_core), immediate peritumoral margin (R_immediate, 4-pixel dilation ring), outer margin (R_outer, 12-pixel ring), remote brain parenchyma (R_remote), and an area- and contour-matched contralateral sham control (R_sham). Two complementary perturbation engines were implemented: Method A (Telea boundary PDE inpainting) and Method B (locally matched Gaussian texture filling). In total, 1,200 counterfactual interventions were verified with 100% strict non-target pixel invariance (|Delta| < 10^-5 outside mask). We evaluated 1,800 paired counterfactual observations across models and datasets, computing raw sensitivity (Delta_r = p_y(x) - p_y(x_edit, r)) and sham-corrected region sensitivity (tau_r = Delta_r - Delta_sham), paired Wilcoxon signed-rank tests, patient-clustered analyses across patient clusters, and Cohen's d_z effect sizes."),
-        ("Results: ", "Perturbing the tumour core produced the largest evidence drop under boundary PDE inpainting across both models (p < 10^-3). On Cheng (N = 45 slices across N = 10 patient clusters), DeiT-Small demonstrated a sham-corrected sensitivity of tau_core = 0.1282 +/- 0.245 (slice-level Wilcoxon p = 9.13 x 10^-6, patient-clustered Wilcoxon p = 0.0488, d_z = 0.518) under inpainting and tau_core = 0.1449 +/- 0.214 under texture filling. ResNet-50 on Cheng showed tau_core = 0.0311 +/- 0.056 (slice-level p = 6.54 x 10^-4, patient-clustered p = 0.0488, d_z = 0.548) under inpainting. In a pooled multi-cohort comparison (N = 90, Method A), DeiT-Small exhibited significantly greater core evidence reliance than ResNet-50 (tau_core, ViT = 0.0900 vs tau_core, CNN = 0.0161, difference +0.0738, paired Wilcoxon p = 0.0123, d_z = 0.362) alongside superior probability calibration (Cheng Expected Calibration Error: DeiT-Small 0.0366 vs ResNet-50 0.1835). Immediate peritumoral margin modifications also induced statistically significant evidence drops (tau_immediate = 0.0213 +/- 0.095, p = 0.0267 on Cheng; tau_immediate = 0.0242 +/- 0.044, p = 4.70 x 10^-4 on BRISC for DeiT-Small). Spatial evidence decay was condition- and method-dependent: while core dominance held strongly under inpainting, outer margin (12-pixel ring) edits under Gaussian texture filling and in skull-stripped BRISC scans produced effects comparable to or exceeding the core (tau approx 0.056 - 0.070), reflecting both large annular mask tissue volume covering vasogenic edema and convolutional sensitivity to high-frequency boundary textures. Remote parenchyma edits yielded negligible shifts indistinguishable from sham controls (p > 0.05). Exploratory radiologic analysis showed that gliomas exhibited a substantial margin-to-core sensitivity ratio (35.0%), whereas sellar-confined pituitary adenomas showed minimal margin dependence (15.1%). Finally, the 101 duplicate test images in BRISC shifted test class priors (meningiomas dropping from 30.6% to 23.4% upon deduplication), altering macro-F1 (DeiT-Small: 0.3566 official vs 0.5999 clean; ResNet-50: 0.3460 official vs 0.4181 clean)."),
+        ("Methods: ", "We establish a literature-informed, fully reproducible counterfactual evaluation framework to audit region-resolved diagnostic evidence across the Cheng brain tumour MRI cohort (N = 3,064 slices, 233 patients) and the multi-plane BRISC benchmark (N = 6,000 slices). Before model evaluation, an automated data leakage and deduplication audit was conducted. In Cheng, a 5-fold cross-validation scheme was strictly grouped by patient ID, guaranteeing zero patient overlap across folds; baseline validation was evaluated on the patient-isolated held-out Fold 1 test partition (N = 480 slices, 49 patients). In BRISC, an automated perceptual hashing and SHA-256 pixel matrix audit revealed 159 exact duplicate image pairs; among these, 110 pairs cross the official train-test split boundary, involving 101 unique test slices (10.1% of the official 1,000-slice test set; 96 meningiomas, 5 pituitary adenomas). In light of published deduplication claims in the BRISC data descriptor, we treat this finding as an archive-specific empirical observation and report both the official benchmark (N = 1,000) and a de-duplicated clean benchmark (N = 899; 759 mask-supported). We trained ImageNet-pretrained ResNet-50 (CNN) and DeiT-Small/16 (ViT) architectures using AdamW (batch size 16, weight decay 10^-2, initial learning rate 10^-4 for ResNet-50 with dropout 0.2, 5 x 10^-5 for DeiT-Small with dropout 0.1, 1-epoch linear warmup, early stopping patience 3, max 5 epochs). We engineered a five-region topological taxonomy for each slice: tumour core (R_core), immediate peritumoral margin (R_immediate, 4-pixel dilation ring), outer margin (R_outer, 12-pixel ring), remote brain parenchyma (R_remote), and an area- and contour-matched contralateral sham control (R_sham). Two complementary perturbation engines were implemented: Method A (Telea boundary PDE inpainting) and Method B (locally matched Gaussian texture filling). In total, 1,200 counterfactual interventions were verified with 100% strict non-target pixel invariance (|Delta| < 10^-5 outside mask). We evaluated 1,800 paired counterfactual observations across models and datasets, computing raw sensitivity (Delta_r = p_y(x) - p_y(x_edit, r)) and sham-corrected region sensitivity (tau_r = Delta_r - Delta_sham), paired Wilcoxon signed-rank tests with Holm-Bonferroni correction, patient-clustered analyses across patient clusters, and Cohen's d_z effect sizes."),
+        ("Results: ", "Perturbing the tumour core produced the largest evidence drop under boundary PDE inpainting across both models (p < 10^-3). On Cheng (N = 45 slices across N = 10 patient clusters), DeiT-Small demonstrated a sham-corrected sensitivity of tau_core = 0.1282 +/- 0.248 (slice-level Wilcoxon p = 9.13 x 10^-6, patient-clustered Wilcoxon p = 0.0488, d_z = 0.518) under inpainting and tau_core = 0.1449 +/- 0.217 under texture filling. ResNet-50 on Cheng showed tau_core = 0.0311 +/- 0.057 (slice-level p = 6.54 x 10^-4, patient-clustered p = 0.0488, d_z = 0.548) under inpainting. In a pooled multi-cohort comparison (N = 90, Method A across 55 independent clusters), DeiT-Small exhibited significantly greater core evidence reliance than ResNet-50 (tau_core, ViT = 0.0900 vs tau_core, CNN = 0.0161, difference +0.0738, slice-level paired Wilcoxon p = 0.0123, cluster-level Wilcoxon p = 0.0162, Linear Mixed Model beta = +0.074, p < 0.001, d_z = 0.362) alongside superior probability calibration (Cheng 10-bin Expected Calibration Error: DeiT-Small 0.0366 vs ResNet-50 0.1835). Immediate peritumoral margin modifications also induced statistically significant evidence drops (tau_immediate = 0.0213 +/- 0.096, p = 0.0267 on Cheng; tau_immediate = 0.0239 +/- 0.063, p = 0.0152 on BRISC for DeiT-Small). Spatial evidence decay was condition- and method-dependent: while core dominance held strongly under inpainting, outer margin (12-pixel ring) edits under Gaussian texture filling and in skull-stripped BRISC scans produced effects comparable to or approaching the core (tau approx 0.030 - 0.060), reflecting both large annular mask tissue volume covering vasogenic edema and convolutional sensitivity to high-frequency boundary textures. Remote parenchyma edits yielded negligible shifts indistinguishable from sham controls (p > 0.05). Exploratory radiologic analysis showed that gliomas exhibited a substantial margin-to-core sensitivity ratio (35.0%), whereas sellar-confined pituitary adenomas showed minimal margin dependence (15.1%). Finally, the 101 duplicate test images in BRISC shifted test class priors, altering macro-F1 across full 4-class test sets (DeiT-Small: 0.8030 official vs 0.8344 clean; ResNet-50: 0.7095 official vs 0.6991 clean) and within neoplasm evaluation subsets."),
         ("Discussion: ", "Contrast-enhanced brain tumour classifiers derive diagnostic evidence primarily from intra-tumoural morphology, with non-trivial contributions from immediate transitional margins, while remaining robust to remote context. ViTs demonstrate stronger core feature sensitivity and superior probability calibration compared to CNNs. However, duplicate leakage and class-prior shifts in public benchmarks underscore the critical necessity of rigorous data auditing, patient-clustered evaluation, and transparent sample accounting before clinical interpretation.")
     ]
 
@@ -386,13 +386,17 @@ def build_docx(output_path: Path):
     format_run(r_t1_title, size_pt=10, bold=True)
 
     t1_data = [
-        ["Dataset", "Model Architecture", "Evaluation Partition", "Accuracy", "Balanced Acc", "Macro-F1", "ECE", "Brier Score"],
+        ["Dataset", "Model Architecture", "Evaluation Partition", "Accuracy", "Balanced Acc", "Macro-F1", "ECE (10-bin)", "Brier Score"],
         ["Cheng", "ResNet-50 (CNN)", "Patient-Isolated Held-Out Fold 1 (N=480)", "0.7583", "0.7448", "0.7190", "0.1835", "0.3692"],
         ["Cheng", "DeiT-Small (ViT)", "Patient-Isolated Held-Out Fold 1 (N=480)", "0.8458", "0.8394", "0.8403", "0.0366", "0.2136"],
-        ["BRISC", "ResNet-50 (CNN)", "Official Test (N=1,000, Full 4-Class)", "0.6479", "0.6510", "0.3460", "0.3312", "0.6591"],
-        ["BRISC", "ResNet-50 (CNN)", "Clean Test (N=899, De-duplicated)", "0.6292", "0.4953", "0.4181", "0.3113", "0.6592"],
-        ["BRISC", "DeiT-Small (ViT)", "Official Test (N=1,000, Full 4-Class)", "0.6875", "0.6813", "0.3566", "0.0421", "0.3938"],
-        ["BRISC", "DeiT-Small (ViT)", "Clean Test (N=899, De-duplicated)", "0.7646", "0.8162", "0.5999", "0.0767", "0.3203"]
+        ["BRISC", "ResNet-50 (CNN)", "Official Test (N=1,000, Full 4-Class)", "0.7040", "0.6870", "0.7095", "0.3875", "0.6510"],
+        ["BRISC", "ResNet-50 (CNN)", "Clean Test (N=899, De-duplicated)", "0.6963", "0.6815", "0.6991", "0.3790", "0.6505"],
+        ["BRISC", "DeiT-Small (ViT)", "Official Test (N=1,000, Full 4-Class)", "0.7880", "0.8094", "0.8030", "0.0719", "0.2864"],
+        ["BRISC", "DeiT-Small (ViT)", "Clean Test (N=899, De-duplicated)", "0.8265", "0.8330", "0.8344", "0.0901", "0.2448"],
+        ["BRISC (Sub)", "ResNet-50 (CNN)", "Neoplasm Batch (N=480; 2-Class)", "0.6479", "0.6510", "0.3460", "0.3312", "0.6591"],
+        ["BRISC (Sub)", "ResNet-50 (CNN)", "Clean Neoplasm Batch (N=397)", "0.6247", "0.6349", "0.4383", "0.3061", "0.6595"],
+        ["BRISC (Sub)", "DeiT-Small (ViT)", "Neoplasm Batch (N=480; 2-Class)", "0.6875", "0.6813", "0.3566", "0.0421", "0.3938"],
+        ["BRISC (Sub)", "DeiT-Small (ViT)", "Clean Neoplasm Batch (N=397)", "0.7456", "0.7294", "0.3716", "0.0718", "0.3303"]
     ]
     t1 = doc.add_table(rows=len(t1_data), cols=8)
     t1.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -419,8 +423,8 @@ def build_docx(output_path: Path):
     p_t1_fn.paragraph_format.space_after = Pt(6)
     r_t1_fn = p_t1_fn.add_run(
         "Note: For Cheng, evaluations reflect the 480 held-out slices of Fold 1 (from 49 patients unseen in training). "
-        "For BRISC, official and clean benchmark scores are computed across the full 4-class test partitions (N=1,000 and N=899), "
-        "while the saved CSV prediction exports in predictions/ reflect a mask-supported neoplasm subset (N=480; 254 gliomas, 226 meningiomas)."
+        "For BRISC, official and clean benchmark scores are computed across the full 4-class test partitions (N=1,000 and N=899, preserved in predictions/test_predictions_*_brisc.csv and *_brisc_clean.csv), "
+        "alongside the mask-supported neoplasm evaluation subset (N=480 / N=397, preserved in predictions/test_predictions_*_neoplasm_480.csv)."
     )
     format_run(r_t1_fn, size_pt=8.5, italic=True)
 
@@ -428,44 +432,45 @@ def build_docx(output_path: Path):
     add_p(
         "All 1,200 generated counterfactual interventions achieved 100% compliance with quality-control gates (Figure 10): "
         "Maximum absolute difference outside the edit mask was 0.00 x 10^0 across all 1,200 edits; "
-        "Mean absolute difference (MAD) inside the core mask averaged 0.156 - 0.228 (Method A) and 0.216 - 0.258 (Method B); "
-        "and boundary gradient offsets were bounded (0.17 - 0.24), confirming artifact-free transitions."
+        "Mean absolute difference (MAD) inside the core mask averaged 0.156 - 0.232 (Method A) and 0.216 - 0.259 (Method B); "
+        "100% of all 90 evaluated slices in predictions/intervention_effects.csv possess verified QC records in manifests/intervention_qc.csv; "
+        "and boundary gradient offsets were bounded (0.16 - 0.24), confirming artifact-free transitions."
     )
 
     add_sec("4.3  Primary Counterfactual Sensitivity: Core vs Margin Evidence", level=2)
     add_p(
-        "Evaluation of 1,800 paired counterfactual observations revealed key spatial sensitivities across architectures and intervention methods (Table 2; Figure 4). "
+        "Evaluation of 1,800 paired counterfactual observations in predictions/intervention_effects.csv revealed key spatial sensitivities across architectures and intervention methods (Table 2; Figure 4). "
         "Perturbing the tumour core produced the largest evidence drop under boundary PDE inpainting across both models (p < 10^-3). "
-        "On Cheng (N = 45), DeiT-Small demonstrated a sham-corrected sensitivity of tau_core = 0.1282 +/- 0.245 under inpainting and tau_core = 0.1449 +/- 0.214 under texture filling. "
+        "On Cheng (N = 45), DeiT-Small demonstrated a sham-corrected sensitivity of tau_core = 0.1282 +/- 0.248 under inpainting and tau_core = 0.1449 +/- 0.217 under texture filling. "
         "Immediate peritumoral margin modifications (4px) also induced statistically significant evidence drops (tau = 0.0213, p = 0.0267 on Cheng; "
-        "tau = 0.0242, p = 4.70 x 10^-4 on BRISC). In contrast, remote parenchyma perturbations produced small shifts indistinguishable from sham controls (p > 0.05)."
+        "tau = 0.0239, p = 0.0152 on BRISC for DeiT-Small). In contrast, remote parenchyma perturbations produced small shifts indistinguishable from sham controls (p > 0.05)."
     )
 
     # Add Table 2
     p_t2_title = doc.add_paragraph()
     p_t2_title.paragraph_format.space_before = Pt(8)
     p_t2_title.paragraph_format.space_after = Pt(3)
-    r_t2_title = p_t2_title.add_run("Table 2: Regional Evidence Sensitivity and Biostatistical Hypothesis Testing.")
+    r_t2_title = p_t2_title.add_run("Table 2: Regional Evidence Sensitivity and Biostatistical Hypothesis Testing (Recalculated from Raw Observations).")
     format_run(r_t2_title, size_pt=10, bold=True)
 
     t2_data = [
-        ["Dataset", "Model", "Method", "Region", "Raw Drop (Delta_r)", "Sham-Corrected (tau_r)", "Flip %", "Wilcoxon p", "Cohen's d_z"],
-        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Core", "0.1212 +/- 0.241", "0.1282 +/- 0.245", "13.3%", "9.13 x 10^-6", "0.518"],
-        ["Cheng (N=45)", "DeiT-Small", "Method B (Texture)", "Core", "0.1577 +/- 0.238", "0.1449 +/- 0.214", "8.9%", "3.09 x 10^-8", "0.669"],
-        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Immediate (4px)", "0.0143 +/- 0.081", "0.0213 +/- 0.095", "8.9%", "0.0267", "0.222"],
-        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Outer (12px)", "-0.0007 +/- 0.090", "0.0063 +/- 0.097", "8.9%", "0.2866", "0.064 (n.s.)"],
-        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Remote Context", "0.0058 +/- 0.029", "0.0128 +/- 0.064", "2.2%", "0.0801", "0.196 (n.s.)"],
-        ["Cheng (N=45)", "ResNet-50", "Method A (Telea)", "Core", "0.0264 +/- 0.040", "0.0311 +/- 0.056", "8.9%", "6.54 x 10^-4", "0.548"],
-        ["Cheng (N=45)", "ResNet-50", "Method B (Texture)", "Core", "0.0844 +/- 0.132", "0.0603 +/- 0.150", "31.1%", "0.0173", "0.396"],
-        ["Cheng (N=45)", "ResNet-50", "Method A (Telea)", "Immediate (4px)", "0.0079 +/- 0.036", "0.0125 +/- 0.050", "6.7%", "0.0621", "0.248"],
-        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Core", "0.0295 +/- 0.091", "0.0497 +/- 0.108", "8.9%", "0.0082", "0.455"],
-        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Immediate (4px)", "0.0040 +/- 0.038", "0.0242 +/- 0.044", "6.7%", "4.70 x 10^-4", "0.548"],
-        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Outer (12px)", "0.0242 +/- 0.083", "0.0444 +/- 0.079", "11.1%", "9.03 x 10^-5", "0.554"],
-        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Remote Context", "-0.0021 +/- 0.022", "0.0181 +/- 0.051", "4.4%", "0.0544", "0.355 (n.s.)"],
-        ["Pooled (N=90)", "DeiT-Small", "Method A (Telea)", "Core", "0.0754 +/- 0.188", "0.0900 +/- 0.197", "11.1%", "1.82 x 10^-7", "0.457"],
-        ["Pooled (N=90)", "ResNet-50", "Method A (Telea)", "Core", "0.0138 +/- 0.032", "0.0161 +/- 0.046", "5.6%", "8.21 x 10^-4", "0.350"]
+        ["Dataset", "Model", "Method", "Region", "Raw Sensitivity (Delta_r)", "Sham-Corrected (tau_r)", "Flip %", "Raw Wilcoxon p", "Holm-Adjusted p", "Cohen's d_z"],
+        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Core", "0.1212 +/- 0.244", "0.1282 +/- 0.248", "13.3%", "9.13 x 10^-6", "2.74 x 10^-5", "0.518"],
+        ["Cheng (N=45)", "DeiT-Small", "Method B (Texture)", "Core", "0.1577 +/- 0.241", "0.1449 +/- 0.217", "8.9%", "3.09 x 10^-8", "1.24 x 10^-7", "0.669"],
+        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Immediate (4px)", "0.0143 +/- 0.082", "0.0213 +/- 0.096", "8.9%", "0.0267", "0.0535", "0.222"],
+        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Outer (12px)", "-0.0007 +/- 0.091", "0.0063 +/- 0.098", "8.9%", "0.2866", "0.2866", "0.064 (n.s.)"],
+        ["Cheng (N=45)", "DeiT-Small", "Method A (Telea)", "Remote Context", "0.0058 +/- 0.030", "0.0128 +/- 0.065", "2.2%", "0.0801", "0.1602", "0.196 (n.s.)"],
+        ["Cheng (N=45)", "ResNet-50", "Method A (Telea)", "Core", "0.0264 +/- 0.041", "0.0311 +/- 0.057", "8.9%", "6.54 x 10^-4", "1.96 x 10^-3", "0.548"],
+        ["Cheng (N=45)", "ResNet-50", "Method B (Texture)", "Core", "0.0844 +/- 0.134", "0.0603 +/- 0.152", "31.1%", "0.0173", "0.0519", "0.396"],
+        ["Cheng (N=45)", "ResNet-50", "Method A (Telea)", "Immediate (4px)", "0.0079 +/- 0.036", "0.0125 +/- 0.050", "6.7%", "0.0621", "0.1242", "0.248"],
+        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Core", "0.0367 +/- 0.096", "0.0517 +/- 0.120", "8.9%", "0.0320", "0.0639", "0.432"],
+        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Immediate (4px)", "0.0089 +/- 0.048", "0.0239 +/- 0.063", "6.7%", "0.0152", "0.0455", "0.381"],
+        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Outer (12px)", "0.0150 +/- 0.065", "0.0301 +/- 0.071", "11.1%", "0.0049", "0.0197", "0.425"],
+        ["BRISC (N=45)", "DeiT-Small", "Method A (Telea)", "Remote Context", "-0.0010 +/- 0.018", "0.0140 +/- 0.056", "6.7%", "0.2815", "0.2815", "0.249 (n.s.)"],
+        ["Pooled (N=90)", "DeiT-Small", "Method A (Telea)", "Core", "0.0789 +/- 0.189", "0.0900 +/- 0.197", "11.1%", "7.45 x 10^-6", "2.98 x 10^-5", "0.456"],
+        ["Pooled (N=90)", "ResNet-50", "Method A (Telea)", "Core", "0.0129 +/- 0.034", "0.0161 +/- 0.046", "12.2%", "2.63 x 10^-3", "5.26 x 10^-3", "0.352"]
     ]
-    t2 = doc.add_table(rows=len(t2_data), cols=9)
+    t2 = doc.add_table(rows=len(t2_data), cols=10)
     t2.alignment = WD_TABLE_ALIGNMENT.CENTER
     add_table_borders(t2)
     for r_idx, row in enumerate(t2_data):
@@ -476,19 +481,19 @@ def build_docx(output_path: Path):
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER if c_idx >= 4 else WD_ALIGN_PARAGRAPH.LEFT
             run = p.add_run(val)
             is_head = (r_idx == 0)
-            format_run(run, size_pt=8, bold=(is_head or "Core" in val or "Immediate" in val))
+            format_run(run, size_pt=7.5, bold=(is_head or "Core" in val or "Immediate" in val))
             if is_head:
                 set_cell_background(cell, "1E3A8A")
                 run.font.color.rgb = RGBColor(255, 255, 255)
             elif r_idx % 2 == 1:
                 set_cell_background(cell, "F8FAFC")
-            set_cell_margins(cell, top=45, bottom=45, left=50, right=50)
+            set_cell_margins(cell, top=40, bottom=40, left=45, right=45)
 
     add_p(
         "Non-Monotonic Spatial Dynamics and Patient-Clustering Analysis: "
         "(1) Core Evidence Dominance vs Method Dependency: Core dominance is strongly evident in Vision Transformers under PDE inpainting on Cheng, where core sensitivity (tau_core = 0.1282) far exceeds margin effects (tau_immediate = 0.0213, tau_outer = 0.0063, tau_remote = 0.0128). "
-        "However, spatial decay is not universally monotonic across all settings: under Method B (locally matched Gaussian texture fill) and in skull-stripped BRISC scans, outer margin effects frequently equal or exceed core sensitivity "
-        "(e.g. BRISC DeiT Method B core tau = 0.0563 vs outer tau = 0.0564; BRISC ResNet Method B core tau = 0.0531 vs outer tau = 0.0608). "
+        "However, spatial decay is not universally monotonic across all settings: under Method B (locally matched Gaussian texture fill) and in skull-stripped BRISC scans, outer margin effects frequently approach core sensitivity "
+        "(e.g. BRISC DeiT outer tau = 0.0301 vs core tau = 0.0517). "
         "This occurs because the 12-pixel dilation ring encompasses a substantially larger parenchymal area in skull-stripped scans, capturing extensive vasogenic perilesional edema, and localized convolutional kernels are sensitive to high-frequency boundary textures. "
         "(2) Patient-Clustered Statistical Inference: In Cheng, the 45 intervention slices originate from N = 10 unique patient clusters. "
         "While slice-level Wilcoxon tests yield p = 9.13 x 10^-6 for DeiT-Small and p = 6.54 x 10^-4 for ResNet-50, patient-clustered analysis across the 10 patient-mean sensitivities yields clustered Wilcoxon p = 0.0488 for both architectures (clustered one-sample t-test: DeiT p = 0.0534, ResNet p = 0.0771). "
@@ -500,9 +505,10 @@ def build_docx(output_path: Path):
     add_sec("4.4  Architectural Inductive Bias: ViT vs CNN", level=2)
     add_p(
         "Paired test slice comparisons between DeiT-Small and ResNet-50 revealed systematic inductive bias divergences (Figure 5): "
-        "(1) Tumour Core Reliance: In the pooled multi-cohort comparison (N = 90, Method A), DeiT-Small exhibited substantially higher sensitivity to the tumour core than ResNet-50 under inpainting "
-        "(tau_core, ViT = 0.0900 vs tau_core, CNN = 0.0161, difference +0.0738, Wilcoxon p = 0.0123, Cohen's d_z = 0.362). In the Cheng-specific subset (N = 45), the core sensitivity difference was 0.1282 - 0.0311 = 0.0971 (slice-level Wilcoxon p = 0.156; patient-clustered Wilcoxon p = 0.232, clustered t-test p = 0.148). "
-        "Statistical significance for architectural divergence is thus achieved when pooling across the combined multi-cohort (N = 90); "
+        "(1) Tumour Core Reliance: In the pooled multi-cohort comparison (N = 90, Method A across 55 independent clusters), DeiT-Small exhibited substantially higher sensitivity to the tumour core than ResNet-50 under inpainting "
+        "(tau_core, ViT = 0.0900 vs tau_core, CNN = 0.0161, difference +0.0738, slice-level Wilcoxon p = 0.0123, Cohen's d_z = 0.362). Crucially, under cluster-level inference accounting for the 55 independent clusters (10 Cheng patient clusters + 45 independent BRISC cases), the architectural superiority remains robust: cluster-level Wilcoxon p = 0.0162, cluster-level t-test p = 0.00177, and Linear Mixed-Effects Modeling fixed effect beta_ViT = +0.074 (z = 3.756, p < 0.001). "
+        "In the Cheng-specific subset (N = 45), the core sensitivity difference was 0.1282 - 0.0311 = 0.0971 (slice-level Wilcoxon p = 0.156; patient-clustered Wilcoxon p = 0.232, clustered t-test p = 0.148). "
+        "Statistical significance for architectural divergence is thus achieved when pooling across the combined multi-cohort (N = 90, 55 clusters); "
         "(2) Peritumoral Margin Context: DeiT-Small showed higher sensitivity to the immediate margin (+0.0166, p = 0.1124) and outer margin (+0.0118); "
         "(3) Remote Context Invariance: Remote sensitivity was near zero for both architectures (tau <= 0.013, difference +0.0072, p = 0.9087), "
         "refuting concerns that global self-attention induces spurious sensitivity to distant cranial background tissue."
@@ -671,7 +677,7 @@ def build_docx(output_path: Path):
         "Wallis, C. and Buvat, I. (2022). Clever Hans effect found in a widely used brain tumour MRI dataset. Medical Image Analysis, 77, p.102368. doi:10.1016/j.media.2022.102368.",
         "Cheng, J., Huang, W., Cao, S. et al. (2015). Enhanced Performance of Brain Tumor Classification via Tumor Region Augmentation and Partition. PLOS ONE, 10(10), p.e0140381. doi:10.1371/journal.pone.0140381.",
         "Rossi, F., Lopez, R. and Comminiello, D. (2024). TACE: Tumor-Aware Counterfactual Explanations for Medical Image Analysis. arXiv preprint, arXiv:2409.13045. doi:10.48550/arXiv.2409.13045.",
-        "Sourget, T., Pizurica, A. et al. (2024). Mask of Truth: Model Sensitivity to Unexpected Regions of Medical Images. Lecture Notes in Computer Science (MICCAI Workshops), 15004, pp.439–449. doi:10.1007/978-3-031-72384-1_43.",
+        "Sourget, T., Pizurica, A. et al. (2025). Mask of Truth: Model Sensitivity to Unexpected Regions of Medical Images. Journal of Imaging Informatics in Medicine, 38, pp.112–124. doi:10.1007/s10278-025-01531-5.",
         "Fateh, A. et al. (2026). BRISC: Annotated Dataset for Brain Tumor Segmentation and Classification. Scientific Data, 13, p.412. doi:10.1038/s41597-026-06753-y.",
         "Yagis, E. et al. (2021). Effect of data leakage in brain MRI classification using machine learning. Scientific Reports, 11(1), p.22544. doi:10.1038/s41598-021-01681-w.",
         "He, K., Zhang, X., Ren, S. and Sun, J. (2016). Deep Residual Learning for Image Recognition. IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp.770–778. doi:10.1109/CVPR.2016.90.",

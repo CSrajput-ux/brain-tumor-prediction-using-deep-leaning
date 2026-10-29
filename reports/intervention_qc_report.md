@@ -1,6 +1,6 @@
 # Counterfactual Intervention Generation & Quality-Control Report
 
-Date: 2026-10-29 (Asia/Kolkata)  
+Date: 2026-10-29 (Updated 2026-10-30)  
 Auditors: Multidisciplinary Research Team (Medical-Imaging Scientist, CV Engineer)  
 Compliance: Strict adherence to Part 8 (Intervention Engine & Quality Control)
 
@@ -12,6 +12,7 @@ Compliance: Strict adherence to Part 8 (Intervention Engine & Quality Control)
 - **Strict Quality-Control Pass Rate:** **100.00%** (1200 / 1200)
 - **Non-Target Pixel Invariance (< 1e-5):** **100.0%** (Zero corruption of pixels outside intervention mask)
 - **Numerical Integrity:** Zero NaNs, zero Infs, zero out-of-bounds intensity values.
+- **Evaluated Slices Coverage:** 100% of all 90 evaluated slices in `predictions/intervention_effects.csv` (45 Cheng + 45 BRISC) have verified QC records in `manifests/intervention_qc.csv`.
 - **Diagnostic Visual Montages Saved:** 24 8-panel high-resolution images in `reports/intervention_montages/`.
 
 ---
@@ -20,16 +21,16 @@ Compliance: Strict adherence to Part 8 (Intervention Engine & Quality Control)
 
 | Dataset | Region | Method | Mean Mask Area (px) | Mean Inside MAD | Max Outside Diff | Boundary Discontinuity | QC Status |
 |---|---|---|---|---|---|---|---|
-| **BRISC** | `core` | matched_texture_fill | 959.0 | 0.2579 | 0.00e+00 | 0.3779 | **PASS** |
-| **BRISC** | `core` | telea_inpaint | 959.0 | 0.2281 | 0.00e+00 | 0.3672 | **PASS** |
-| **BRISC** | `immediate` | matched_texture_fill | 708.0 | 0.1769 | 0.00e+00 | 0.3857 | **PASS** |
-| **BRISC** | `immediate` | telea_inpaint | 708.0 | 0.0807 | 0.00e+00 | 0.2151 | **PASS** |
-| **BRISC** | `outer` | matched_texture_fill | 2246.1 | 0.1654 | 0.00e+00 | 0.3713 | **PASS** |
-| **BRISC** | `outer` | telea_inpaint | 2246.1 | 0.0884 | 0.00e+00 | 0.1844 | **PASS** |
-| **BRISC** | `remote` | matched_texture_fill | 272.0 | 0.2566 | 0.00e+00 | 0.6419 | **PASS** |
-| **BRISC** | `remote` | telea_inpaint | 272.0 | 0.1821 | 0.00e+00 | 0.3253 | **PASS** |
-| **BRISC** | `sham` | matched_texture_fill | 953.5 | 0.2005 | 0.00e+00 | 0.3805 | **PASS** |
-| **BRISC** | `sham` | telea_inpaint | 953.5 | 0.1083 | 0.00e+00 | 0.1921 | **PASS** |
+| **BRISC** | `core` | matched_texture_fill | 1033.9 | 0.2594 | 0.00e+00 | 0.3788 | **PASS** |
+| **BRISC** | `core` | telea_inpaint | 1033.9 | 0.2323 | 0.00e+00 | 0.3737 | **PASS** |
+| **BRISC** | `immediate` | matched_texture_fill | 754.4 | 0.1745 | 0.00e+00 | 0.3866 | **PASS** |
+| **BRISC** | `immediate` | telea_inpaint | 754.4 | 0.0774 | 0.00e+00 | 0.2065 | **PASS** |
+| **BRISC** | `outer` | matched_texture_fill | 2369.4 | 0.1726 | 0.00e+00 | 0.3838 | **PASS** |
+| **BRISC** | `outer` | telea_inpaint | 2369.4 | 0.0936 | 0.00e+00 | 0.1925 | **PASS** |
+| **BRISC** | `remote` | matched_texture_fill | 290.3 | 0.2290 | 0.00e+00 | 0.6062 | **PASS** |
+| **BRISC** | `remote` | telea_inpaint | 290.3 | 0.1537 | 0.00e+00 | 0.2903 | **PASS** |
+| **BRISC** | `sham` | matched_texture_fill | 1028.5 | 0.1763 | 0.00e+00 | 0.3406 | **PASS** |
+| **BRISC** | `sham` | telea_inpaint | 1028.5 | 0.0927 | 0.00e+00 | 0.1616 | **PASS** |
 | **CHENG** | `core` | matched_texture_fill | 992.2 | 0.2158 | 0.00e+00 | 0.3881 | **PASS** |
 | **CHENG** | `core` | telea_inpaint | 992.2 | 0.1561 | 0.00e+00 | 0.3522 | **PASS** |
 | **CHENG** | `immediate` | matched_texture_fill | 511.1 | 0.1495 | 0.00e+00 | 0.3505 | **PASS** |
@@ -48,10 +49,3 @@ Compliance: Strict adherence to Part 8 (Intervention Engine & Quality Control)
 1. **Non-Overlapping Regional Topology:**
    - Ground truth core ($R_{core}$), immediate margin ($R_{immediate}$, 4px), outer margin ($R_{outer}$, 12px), sham control ($R_{sham}$), and remote context ($R_{remote}$) are strictly disjoint.
    - The sham control is geometrically matched in area and contour to the core and placed within intracranial parenchyma ($S$) in normal contralateral brain tissue, ensuring zero intersection with the lesion or its peritumoral rings.
-
-2. **Dual-Method Perturbation:**
-   - **Method A (Telea Inpainting):** Solves the Fast Marching Method boundary PDE to inpaint tissue smoothly across the target region.
-   - **Method B (Locally Matched Texture):** Estimates local background parenchyma mean and Gaussian variance from the surrounding tissue ring, applying a 2-pixel cosine/distance taper to avoid high-frequency cliff artifacts.
-
-3. **Strict Outside Invariance:**
-   - In all interventions, outside the specified region mask $M$, $x_{edit}(u, v) \equiv x(u, v)$ to floating point precision ($|\Delta| < 10^{-5}$).

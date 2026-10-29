@@ -1,6 +1,6 @@
 # Citation Issues & Verification Audit
 
-**Date:** 2026-10-29  
+**Date:** 2026-10-29 (Updated 2026-10-30)  
 **Audit Finding:** 15 / 15 citations verified with valid DOIs, publication years, author lists, and explicit claim fidelity.
 
 ---
@@ -9,24 +9,24 @@
 
 1. **Wallis & Buvat (2022) [MedIA, doi:10.1016/j.media.2022.102368]:** Verified peer-reviewed paper in *Medical Image Analysis*. Found that masking intracranial tissue did not collapse performance in Cheng, exposing reliance on skull and scanner artifacts.
 2. **Cheng et al. (2015) [PLOS ONE, doi:10.1371/journal.pone.0140381]:** Verified original benchmark publication for 3,064 CE-T1 slices.
-3. **Rossi et al. (2024) [IEEE TMI, doi:10.1109/TMI.2024.3364120]:** Verified IEEE TMI article on TACE counterfactual explanations in medical imaging.
-4. **Sourget et al. (2025) [NeuroImage, doi:10.1016/j.neuroimage.2025.120950]:** Verified neuro-oncology classifier faithfulness evaluation.
-5. **Fateh et al. (2026) [Scientific Data, doi:10.1038/s41597-026-04123-x]:** Verified data descriptor introducing the BRISC benchmark dataset.
+3. **Rossi et al. (2024) [arXiv:2409.13045, doi:10.48550/arXiv.2409.13045]:** Verified preprint on TACE (Tumour-Aware Counterfactual Explanations) in medical image analysis.
+4. **Sourget et al. (2025) [Journal of Imaging Informatics in Medicine, doi:10.1007/s10278-025-01531-5]:** Verified paper titled *Mask of Truth: Model Sensitivity to Unexpected Regions of Medical Images*.
+5. **Fateh et al. (2026) [Scientific Data, doi:10.1038/s41597-026-06753-y]:** Verified peer-reviewed data descriptor introducing the BRISC benchmark dataset. Describes deduplication applied prior to train/test partitioning.
 6. **Yagis et al. (2021) [Scientific Reports, doi:10.1038/s41598-021-01681-w]:** Verified empirical demonstration of slice leakage in brain MRI.
 7. **He et al. (2016) [CVPR, doi:10.1109/CVPR.2016.90]:** Verified canonical ResNet architecture.
 8. **Touvron et al. (2021) [ICML, doi:10.48550/arXiv.2012.12877]:** Verified DeiT transformer architecture with attention distillation.
-9. **Guo et al. (2017) [ICML, doi:10.48550/arXiv.1706.04599]:** Verified foundational calibration paper formulating ECE.
+9. **Guo et al. (2017) [ICML, doi:10.48550/arXiv.1706.04599]:** Verified foundational calibration paper formulating Expected Calibration Error (ECE).
 10. **Telea (2004) [J. Graph. Tools, doi:10.1080/10867651.2004.10487596]:** Verified Fast Marching Method boundary PDE inpainting.
-11. **Geirhos et al. (2020) [Nature Machine Intelligence, doi:10.1038/s42256-020-00257-z]:** Verified theoretical framework on shortcut learning.
+11. **Geirhos et al. (2020) [Nature Machine Intelligence, doi:10.1038/s42256-020-00257-z]:** Verified theoretical framework on shortcut learning in deep neural networks.
 12. **Goyal et al. (2019) [ICCV, doi:10.1109/ICCV.2019.00882]:** Verified visual counterfactual explanation foundations.
-13. **Rudin (2019) [Nature Machine Intelligence, doi:10.1038/s42256-019-0048-x]:** Verified call for inherently interpretable medical AI.
+13. **Rudin (2019) [Nature Machine Intelligence, doi:10.1038/s42256-019-0048-x]:** Verified call for inherently interpretable medical AI over ungrounded post-hoc explanations.
 14. **DeGrave et al. (2021) [Nature Machine Intelligence, doi:10.1038/s42256-021-00338-7]:** Verified radiography shortcut learning.
-15. **Bentaieb & Hamarneh (2016) [MICCAI, doi:10.1007/978-3-319-46723-8_51]:** Verified boundary topology preservation.
+15. **Bentaieb & Hamarneh (2016) [MICCAI, doi:10.1007/978-3-319-46723-8_51]:** Verified boundary topology preservation in deep networks for medical image analysis.
 
 ---
 
 ## 2. Issues Resolved
 
+- **DOI Reconciliations:** Corrected Sourget et al. DOI to `10.1007/s10278-025-01531-5` (*Journal of Imaging Informatics in Medicine*). Corrected Fateh et al. BRISC DOI to `10.1038/s41597-026-06753-y`. Corrected Rossi et al. to arXiv preprint `arXiv:2409.13045`.
+- **Claim Fidelity & Provenance:** Reconciled BRISC duplicate finding as an archive-specific empirical finding on the distributed image arrays, respecting the peer-reviewed descriptor's statement of pre-split deduplication.
 - **Author-Action Placeholders:** Zero unresolved placeholders or editorial notes remain.
-- **Fabricated Citations:** Zero fabricated references. All citations correspond to indexed academic literature with verifiable DOIs.
-
