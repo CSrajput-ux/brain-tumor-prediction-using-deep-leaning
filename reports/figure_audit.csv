@@ -1,0 +1,12 @@
+figure_id,filename,title,resolution_dpi,file_size_kb,dataset,model_architecture,experimental_condition,key_metric_plotted,verified_status
+FIG-01,fig1_study_design.png,Study Design & Intervention Pipeline,300,227.9,Both,ResNet-50 & DeiT-Small,5-region taxonomy & dual methods,Methodological schematic,VERIFIED
+FIG-02,fig2_preprocessing_alignment.png,Preprocessing Pipeline & Mask Alignment,300,175.0,Both,N/A,Percentile scaling & letterbox padding,Intensity distribution & boundary overlay,VERIFIED
+FIG-03,fig3_calibration_reliability.png,Reliability Diagrams & Calibration Curves,300,244.1,Both,ResNet-50 vs DeiT-Small,Patient OOF & Clean Test,Expected Calibration Error (ECE),VERIFIED
+FIG-04,fig4_regional_evidence_effects.png,Regional Evidence Sensitivity Across Architectures,300,125.5,Both,ResNet-50 & DeiT-Small,Method A (Inpainting),Sham-corrected sensitivity (tau_r),VERIFIED
+FIG-05,fig5_architecture_comparison.png,Architectural Inductive Bias Profile,300,113.7,Cheng,ViT vs CNN,Method A (Inpainting),Sensitivity difference (tau_ViT - tau_CNN),VERIFIED
+FIG-06,fig6_method_robustness.png,Perturbation Method Invariance (Method A vs B),300,137.9,Cheng,ResNet-50 & DeiT-Small,Inpainting vs Texture Fill,Linear correlation and scatter,VERIFIED
+FIG-07,fig7_plane_stratification.png,Imaging Plane Stratification of Regional Evidence,300,114.4,BRISC,DeiT-Small,Axial vs Coronal vs Sagittal,Regional sensitivity per plane,VERIFIED
+FIG-08,fig8_class_heterogeneity.png,Class Heterogeneity in Peritumoral vs Core Evidence,300,127.2,Both,DeiT-Small,Glioma vs Meningioma vs Pituitary,Margin-to-core sensitivity ratio,VERIFIED
+FIG-09,fig9_brisc_leakage_artifact.png,Impact of Train-Test Duplicate Leakage,300,125.9,BRISC,ResNet-50 & DeiT-Small,Official Test vs Clean Test,Macro-F1 inflation difference,VERIFIED
+FIG-10,fig10_intervention_gallery.png,Counterfactual Intervention & Residual Montage,300,2280.0,Both,All,8-panel diagnostic gallery,Residual absolute difference maps,VERIFIED
+

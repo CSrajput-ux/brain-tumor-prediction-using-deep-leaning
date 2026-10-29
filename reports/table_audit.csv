@@ -1,0 +1,7 @@
+table_id,table_number,title,row_count,col_count,datasets,models_included,primary_metrics,underlying_sources,verification_status
+TAB-01,Table 1,Baseline Classification Performance and Probability Calibration,6,8,"Cheng, BRISC","ResNet-50, DeiT-Small","Accuracy, Balanced Acc, Macro-F1, ECE, Brier Score","predictions/oof_predictions_*.csv, predictions/test_predictions_*.csv",VERIFIED
+TAB-02,Table 2,Regional Evidence Sensitivity and Biostatistical Hypothesis Testing,12,9,"Cheng, BRISC","ResNet-50, DeiT-Small","Raw drop (Delta_r), Sham-corrected (tau_r), Flip rate, Wilcoxon p-value, Cohen's d_z",predictions/intervention_effects.csv,VERIFIED
+TAB-03,Table 3,Imaging Plane Stratification of Regional Evidence (BRISC),3,5,BRISC,DeiT-Small,"Sample Count, Mean Core tau, Mean Immediate tau, Mean Remote tau",reports/secondary_robustness_report.md,VERIFIED
+TAB-04,Table 4,Tumour Class Heterogeneity and Margin-to-Core Sensitivity Ratios,3,5,"Cheng, BRISC",DeiT-Small,"Class, Sample Count, Core tau, Immediate tau, Margin-to-Core Ratio",reports/secondary_robustness_report.md,VERIFIED
+TAB-05,Table 5,BRISC Train-Test Duplicate Leakage Impact Across Architectures,4,6,BRISC,"ResNet-50, DeiT-Small","Official Macro-F1, Clean Macro-F1, Delta Macro-F1, Official ECE, Clean ECE",reports/baseline_training_report.md,VERIFIED
+

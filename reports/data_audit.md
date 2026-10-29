@@ -1,0 +1,63 @@
+# Data audit
+
+Generated from local manifests; counts below are observed, not expected release counts.
+
+## cheng
+
+```json
+{
+  "indexed_samples": 3064,
+  "readable_samples": 3064,
+  "class_counts": {
+    "glioma": 1426,
+    "meningioma": 708,
+    "pituitary": 930
+  },
+  "official_split_counts": {
+    "not_supplied": 3064
+  },
+  "plane_counts": {
+    "not_supplied": 3064
+  },
+  "patient_count_if_supplied": 233,
+  "mask_available_count": 3064,
+  "missing_mask_count": 0,
+  "empty_mask_count": 0,
+  "dimension_mismatch_count": 0,
+  "unreadable_or_malformed_count": 0,
+  "quality_flag_counts": {}
+}
+```
+
+## brisc
+
+```json
+{
+  "indexed_samples": 6000,
+  "readable_samples": 6000,
+  "class_counts": {
+    "glioma": 1401,
+    "meningioma": 1635,
+    "no_tumor": 1207,
+    "pituitary": 1757
+  },
+  "official_split_counts": {
+    "test": 1000,
+    "train": 5000
+  },
+  "plane_counts": {
+    "axial": 1993,
+    "coronal": 1981,
+    "sagittal": 2026
+  },
+  "patient_count_if_supplied": 0,
+  "mask_available_count": 860,
+  "missing_mask_count": 3933,
+  "empty_mask_count": 0,
+  "dimension_mismatch_count": 0,
+  "unreadable_or_malformed_count": 0,
+  "quality_flag_counts": {
+    "missing_mask": 3933
+  }
+}
+```

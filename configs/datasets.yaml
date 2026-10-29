@@ -1,0 +1,20 @@
+# All paths are workspace-relative. Raw sources are read-only by policy.
+cheng:
+  root: cheng
+  archives_glob: brainTumorDataPublic_*
+  cvind_path: cheng/cvind.mat
+  class_map:
+    1: meningioma
+    2: glioma
+    3: pituitary
+brisc:
+  root: brisc/brisc2025
+  manifest_path: brisc/brisc2025/manifest.csv
+  # Only files enumerated by this manifest are part of BRISC analysis.
+  classification_task: classification
+  segmentation_task: segmentation
+  class_map:
+    glioma: 0
+    meningioma: 1
+    pituitary: 2
+    no_tumor: 3

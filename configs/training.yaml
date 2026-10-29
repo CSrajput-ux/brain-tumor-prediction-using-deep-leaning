@@ -1,0 +1,27 @@
+# Training configuration for ResNet-50 and DeiT-Small/16
+common:
+  input_size: [224, 224]
+  num_workers: 0  # Set to 0 for Windows compatibility
+  seed: 42
+  early_stopping_patience: 3
+  early_stopping_metric: macro_f1
+  mixed_precision: false  # Auto-enabled on CUDA
+
+resnet50:
+  architecture: resnet50
+  batch_size: 16
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  dropout: 0.2
+  warmup_epochs: 1
+  max_epochs: 5
+
+deit_small:
+  architecture: deit_small_patch16_224
+  batch_size: 16
+  learning_rate: 0.00005
+  weight_decay: 0.01
+  dropout: 0.1
+  warmup_epochs: 1
+  max_epochs: 5
+

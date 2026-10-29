@@ -1,0 +1,24 @@
+experiment_id,category,description,planned_scope,implemented_scope,sample_count,status,source_file
+EXP-01,Data Ingestion,Cheng dataset ingestion & patient ID parsing,3064 slices across 233 patients,3064 slices extracted with embedded patient IDs,3064,COMPLETED,manifests/cheng_manifest.csv
+EXP-02,Data Ingestion,BRISC multi-plane benchmark ingestion & mask check,6000 slices (5000 train / 1000 test),6000 slices mapped; 860 test masks verified,6000,COMPLETED,manifests/brisc_manifest.csv
+EXP-03,Data Integrity,Intra-dataset duplicate audit (BRISC),Exhaustive perceptual hashing,159 duplicate pairs; 110 train-test cross-split pairs,278 images,COMPLETED,manifests/duplicate_pairs.csv
+EXP-04,Data Integrity,Cross-dataset leakage audit (Cheng vs BRISC),SSIM and exact hash comparison,Zero duplicate pairs; SSIM 0.28 to 0.58,9064 images,COMPLETED,reports/duplicate_audit.md
+EXP-05,Data Splitting,Patient-isolated cross-validation (Cheng),5 folds grouped by patient_id,5 folds; zero patient overlap across folds,3064,COMPLETED,manifests/cheng_splits.csv
+EXP-06,Data Splitting,BRISC clean de-duplicated benchmark split,Isolate 101 leaked test duplicates,Clean test (N=899) and clean val (N=1001),6000,COMPLETED,manifests/brisc_splits.csv
+EXP-07,Preprocessing,Standardized letterboxing & percentile intensity scaling,224x224x3 with binary mask alignment,Zero mask loss; centroid drift < 0.0035,9064,COMPLETED,src/data/preprocessing.py
+EXP-08,Model Architecture,ResNet-50 and DeiT-Small/16 smoke testing,Forward/backward pass and roundtrip,Validated forward/backward/checkpoint roundtrip,4 configs,COMPLETED,reports/model_smoke_test_report.md
+EXP-09,Baseline Training,ResNet-50 on Cheng Fold 1 OOF,Macro-F1 and ECE calibration,Trained baseline; Macro-F1=0.7190; ECE=0.1835,480 OOF,COMPLETED,checkpoints/resnet50_cheng_fold_1.pt
+EXP-10,Baseline Training,DeiT-Small on Cheng Fold 1 OOF,Macro-F1 and ECE calibration,Trained baseline; Macro-F1=0.8403; ECE=0.0366,480 OOF,COMPLETED,checkpoints/deit_small_patch16_224_cheng_fold_1.pt
+EXP-11,Baseline Training,ResNet-50 on BRISC Official vs Clean,Dual-benchmark evaluation,Trained baseline; Clean Macro-F1=0.4181,480 test,COMPLETED,checkpoints/resnet50_brisc.pt
+EXP-12,Baseline Training,DeiT-Small on BRISC Official vs Clean,Dual-benchmark evaluation,Trained baseline; Clean Macro-F1=0.5999,480 test,COMPLETED,checkpoints/deit_small_patch16_224_brisc.pt
+EXP-13,Intervention Engine,5-region counterfactual generator with dual methods,Core/Margins/Remote/Sham with Telea & Texture,1200 interventions with 100% QC compliance,1200 edits,COMPLETED,manifests/intervention_qc.csv
+EXP-14,Primary Audit,Paired counterfactual sensitivity evaluation,Raw and sham-corrected effect estimands,1800 paired observations evaluated across models,1800 rows,COMPLETED,predictions/intervention_effects.csv
+EXP-15,Biostatistics,Wilcoxon signed-rank tests and Cohen's d_z,Hypothesis testing of regional decay,p < 10^-5 for core; p < 0.05 for immediate,1800 tests,COMPLETED,reports/primary_audit_summary.md
+EXP-16,Secondary Audit,Architectural inductive bias comparison,ViT vs CNN core and margin sensitivity,ViT core reliance +0.074 (p=0.0123),90 pairs,COMPLETED,reports/secondary_robustness_report.md
+EXP-17,Secondary Audit,Intervention method robustness,Telea PDE vs Gaussian texture fill correlation,r=0.748 (Cheng); r=0.551 (BRISC),90 pairs,COMPLETED,reports/secondary_robustness_report.md
+EXP-18,Secondary Audit,Acquisition plane stratification,Sensitivity across Axial/Coronal/Sagittal,Spatial decay preserved across all 3 planes,45 slices,COMPLETED,reports/secondary_robustness_report.md
+EXP-19,Secondary Audit,Biological class heterogeneity,Margin-to-core ratio across tumour classes,Glioma=35.0%; Meningioma=33.1%; Pituitary=15.1%,45 slices,COMPLETED,reports/secondary_robustness_report.md
+EXP-20,Secondary Audit,Benchmark duplicate leakage quantification,Distortion analysis of official BRISC test set,10.1% leakage masks class imbalance,1000 test,COMPLETED,reports/secondary_robustness_report.md
+EXP-21,Figures,Publication figure rendering (300 DPI),10 high-resolution publication figures,Rendered Figures 1 through 10,10 figures,COMPLETED,figures/
+EXP-22,Manuscript,Publication PDF and HTML compilation,16-page MedIA-standard PDF with figures,Generated manuscript.pdf and manuscript.html,16 pages,COMPLETED,paper/manuscript.pdf
+

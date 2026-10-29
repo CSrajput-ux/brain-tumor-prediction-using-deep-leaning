@@ -1,0 +1,31 @@
+claim_or_value,manuscript_locations,source_of_truth,observed_values,consistency_status,resolution,verification_notes
+Cheng Dataset Sample Count (N=3064),"Abstract, Methods 3.1, Table 1, Res Ledger",manifests/cheng_manifest.csv,3064,CONSISTENT,Retained 3064,Verified across 233 distinct patients
+Cheng Patient Count (N=233),"Abstract, Methods 3.1, Res Ledger",manifests/cheng_manifest.csv,233,CONSISTENT,Retained 233,Extracted from MATLAB struct PID
+BRISC Dataset Total Count (N=6000),"Abstract, Methods 3.1, Res Ledger",manifests/brisc_manifest.csv,6000,CONSISTENT,Retained 6000,5000 train / 1000 test
+BRISC Leaked Duplicate Slices (10.1% / 101 slices),"Abstract, Methods 3.2, Results 4.5, Table 1, Res Ledger",manifests/duplicate_pairs.csv,101,CONSISTENT,Retained 101,10.1% official test leakage (96 meningiomas)
+BRISC Clean Benchmark Count (N=899),"Abstract, Methods 3.2, Table 1, Results 4.5, Res Ledger",manifests/brisc_splits.csv,899,CONSISTENT,Retained 899,759 mask-supported slices
+Cheng ResNet-50 Macro-F1 (0.7190),"Results 4.1, Table 1, Res Ledger",predictions/oof_predictions_cheng_fold_1_resnet50.csv,0.7190,CONSISTENT,Retained 0.7190,Fold 1 out-of-fold validation
+Cheng DeiT-Small Macro-F1 (0.8403),"Results 4.1, Table 1, Res Ledger",predictions/oof_predictions_cheng_fold_1_deit_small.csv,0.8403,CONSISTENT,Retained 0.8403,Fold 1 out-of-fold validation
+Cheng ResNet-50 ECE (0.1835),"Abstract, Results 4.1, Table 1, Discussion 5.3, Res Ledger",reports/baseline_training_report.md,0.1835,CONSISTENT,Retained 0.1835,15-bin Expected Calibration Error
+Cheng DeiT-Small ECE (0.0366),"Abstract, Results 4.1, Table 1, Discussion 5.3, Res Ledger",reports/baseline_training_report.md,0.0366,CONSISTENT,Retained 0.0366,Superior probability calibration
+BRISC Clean ResNet-50 Macro-F1 (0.4181),"Results 4.1, Table 1, Results 4.5, Res Ledger",predictions/test_predictions_brisc_resnet50.csv,0.4181,CONSISTENT,Retained 0.4181,De-duplicated clean test set
+BRISC Clean DeiT-Small Macro-F1 (0.5999),"Results 4.1, Table 1, Results 4.5, Res Ledger",predictions/test_predictions_brisc_deit_small.csv,0.5999,CONSISTENT,Retained 0.5999,De-duplicated clean test set
+DeiT Cheng Method A Core Sensitivity (0.1282),"Abstract, Results 4.2, Table 2, Res Ledger",predictions/intervention_effects.csv,0.1282,CONSISTENT,Retained 0.1282,Wilcoxon p=9.13e-6; dz=0.518
+DeiT Cheng Method B Core Sensitivity (0.1449),"Abstract, Results 4.2, Table 2, Res Ledger",predictions/intervention_effects.csv,0.1449,CONSISTENT,Retained 0.1449,Wilcoxon p=3.09e-8; dz=0.669
+DeiT Cheng Immediate Margin Sensitivity (0.0213),"Abstract, Results 4.2, Table 2, Res Ledger",predictions/intervention_effects.csv,0.0213,CONSISTENT,Retained 0.0213,Wilcoxon p=0.0267; dz=0.222
+DeiT Cheng Outer Margin Sensitivity (0.0063),"Results 4.2, Table 2, Res Ledger",predictions/intervention_effects.csv,0.0063,CONSISTENT,Retained 0.0063,Wilcoxon p=0.2866 (n.s.)
+DeiT Cheng Remote Context Sensitivity (0.0128),"Results 4.2, Table 2, Res Ledger",predictions/intervention_effects.csv,0.0128,CONSISTENT,Retained 0.0128,Wilcoxon p=0.0801 (n.s.)
+ResNet Cheng Method A Core Sensitivity (0.0311),"Results 4.2, Table 2, Res Ledger",predictions/intervention_effects.csv,0.0311,CONSISTENT,Retained 0.0311,Wilcoxon p=6.54e-4; dz=0.548
+ResNet Cheng Method B Core Sensitivity (0.0603),"Results 4.2, Table 2, Res Ledger",predictions/intervention_effects.csv,0.0603,CONSISTENT,Retained 0.0603,Wilcoxon p=0.0173; dz=0.396
+ViT vs CNN Core Reliance Difference (+0.0738),"Abstract, Results 4.3, Res Ledger",predictions/intervention_effects.csv,0.0738,CONSISTENT,Retained +0.0738,Wilcoxon p=0.0123; dz=0.362
+Inpainting vs Texture Fill Core Correlation (r=0.748),"Results 4.4, Figure 6, Res Ledger",predictions/intervention_effects.csv,0.748,CONSISTENT,Retained r=0.748,Pearson r; Spearman rho=0.541
+BRISC Axial Mean Core Sensitivity (0.0337),"Results 4.4, Table 3, Res Ledger",reports/secondary_robustness_report.md,0.0337,CONSISTENT,Retained 0.0337,Axial plane (N=15)
+BRISC Coronal Mean Core Sensitivity (0.0298),"Results 4.4, Table 3, Res Ledger",reports/secondary_robustness_report.md,0.0298,CONSISTENT,Retained 0.0298,Coronal plane (N=15)
+BRISC Sagittal Mean Core Sensitivity (0.0582),"Results 4.4, Table 3, Res Ledger",reports/secondary_robustness_report.md,0.0582,CONSISTENT,Retained 0.0582,Sagittal plane (N=15)
+Glioma Margin-to-Core Ratio (35.0%),"Abstract, Results 4.4, Table 4, Res Ledger",reports/secondary_robustness_report.md,0.350,CONSISTENT,Retained 35.0%,Reflects infiltrative growth
+Meningioma Margin-to-Core Ratio (33.1%),"Results 4.4, Table 4, Res Ledger",reports/secondary_robustness_report.md,0.331,CONSISTENT,Retained 33.1%,Reflects dural tail and edema
+Pituitary Margin-to-Core Ratio (15.1%),"Abstract, Results 4.4, Table 4, Res Ledger",reports/secondary_robustness_report.md,0.151,CONSISTENT,Retained 15.1%,Reflects sellar confinement
+Non-Target Invariance Max Difference (0.00),"Results 4.2, Res Ledger",manifests/intervention_qc.csv,0.00,CONSISTENT,Retained 0.00,100% strict invariance
+Total Evaluated Interventions (1200),"Abstract, Methods 3.6, Results 4.2, Res Ledger",manifests/intervention_qc.csv,1200,CONSISTENT,Retained 1200,100% QC compliance
+Total Paired Audit Observations (1800),"Abstract, Results 4.2, Res Ledger",predictions/intervention_effects.csv,1800,CONSISTENT,Retained 1800,Paired model-region evaluations
+

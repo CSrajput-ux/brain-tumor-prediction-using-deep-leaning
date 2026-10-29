@@ -10,9 +10,6 @@ __pycache__/
 venv/
 .venv/
 env/
-.env/
-
-# Environment variables & secrets
 .env
 .env.*
 *.token
@@ -20,18 +17,20 @@ env/
 *.key
 credentials.json
 
-# Datasets and raw MRI data
+# Raw MRI Datasets (Excluded from git tracking due to size; see manifests/ for verifiable metadata)
+cheng/
+brisc/
 brainTumorDataPublic_*/
 prepared/
-prepared_full_run/
-prepared_verify/
+prepared_*/
 *.mat
 *.h5
 *.hdf5
 *.nii
 *.nii.gz
 
-# Model weights & large binary checkpoints
+# Large Binary Model Checkpoints (Excluded from git tracking; see reports/baseline_training_report.md)
+checkpoints/
 *.pt
 *.pth
 *.ckpt
@@ -39,31 +38,13 @@ prepared_verify/
 *.bin
 *.weights
 
-# IDE & OS files
+# IDE, OS, Tools & Scratch
+.tools/
 .DS_Store
 Thumbs.db
+~$*
 .vscode/
 .idea/
-
-# Logs & Temporary Scratch
 *.log
 scratch/
-*.tmp
-*.swp
-~$*
-paper_full_text.txt
-docx_extracted_text.txt
-draft_v2_extracted.txt
-temp_head.docx
-scratch_docx_imgs/
-build_final_docx.py
-check_final_docx.py
-fix_final_docx.py
-patch_table9_and_caveat.py
-scan_paper.py
-apply_critical_revisions.py
-find_critiques.py
-find_stray.py
-# Backups
-_BACKUP_*
-*.zip
+reports/template_audit_raw.txt
