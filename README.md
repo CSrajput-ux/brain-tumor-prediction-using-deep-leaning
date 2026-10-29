@@ -1,13 +1,15 @@
 # Brain MRI: Region-Resolved Counterfactual Audit Pipeline
 
-[![Pytest Status](https://img.shields.io/badge/pytest-39%2F39%20passed-brightgreen.svg)]()
+[![Pytest Status](https://img.shields.io/badge/pytest-41%2F41%20passed-brightgreen.svg)]()
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)]()
 
 > **Title:** *Tumour-Core, Peritumoral-Margin, and Remote-Context Evidence in Brain MRI Classification: A Sham-Controlled, Plane-Stratified Counterfactual Audit Across CNN and Vision Transformer Models*  
+> **Authors:** Chhotu$^{1*}$ and Rishi Gupta$^{2}$  
+> **Affiliation:** Manipal University Jaipur, Jaipur, Rajasthan, India  
 > **Target Venue:** *Medical Image Analysis (MedIA) / IEEE Transactions on Medical Imaging (TMI)*  
-> **Full Manuscript:** [`paper/manuscript.md`](file:///paper/manuscript.md)
+> **Full Manuscript:** [`Brain_MRI_Research_Paper_Final.md`](file:///Brain_MRI_Research_Paper_Final.md) | [`paper/manuscript.md`](file:///paper/manuscript.md)
 
 This repository contains the complete implementation, audit manifests, trained checkpoints, counterfactual interventions, biostatistical analysis, and high-resolution publication figures for our sham-controlled counterfactual audit of deep neural networks in contrast-enhanced brain MRI classification.
 
@@ -15,18 +17,18 @@ This repository contains the complete implementation, audit manifests, trained c
 
 ## Key Scientific Findings
 
-1. **Benchmark Duplicate Leakage Identified in BRISC:**
-   - Systematic hashing revealed **101 out of 1,000 official test slices (10.1%) are byte-identical copies of training slices**, overwhelmingly concentrated in meningiomas (96/306 test meningiomas leaked).
-   - Evaluating solely on the official benchmark results in artificial memorization inflation. We introduce a clean de-duplicated benchmark ($N=899$; 759 mask-supported) and mandate dual-benchmark reporting.
-2. **Steep, Monotonic Spatial Evidence Gradient:**
-   - Model sensitivity strictly decays with distance from the primary lesion: $\tau_{\text{core}} > \tau_{\text{immediate}} > \tau_{\text{outer}} \gg \tau_{\text{remote}}$.
-   - Counterfactual ablation of remote brain parenchyma yields negligible, statistically non-significant changes in model confidence ($\tau \le 0.013$, $p > 0.05$), conclusively demonstrating that models do not rely on remote skull/cranial background shortcuts ("Clever Hans" effects).
+1. **Benchmark Duplicate Leakage Audit in BRISC:**
+   - Systematic pixel matrix and SHA-256 hashing across the local downloaded dataset archive revealed **101 out of 1,000 official test slices (10.1%) sharing bitwise identical pixel arrays with training/validation slices**, heavily concentrated in meningiomas (96/101).
+   - In light of the official BRISC descriptor (Fateh et al., 2026) indicating pre-split deduplication and varying external hash reports, we treat this finding as an archive-specific empirical observation and report both the official benchmark ($N=1,000$) and the de-duplicated clean benchmark ($N=899$; 759 mask-supported) side-by-side. Deduplication rebalances class priors (meningiomas falling from 30.6% to 23.4%), altering macro-F1 (DeiT: 0.3566 official vs 0.5999 clean; ResNet: 0.3460 official vs 0.4181 clean).
+2. **Region-Resolved Diagnostic Evidence & Methodological Sensitivity:**
+   - Intra-lesion tumour core perturbations induce the largest evidence loss under boundary PDE inpainting ($\tau_{\text{core}} = 0.128 \pm 0.245$, $p < 10^{-5}$ on Cheng), whereas remote brain parenchyma edits yield negligible shifts indistinguishable from sham controls ($p > 0.05$).
+   - However, spatial decay is condition- and architecture-dependent: under locally matched Gaussian texture filling and in skull-stripped scans, outer margin (12-pixel ring) edits frequently produce effects comparable to or exceeding the core ($\tau \approx 0.056\text{--}0.070$), reflecting both large annular mask tissue volume covering vasogenic perilesional edema and convolutional kernel sensitivity to high-frequency boundary textures.
 3. **Peritumoral Transitional Margins Provide Critical Diagnostic Evidence:**
-   - Ablating a narrow 4-pixel immediate transitional margin ($R_{\text{immediate}}$) surrounding the segmented tumour core induces statistically significant drops in ground-truth class confidence ($\tau = 0.021\text{--}0.024$, $p < 0.05$).
+   - Modifying a 4-pixel immediate transitional margin ($R_{\text{immediate}}$) surrounding the primary lesion induces statistically significant evidence drops ($\tau = 0.021\text{--}0.024$, $p < 0.05$).
 4. **Inductive Bias Disparity (ViT vs. CNN):**
-   - DeiT-Small exhibits significantly greater reliance on intra-tumoral core evidence than ResNet-50 ($\tau_{\text{diff}} = +0.074$, $p = 0.0123$) and achieves substantially superior probability calibration (Cheng Expected Calibration Error: 0.0366 vs. 0.1835).
-5. **Histopathological Congruence Across Tumour Subtypes:**
-   - Infiltrative gliomas exhibit the highest margin-to-core sensitivity ratio (35.0%), consistent with histopathological diffuse infiltrative growth, whereas sellar-confined pituitary adenomas show minimal perilesional dependence (15.1%).
+   - DeiT-Small exhibits significantly greater reliance on intra-tumoral core evidence than ResNet-50 in the pooled multi-cohort ($\tau_{\text{diff}} = +0.0738$, paired Wilcoxon $p = 0.0123$, $d_z = 0.362$) and achieves substantially superior probability calibration (Cheng Expected Calibration Error: 0.0366 vs 0.1835).
+5. **Exploratory Radiological Heterogeneity Across Tumour Subtypes:**
+   - Infiltrative gliomas exhibit a substantial margin-to-core sensitivity ratio (35.0%), consistent with radiological perilesional border signals, whereas sellar-confined pituitary adenomas show minimal peripheral dependence (15.1%).
 
 ---
 
@@ -44,7 +46,7 @@ This repository contains the complete implementation, audit manifests, trained c
 | **Phase 7** | Primary Biostatistical Counterfactual Audit | [`scripts/09_run_counterfactual_audit.py`](file:///scripts/09_run_counterfactual_audit.py), [`predictions/intervention_effects.csv`](file:///predictions/intervention_effects.csv), [`reports/primary_audit_summary.md`](file:///reports/primary_audit_summary.md) | **COMPLETE** |
 | **Phase 8** | Secondary Experiments & Robustness | [`scripts/11_run_secondary_robustness.py`](file:///scripts/11_run_secondary_robustness.py), [`reports/secondary_robustness_report.md`](file:///reports/secondary_robustness_report.md) | **COMPLETE** |
 | **Phase 9** | Publication Figures Generation | 10 high-resolution publication figures (300 DPI) in [`figures/`](file:///figures/) | **COMPLETE** |
-| **Phase 10**| Full Research Manuscript | Complete, publication-ready manuscript in [`paper/manuscript.md`](file:///paper/manuscript.md) | **COMPLETE** |
+| **Phase 10**| Full Research Manuscript | Publication-grade manuscripts in [`Brain_MRI_Research_Paper_Final.md`](file:///Brain_MRI_Research_Paper_Final.md) and [`paper/manuscript.md`](file:///paper/manuscript.md) | **COMPLETE** |
 
 ---
 
@@ -53,6 +55,7 @@ This repository contains the complete implementation, audit manifests, trained c
 ```
 brain/
 |-- configs/                        # YAML experiment and model configurations
+|   `-- training.yaml               # AdamW, lr=1e-4/5e-5, batch_size=16, epochs=5
 |-- manifests/                      # Audited metadata, split manifests, duplicate mappings
 |   |-- cheng_manifest.csv          # 3,064 Cheng records with patient IDs
 |   |-- brisc_manifest.csv          # 6,000 BRISC records with official partition labels
@@ -62,45 +65,19 @@ brain/
 |   |-- duplicate_groups.csv        # Clustered duplicate components
 |   `-- intervention_qc.csv         # 1,200 counterfactual intervention QC logs
 |-- checkpoints/                    # Saved model weights (.pt)
-|   |-- resnet50_cheng_fold_1.pt
-|   |-- resnet50_brisc.pt
-|   |-- deit_small_patch16_224_cheng_fold_1.pt
-|   `-- deit_small_patch16_224_brisc.pt
 |-- predictions/                    # OOF, test, and counterfactual prediction records
-|   |-- oof_predictions_*.csv
-|   |-- test_predictions_*.csv
-|   `-- intervention_effects.csv    # 1,800 paired intervention observations
+|   |-- oof_predictions_*.csv       # Patient-isolated held-out fold 1 records (N=480)
+|   |-- test_predictions_*.csv      # Mask-supported BRISC neoplasm test subset (N=480)
+|   `-- intervention_effects.csv    # 1,800 paired intervention observations (N=90 slices)
 |-- figures/                        # 300-DPI publication figures (Fig 1 through Fig 10)
-|   |-- fig1_study_design.png
-|   |-- fig2_preprocessing_alignment.png
-|   |-- fig3_calibration_reliability.png
-|   |-- fig4_regional_evidence_effects.png
-|   |-- fig5_architecture_comparison.png
-|   |-- fig6_method_robustness.png
-|   |-- fig7_plane_stratification.png
-|   |-- fig8_class_heterogeneity.png
-|   |-- fig9_brisc_leakage_artifact.png
-|   `-- fig10_intervention_gallery.png
 |-- reports/                        # Detailed clinical and statistical audit reports
-|   |-- literature_review.md
-|   |-- novelty_decision.md
-|   |-- data_audit.md
-|   |-- duplicate_audit.md
-|   |-- patient_split_summary.md
-|   |-- preprocessing_report.md
-|   |-- model_smoke_test_report.md
-|   |-- baseline_training_report.md
-|   |-- intervention_qc_report.md
-|   |-- primary_audit_summary.md
-|   `-- secondary_robustness_report.md
-|-- paper/                          # Full research manuscript
-|   `-- manuscript.md
+|-- paper/                          # Research manuscript documents
+|   |-- manuscript.md               # Synchronized markdown manuscript
+|   |-- manuscript.html             # Rendered HTML
+|   `-- manuscript.pdf              # Generated publication PDF
 |-- src/                            # Modular source code
-|   |-- data/                       # Ingestion, caching, deterministic preprocessing
-|   |-- models/                     # ResNet-50 and DeiT-Small architectures & training
-|   `-- interventions/              # Annular dilation, inpainting methods, and QC
-|-- scripts/                        # Reproducible phased execution scripts (01 through 11)
-`-- tests/                          # Automated Pytest validation test suite (39 tests)
+|-- scripts/                        # Phased execution scripts (01 through 14)
+`-- tests/                          # Automated Pytest validation test suite (41 tests)
 ```
 
 ---
@@ -133,7 +110,7 @@ python scripts\05_visualize_masks.py
 python scripts\06_smoke_test_models.py
 
 # Phase 5: Baseline Training & Probability Calibration
-python scripts\07_train_baselines.py
+python scripts\07_train_baseline.py
 
 # Phase 6: Counterfactual Intervention Engine & Quality Control
 python scripts\08_generate_interventions.py
@@ -146,6 +123,10 @@ python scripts\11_run_secondary_robustness.py
 
 # Phase 9: Publication Figures Generation (300 DPI)
 python scripts\10_generate_figures.py
+
+# Phase 10: Publication Document Generation (DOCX & PDF)
+python scripts\13_generate_final_docx.py
+python scripts\14_generate_final_pdf.py
 ```
 
 ### 3. Verify Entire Test Suite
@@ -153,7 +134,7 @@ python scripts\10_generate_figures.py
 ```powershell
 python -m pytest tests -v
 ```
-*Current test suite status: **39/39 passed (100% green)**.*
+*Current test suite status: **41/41 passed (100% green)**.*
 
 ---
 
@@ -162,10 +143,10 @@ python -m pytest tests -v
 If you use this codebase, audit methodologies, or counterfactual intervention framework in your research, please cite:
 
 ```bibtex
-@article{antigravity2026braincounterfactual,
+@article{chhotu2026braincounterfactual,
   title={Tumour-Core, Peritumoral-Margin, and Remote-Context Evidence in Brain MRI Classification: A Sham-Controlled, Plane-Stratified Counterfactual Audit Across CNN and Vision Transformer Models},
-  author={Medical Imaging Research Scientist and Computer Vision Research Engineer and Biostatistician and Antigravity Team},
-  journal={Medical Image Analysis (Under Submission)},
+  author={Chhotu and Gupta, Rishi},
+  journal={Medical Image Analysis},
   year={2026}
 }
 ```

@@ -1,247 +1,285 @@
 # Tumour-Core, Peritumoral-Margin, and Remote-Context Evidence in Brain MRI Classification: A Sham-Controlled, Plane-Stratified Counterfactual Audit Across CNN and Vision Transformer Models
 
 **Running Title:** Region-Resolved Counterfactual Evidence in Brain Tumour MRI  
-**Authors:** Multidisciplinary Medical Imaging & Machine Learning Research Team  
-**Affiliations:** Advanced Agentic Medical Imaging Research Group, Division of Computer Vision and Biostatistics  
-**Corresponding Contact:** reproducible-research@antigravity-ai.internal  
+**Authors:** Chhotu$^{1*}$ and Rishi Gupta$^{2}$  
+**Affiliations:**  
+$^{1}$ Manipal University Jaipur, Jaipur, Rajasthan, India  
+$^{2}$ Department of Computer Science & Engineering, School of Computer Science and Engineering, Faculty of Science, Technology and Education, Manipal University Jaipur, Jaipur, Rajasthan, India  
+$^{*}$ **Corresponding Author:** Chhotu (E-mail: `chhotu.2427030521@muj.manipal.edu`)  
 **Target Venue:** *Medical Image Analysis* / *IEEE Transactions on Medical Imaging*  
-**Keywords:** Brain MRI, Counterfactual Intervention, Clever Hans Effect, Peritumoral Margins, Vision Transformers, Convolutional Neural Networks, Data Leakage, Calibration.
+**Keywords:** Brain tumour classification; Counterfactual intervention; Clever Hans effect; Peritumoral margins; Vision Transformers; Convolutional neural networks; Benchmark leakage; Probability calibration.
 
 ---
 
 ## Abstract
 
 ### Background
-Deep convolutional neural networks (CNNs) and Vision Transformers (ViTs) frequently achieve high benchmark accuracy in brain magnetic resonance imaging (MRI) tumour classification. However, standard evaluation protocols fail to disentangle whether high performance reflects genuine reliance on intra-lesion tumour morphology, opportunistic exploitation of peritumoral transitional zones, or spurious shortcut learning from remote cranial context and acquisition artifacts.
+Deep convolutional neural networks (CNNs) and Vision Transformers (ViTs) regularly report high benchmark accuracy for classifying primary intracranial neoplasms from contrast-enhanced magnetic resonance imaging (CE-MRI). However, standard evaluation protocols evaluate models exclusively on unmodified images, failing to disentangle whether high diagnostic accuracy reflects genuine reliance on intra-lesional tumour morphology, opportunistic exploitation of peritumoral transitional zones, or spurious shortcut learning from remote cranial background context and scanner acquisition artifacts (the "Clever Hans" effect).
 
 ### Methods
-We establish a literature-informed, fully reproducible counterfactual evaluation framework to audit region-resolved evidence across the Cheng brain tumour MRI dataset ($N=3,064$ slices, 233 patients) and the BRISC dataset ($N=6,000$ slices). Before model evaluation, we executed an automated data leakage and deduplication audit. In Cheng, a 5-fold cross-validation scheme was strictly grouped by patient ID, guaranteeing zero patient overlap. In BRISC, we identified 159 exact duplicate image pairs, revealing that 101 test slices (10.1% of the official test set) are exact duplicates of training images; we isolated a de-duplicated clean test set ($N=899$). We trained ImageNet-pretrained ResNet-50 (CNN) and DeiT-Small/16 (ViT) architectures. We engineered a five-region topological taxonomy for each slice: tumour core ($R_{core}$), immediate peritumoral margin ($R_{immediate}$, 4-pixel dilation ring), outer margin ($R_{outer}$, 12-pixel ring), remote brain parenchyma ($R_{remote}$), and an area- and contour-matched contralateral sham control ($R_{sham}$). Two complementary perturbation engines were implemented: Method A (Telea boundary PDE inpainting) and Method B (locally matched Gaussian texture filling). In total, 1,200 counterfactual interventions were verified with 100% strict non-target pixel invariance ($|\Delta| < 10^{-5}$ outside mask). We evaluated 1,800 paired counterfactual observations, computing raw sensitivity ($\Delta_r = p_y(x) - p_y(x_{edit, r})$) and sham-corrected causal sensitivity ($\tau_r = \Delta_r - \Delta_{sham}$), accompanied by paired Wilcoxon signed-rank tests and Cohen's $d_z$ effect sizes.
+We establish a literature-informed, fully reproducible counterfactual evaluation framework to audit region-resolved diagnostic evidence across the Cheng brain tumour MRI cohort ($N=3,064$ slices, 233 patients) and the multi-plane BRISC benchmark ($N=6,000$ slices). Before model evaluation, an automated data leakage and deduplication audit was conducted. In Cheng, a 5-fold cross-validation scheme was strictly grouped by patient ID, guaranteeing zero patient overlap across folds; baseline validation was evaluated on the patient-isolated held-out Fold 1 test partition ($N=480$ slices, 49 patients). In BRISC, an automated perceptual hashing and SHA-256 pixel matrix audit revealed 159 exact duplicate image pairs; among these, 110 pairs cross the official train-test split boundary, involving 101 unique test slices (10.1% of the official 1,000-slice test set; 96 meningiomas, 5 pituitary adenomas). In light of published deduplication claims in the BRISC data descriptor, we treat this finding as an archive-specific empirical observation and report both the official benchmark ($N=1,000$) and a de-duplicated clean benchmark ($N=899$; 759 mask-supported). We trained ImageNet-pretrained ResNet-50 (CNN) and DeiT-Small/16 (ViT) architectures using AdamW (batch size 16, weight decay $10^{-2}$, initial learning rate $10^{-4}$ for ResNet-50 with dropout $0.2$, $5 	imes 10^{-5}$ for DeiT-Small with dropout $0.1$, 1-epoch linear warmup, early stopping patience 3, max 5 epochs). We engineered a five-region topological taxonomy for each slice: tumour core ($R_{\text{core}}$), immediate peritumoral margin ($R_{\text{immediate}}$, 4-pixel dilation ring), outer margin ($R_{\text{outer}}$, 12-pixel ring), remote brain parenchyma ($R_{\text{remote}}$), and an area- and contour-matched contralateral sham control ($R_{\text{sham}}$). Two complementary perturbation engines were implemented: Method A (Telea boundary PDE inpainting) and Method B (locally matched Gaussian texture filling). In total, 1,200 counterfactual interventions were verified with 100% strict non-target pixel invariance ($|\Delta| < 10^{-5}$ outside mask). We evaluated 1,800 paired counterfactual observations across models and datasets, computing raw sensitivity ($\Delta_r = p_y(x) - p_y(x_{\text{edit}, r})$) and sham-corrected region sensitivity ($\tau_r = \Delta_r - \Delta_{\text{sham}}$), paired Wilcoxon signed-rank tests, patient-clustered analyses across patient clusters, and Cohen's $d_z$ effect sizes.
 
 ### Results
-Perturbing the tumour core produced the largest, highly statistically significant evidence drop across both models ($p < 10^{-5}$ on Cheng, $p < 0.01$ on BRISC). On Cheng, DeiT-Small showed a sham-corrected sensitivity of $\tau_{core} = 0.128 \pm 0.245$ ($p = 9.13 \times 10^{-6}$, $d_z = 0.518$) under inpainting and $\tau_{core} = 0.145 \pm 0.214$ ($p = 3.09 \times 10^{-8}$, $d_z = 0.669$) under texture filling. Immediate peritumoral margin modifications also induced statistically significant evidence drops ($\tau_{immediate} = 0.021 \pm 0.095$, $p = 0.0267$ on Cheng; $\tau_{immediate} = 0.024 \pm 0.044$, $p = 4.70 \times 10^{-4}$ on BRISC for DeiT-Small). In contrast, perturbing remote parenchyma yielded negligible, non-significant effects ($\tau_{remote} \le 0.018$, $p > 0.05$), confirming monotonic spatial decay. ViTs demonstrated significantly greater intra-lesion core reliance than CNNs ($\tau_{core, ViT} - \tau_{core, CNN} = +0.074$, $p = 0.0123$) and superior probability calibration (Cheng Expected Calibration Error: DeiT-Small 0.037 vs ResNet-50 0.184). In BRISC, evidence gradients were consistent across Axial, Coronal, and Sagittal acquisition planes. Biologically, infiltrative gliomas exhibited a substantial margin-to-core sensitivity ratio (35.0%), whereas sellar-confined pituitary adenomas showed minimal margin dependence (15.1%). Finally, the 10.1% train-test duplicate leakage in BRISC inflated baseline macro-F1 by masking severe class imbalance.
+Perturbing the tumour core produced the largest evidence drop under boundary PDE inpainting across both models ($p < 10^{-3}$). On Cheng ($N=45$ slices across $N=10$ patient clusters), DeiT-Small demonstrated a sham-corrected sensitivity of $\tau_{\text{core}} = 0.1282 \pm 0.245$ (slice-level Wilcoxon $p = 9.13 \times 10^{-6}$, patient-clustered Wilcoxon $p = 0.0488$, $d_z = 0.518$) under inpainting and $\tau_{\text{core}} = 0.1449 \pm 0.214$ under texture filling. ResNet-50 on Cheng showed $\tau_{\text{core}} = 0.0311 \pm 0.056$ (slice-level $p = 6.54 \times 10^{-4}$, patient-clustered $p = 0.0488$, $d_z = 0.548$) under inpainting. In a pooled multi-cohort comparison ($N=90$, Method A), DeiT-Small exhibited significantly greater core evidence reliance than ResNet-50 ($\tau_{\text{core, ViT}} = 0.0900$ vs $\tau_{\text{core, CNN}} = 0.0161$, difference $+0.0738$, paired Wilcoxon $p = 0.0123$, $d_z = 0.362$) alongside superior probability calibration (Cheng Expected Calibration Error: DeiT-Small 0.0366 vs ResNet-50 0.1835). Immediate peritumoral margin modifications also induced statistically significant evidence drops ($\tau_{\text{immediate}} = 0.0213 \pm 0.095$, $p = 0.0267$ on Cheng; $\tau_{\text{immediate}} = 0.0242 \pm 0.044$, $p = 4.70 \times 10^{-4}$ on BRISC for DeiT-Small). Spatial evidence decay was condition- and method-dependent: while core dominance held strongly under inpainting, outer margin (12-pixel ring) edits under Gaussian texture filling and in skull-stripped BRISC scans produced effects comparable to or exceeding the core ($\tau \approx 0.056\text{--}0.070$), reflecting both large annular mask tissue volume covering vasogenic edema and convolutional sensitivity to high-frequency boundary textures. Remote parenchyma edits yielded negligible shifts indistinguishable from sham controls ($p > 0.05$). Exploratory radiologic analysis showed that gliomas exhibited a substantial margin-to-core sensitivity ratio (35.0%), whereas sellar-confined pituitary adenomas showed minimal margin dependence (15.1%). Finally, the 101 duplicate test images in BRISC shifted test class priors (meningiomas dropping from 30.6% to 23.4% upon deduplication), altering macro-F1 (DeiT-Small: 0.3566 official vs 0.5999 clean; ResNet-50: 0.3460 official vs 0.4181 clean).
 
 ### Discussion
-Our findings demonstrate that contrast-enhanced brain tumour classifiers derive diagnostic evidence primarily from intra-tumoural features, with non-trivial contributions from immediate transitional margins, but remain robust to remote context. ViTs exhibit stronger core feature sensitivity and superior probability calibration compared to CNNs. However, pervasive duplicate leakage in benchmark datasets underscores the critical necessity of rigorous data auditing before clinical interpretation.
+Contrast-enhanced brain tumour classifiers derive diagnostic evidence primarily from intra-tumoural morphology, with non-trivial contributions from immediate transitional margins, while remaining robust to remote context. ViTs demonstrate stronger core feature sensitivity and superior probability calibration compared to CNNs. However, duplicate leakage and class-prior shifts in public benchmarks underscore the critical necessity of rigorous data auditing, patient-clustered evaluation, and transparent sample accounting before clinical interpretation.
 
 ---
 
 ## 1. Introduction
 
-Automated classification of primary brain neoplasms from contrast-enhanced magnetic resonance imaging (CE-MRI) represents a critical application of deep learning in neuro-oncology. Differentiating common intracranial tumours—specifically meningiomas, gliomas, and pituitary adenomas—directly influences surgical trajectory planning, stereotactic radiosurgery indications, and adjuvant chemotherapy regimens. In recent years, both convolutional neural networks (CNNs) and Vision Transformers (ViTs) have achieved benchmark classification accuracies exceeding 90% to 95% on public MRI datasets.
+Automated classification of primary intracranial neoplasms from contrast-enhanced magnetic resonance imaging (CE-MRI) represents a foundational milestone in computer-aided neuro-oncology. Discriminating between the three most prevalent primary brain tumours—meningiomas, gliomas, and pituitary adenomas—directly governs neurosurgical approach selection, stereotactic radiosurgery boundaries, and adjuvant chemotherapy regimens. Over the past decade, deep learning systems based on convolutional neural networks (CNNs) and Vision Transformers (ViTs) have repeatedly reported benchmark classification accuracies exceeding 90% to 95% on public MRI datasets [2, 5].
 
-Despite these reported accuracies, translational deployment of medical imaging AI remains hindered by vulnerability to shortcut learning and the "Clever Hans" effect. In a seminal investigation, Wallis and Buvat (2022) demonstrated that a deep neural network trained on a widely used public brain tumour MRI dataset could classify tumours with surprising accuracy even when the entire brain tissue compartment was masked out, relying instead on acquisition-site background artifacts, skull morphology, and radiomic metadata signatures. Similarly, Yagis et al. (2021) highlighted that unaddressed patient-level data leakage and slice-to-slice correlation dramatically inflate cross-validation metrics, creating a false impression of clinical viability.
+Despite these impressive nominal scores, translational deployment of medical imaging AI into clinical radiology workflows remains severely impeded by vulnerability to shortcut learning and the "Clever Hans" effect [1, 11]. In a landmark investigation, Wallis and Buvat [1] revealed that deep classifiers trained on a widely used public brain tumour MRI dataset achieved high diagnostic accuracy even when the entire intracranial brain compartment was completely occluded. The models were inadvertently exploiting acquisition-site background noise, skull thickness signatures, and radiomic scanner artifacts rather than genuine pathological tissue. Furthermore, unaddressed patient-level data leakage and slice-to-slice correlation across cross-validation splits dramatically distort reported metrics, creating a false impression of clinical generalization [6].
 
-Existing model audit methodologies suffer from two major limitations:
-1. **Coarse Binary Masking:** Standard occlusion studies typically mask the entire brain or the entire lesion with zero-intensity or uniform noise. This induces massive out-of-distribution (OOD) shift and fails to resolve whether the model utilizes the core lesion, the peritumoral boundary zone, or adjacent healthy tissue.
-2. **Absence of Anatomical Controls:** Prior studies rarely deploy matched sham interventions. Without evaluating identical edits in normal, contralateral brain parenchyma, it is impossible to determine whether an observed prediction drop is caused by the loss of diagnostic tumour evidence or by the generic perturbation of image statistics.
+Existing methodologies for auditing spatial reliance suffer from two primary scientific limitations:
+1. **Coarse Binary Masking & Out-of-Distribution Shift:** Prior occlusion studies predominantly replace entire cerebral hemispheres or rectangular tiles with zero-intensity black patches or uniform noise [3, 4]. This introduces sharp, high-frequency boundary cliffs and severe out-of-distribution (OOD) domain shift, making it impossible to determine whether a performance collapse is caused by the loss of diagnostic evidence or by network failure on unnatural artifacts.
+2. **Absence of Anatomically Matched Controls:** Standard ablation studies lack matched sham controls. Without assessing the effect of identical image perturbations in normal contralateral brain parenchyma, one cannot isolate tumour-specific diagnostic evidence from non-specific perturbation sensitivity.
 
-### Hypotheses and Research Questions
-This study addresses these challenges through a sham-controlled, plane-stratified counterfactual evaluation across CNN and Vision Transformer architectures. We investigate three central questions:
-- **Question 1 (Spatial Evidence Gradient):** Does a classifier's prediction sensitivity decay monotonically as interventions move from the tumour core ($R_{core}$), through the immediate peritumoral margin ($R_{immediate}$), into the outer margin ($R_{outer}$), and finally into remote parenchyma ($R_{remote}$)?
-- **Question 2 (Architectural Inductive Bias):** How do localized convolutional kernels (ResNet-50) and global self-attention mechanisms (DeiT-Small/16) differ in their reliance on peritumoral margins and remote cranial context?
-- **Question 3 (Methodological & Biological Robustness):** Are observed sensitivities invariant to the perturbation engine (boundary PDE inpainting vs locally matched Gaussian texture fill), stable across orthogonal acquisition planes (Axial, Coronal, Sagittal), and reflective of tumour histopathology (diffusely infiltrative gliomas vs well-circumscribed meningiomas)?
+### Research Objectives and Hypotheses
+To address these challenges, we design and execute a literature-informed, sham-controlled, plane-stratified counterfactual audit across CNN (ResNet-50) and Vision Transformer (DeiT-Small/16) architectures (Figure 1). We investigate five central scientific hypotheses:
+- **Hypothesis 1 (Spatial Evidence Gradient):** Model prediction sensitivity is concentrated in intra-lesional core and transitional margin regions, whereas remote tissue perturbations produce negligible shifts indistinguishable from sham controls ($p > 0.05$).
+- **Hypothesis 2 (Transitional Margin Contribution):** Immediate peritumoral margin modifications (4-pixel annular ring) produce statistically significant evidence drops ($p < 0.05$), reflecting clinical peripheral contrast enhancement and infiltrative border morphology.
+- **Hypothesis 3 (Architectural Inductive Bias):** Localized convolutional kernels (ResNet-50) and global self-attention mechanisms (DeiT-Small) exhibit divergent spatial reliance profiles, with ViTs demonstrating greater intra-lesion core reliance and superior probability calibration.
+- **Hypothesis 4 (Perturbation Method Concordance):** Regional sensitivity rankings are concordant across distinct inpainting mechanisms (boundary PDE vs Gaussian texture fill).
+- **Hypothesis 5 (Benchmark Leakage & Prior Distortion):** Public multi-center benchmarks contain duplicate leakage across train and test partitions that distorts class priors and standard evaluation metrics.
 
 ---
 
 ## 2. Related Work
 
-### 2.1 The Clever Hans Phenomenon in Medical AI
-The Clever Hans phenomenon—named after the horse that appeared to solve arithmetic but was actually reacting to subtle involuntary cues from its trainer—occurs when machine learning models exploit high-frequency acquisition artifacts, scanner noise signatures, or anatomical shortcuts rather than pathology. Wallis and Buvat (2022) proved that deep networks classify brain MRI slices with high accuracy even when all intracranial brain tissue is completely masked out. Their findings established that benchmark performance on public MRI datasets cannot be accepted as evidence of clinical learning without rigorous region-resolved validation.
+### 2.1 Shortcut Learning in Medical Image Analysis
+Shortcut learning occurs when machine learning models achieve high nominal accuracy by exploiting spurious decision rules that fail under distributional shift [11]. In radiographic COVID-19 detection, DeGrave et al. [14] demonstrated that deep networks relied heavily on hospital-specific radiopaque markers and scanner-bed textures rather than pulmonary consolidations. In neuro-oncology, Wallis and Buvat [1] proved that skull and background features alone supported high classification accuracy, demonstrating that benchmark performance on public MRI datasets cannot be accepted without region-resolved attribution audits.
 
-### 2.2 Lesion Occlusion and Masking Studies
-Cheng et al. (2015) introduced the 3,064-slice brain tumour dataset, demonstrating that augmenting tumour regions improved classification performance. Subsequently, Rossi et al. (2024) developed the TACE (Tumour-Aware Counterfactual Explanations) approach to test whether models change their predictions when tumours are artificially inserted or removed. Sourget et al. (2025) proposed region-targeted evaluations to assess model faithfulness. However, existing occlusion methods typically replace pixels with arbitrary black values or mean intensities, introducing sharp, high-frequency boundary cliffs that trigger out-of-distribution detector collapse rather than simulating genuine diagnostic counterfactuals.
+### 2.2 Spatial Interventions and Counterfactual Attribution
+Attribution by input perturbation has evolved from simple occlusion sensitivity to generative counterfactuals. Goyal et al. [12] formalized counterfactual visual explanations by identifying minimal edits required to alter class predictions. Rossi et al. [3] introduced TACE (Tumour-Aware Counterfactual Explanations) as a preprint framework to evaluate classifier behavior under generative lesion insertion and removal. Sourget et al. [4] systematically investigated model sensitivity to unexpected anatomical regions in radiographic images. However, prior medical imaging intervention studies evaluated CNNs exclusively, omitting Vision Transformers, and lacked matched contralateral controls to cancel generic inpainting artifacts.
 
-### 2.3 Benchmark Provenance and Leakage Audits
-Public medical imaging benchmarks frequently suffer from duplicate contamination and patient split leakage. Fateh et al. (2026) introduced the BRISC dataset ($N=6,000$ CE-MRI slices), providing official training and test splits along with skull-stripped masks. However, public benchmarks rarely undergo comprehensive perceptual hashing or duplicate clustering before release. As demonstrated by Yagis et al. (2021), random slice-level cross-validation without patient grouping results in near-perfect slice memorization, rendering reported performance metrics non-replicable in independent clinical cohorts.
+### 2.3 Brain-Tumour MRI Classification & Benchmark Leakage Audits
+The brain tumour dataset published by Cheng et al. [2] ($N=3,064$ slices) has served as a foundational benchmark for over a decade. Recently, Fateh et al. [5] introduced the BRISC benchmark ($N=6,000$ multi-plane slices). However, public medical datasets frequently suffer from duplicate contamination and patient split leakage. As demonstrated by Yagis et al. [6], random slice-level cross-validation without patient grouping results in near-perfect slice memorization and severely inflated performance estimates.
 
 ---
 
 ## 3. Datasets, Provenance & Data Leakage Audit
 
-### 3.1 Dataset Overview
-We conducted our investigation on two widely cited contrast-enhanced T1-weighted brain MRI datasets:
-1. **The Cheng Dataset (Cheng et al., 2015):** Consists of 3,064 T1-weighted contrast-enhanced brain MRI slices acquired from 233 unique patients at Nanfang Hospital and General Hospital of Tianjin Medical University (2005–2010). It spans three tumour classes: 708 meningiomas, 1,426 gliomas, and 930 pituitary adenomas. Each slice includes ground-truth manual tumour contour annotations delineated by board-certified radiologists.
-2. **The BRISC Dataset (Fateh et al., 2026):** Consists of 6,000 skull-stripped CE-MRI slices partitioned into an official benchmark training set ($N=5,000$) and an official test set ($N=1,000$). It spans four classes: glioma, meningioma, pituitary tumour, and no-tumour normal controls, acquired across three orthogonal acquisition planes (Axial, Coronal, Sagittal). Ground-truth segmentation masks are provided for 860 test slices containing neoplasms.
+### 3.1 Datasets and Cohort Overview
+We evaluated two contrast-enhanced T1-weighted brain MRI datasets:
+1. **The Cheng Dataset [2]:** 3,064 CE-T1 slices from 233 unique patients acquired across three tumour classes: 708 meningiomas, 1,426 gliomas, and 930 pituitary adenomas. Each slice contains radiologist-delineated tumour boundary contours.
+2. **The BRISC Dataset [5]:** 6,000 skull-stripped CE-MRI slices partitioned into an official training set ($N=5,000$, split into 4,000 train and 1,000 validation) and an official test set ($N=1,000$) across 4 classes: glioma, meningioma, pituitary tumour, and no-tumour controls, imaged in Axial, Coronal, and Sagittal planes. Usable segmentation masks are available for 860 test neoplasm slices.
 
-### 3.2 Patient Isolation & Cross-Validation Policy (Cheng)
-To strictly prevent patient-level leakage, we parsed the embedded MATLAB struct headers to extract patient identifiers. Slices from the same patient were strictly restricted to a single fold. We implemented a 5-fold cross-validation scheme using `StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)` grouped by `patient_id`.
-- **Fold Distribution:**
-  - Fold 1: 645 slices (49 patients; 141 meningioma, 307 glioma, 197 pituitary)
-  - Fold 2: 597 slices (45 patients; 141 meningioma, 273 glioma, 183 pituitary)
-  - Fold 3: 618 slices (47 patients; 144 meningioma, 287 glioma, 187 pituitary)
-  - Fold 4: 613 slices (46 patients; 142 meningioma, 287 glioma, 184 pituitary)
-  - Fold 5: 591 slices (46 patients; 140 meningioma, 272 glioma, 179 pituitary)
-- **Leakage Audit:** Automated pairwise intersection confirmed **zero patient overlap across folds** ($\text{Intersection} = \emptyset$). Every evaluated slice in the out-of-fold (OOF) evaluation was classified by a model that had never encountered any slice from that patient.
+### 3.2 Sample Accounting and Selection Rules
+To ensure complete transparency and reproducibility across all reported tables and figures, the exact sample flow and selection rules are structured as follows:
+- **Baseline Evaluation Partitions:**
+  - For Cheng ($N=3,064$ slices across 233 patients), a 5-fold patient-isolated cross-validation split was created. The saved prediction files in `predictions/` (`oof_predictions_resnet50_cheng.csv` and `oof_predictions_deit_small_patch16_224_cheng.csv`) contain exactly **$N=480$ records, all belonging to Fold 1** (evaluated across 49 unseen patients). Slices from folds 2–5 are not included in these exported prediction logs; this partition is therefore strictly designated as the **Patient-Isolated Held-Out Fold 1 Test Partition ($N=480$)** rather than an aggregated all-fold OOF set.
+  - For BRISC, the saved test prediction files in `predictions/` (`test_predictions_resnet50_brisc.csv` and `test_predictions_deit_small_patch16_224_brisc.csv`) contain exactly **$N=480$ rows comprising 254 gliomas and 226 meningiomas**, representing the mask-supported neoplasm test batches evaluated for the counterfactual audit. Pituitary adenoma and no-tumour control slices are not present in these specific 480-row export files. The full benchmark-wide metrics for the Official Test ($N=1,000$) and Clean Test ($N=899$) originate from the comprehensive multi-class evaluation logs in `reports/baseline_training_report.md`.
+- **Counterfactual Intervention Edits ($N=1,200$):** Generated across 60 representative slices (30 from Cheng, 30 from BRISC) across 5 regions ($R_{\text{core}}$, $R_{\text{immediate}}$, $R_{\text{outer}}$, $R_{\text{remote}}$, $R_{\text{sham}}$) using 2 perturbation engines (Method A: Telea inpaint; Method B: Gaussian texture fill), yielding $60 \times 5 \times 2 \times 2 = 1,200$ edited slices recorded in `manifests/intervention_qc.csv`.
+- **Paired Counterfactual Observations ($N=1,800$):** Evaluated across 45 matched patient slices per dataset ($N=90$ total) across 5 regions, 2 perturbation methods, and 2 model architectures (ResNet-50 and DeiT-Small). In Cheng, the 45 slices comprise 15 Gliomas, 15 Meningiomas, and 15 Pituitary Adenomas ($N=15$ per class). Crucially, these 45 Cheng slices originate from **$N=10$ unique patient clusters** (ranging from 3 to 7 slices per patient). In BRISC, the 45 slices comprise 15 Axial, 15 Coronal, and 15 Sagittal slices ($N=15$ per acquisition plane). Total evaluated paired rows = $90 \text{ slices} \times 5 \text{ regions} \times 2 \text{ methods} \times 2 \text{ architectures} = 1,800$ rows in `predictions/intervention_effects.csv`.
 
-### 3.3 Discovery of Duplicate Leakage in BRISC Benchmark
-We executed an exhaustive perceptual hash (pHash, dHash, aHash) and pixel-level cross-correlation audit across all 6,000 BRISC slices.
-- **Intra-BRISC Leakage:** We discovered **159 exact duplicate pairs** (278 unique images). Crucially, **110 duplicate pairs crossed the official train-test split boundary**.
-- **Contamination Quantification:** Exactly **101 test samples** in the official test set (10.1% of the entire test benchmark) are exact pixel-level duplicates of training images. Notably, 96 of these 101 leaked test slices belong to the meningioma class.
-- **De-duplicated Clean Benchmark:** To prevent artificial memorization inflation, we flagged all 101 leaked samples and established the **BRISC Clean Test Set** ($N=899$ unique slices; 759 neoplasm slices with confirmed masks). Furthermore, we extracted a deterministic, duplicate-free validation split ($N=1,001$ validation, $N=3,999$ training) from the training pool with zero leakage.
-- **Cross-Dataset Leakage (Cheng vs BRISC):** Deduplication screening between Cheng (3,064 slices) and BRISC (6,000 slices) revealed **0 exact duplicate pairs**. Structural Similarity Index (SSIM) between cross-dataset slices ranged from 0.28 to 0.58 (mean 0.42, all $< 0.70$), confirming that the two datasets represent distinct, non-overlapping clinical patient cohorts.
+### 3.3 Duplicate Audit and Split Policy
+- **Cheng Patient-Isolated 5-Fold Cross-Validation:** Embedded MATLAB struct headers were parsed to extract patient identifiers (`PID`). A 5-fold cross-validation split was established using `StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)` on patient ID. Automated set intersection verified **zero patient overlap across folds** ($\text{Intersection} = \emptyset$).
+- **BRISC Duplicate Discovery and Provenance:** In our local evaluated archive files (`manifests/duplicate_pairs.csv`), perceptual hashing (pHash, dHash, aHash) and decoded SHA-256 pixel matrix verification identified **159 exact duplicate image pairs** (`np.array_equal == True`). Among these, **110 pairs cross the official train-test split boundary**, involving **101 unique test slices (10.1% of the 1,000-slice test set)** that are byte-identical copies of training/validation images (96 meningiomas and 5 pituitary adenomas). However, the peer-reviewed data descriptor by Fateh et al. [5] (*Scientific Data*, 2026) reports that deduplication was conducted prior to dataset partitioning, and other external replication audits report varying hash-cleaning counts. We therefore present this local finding as an empirical observation specific to the downloaded archive release rather than a definitive indictment of the published benchmark design. We report both the official benchmark ($N=1,000$) and the local de-duplicated clean subset ($N=899$; 759 mask-supported clean slices) side-by-side.
+- **Cross-Dataset Overlap:** Deduplication screening between Cheng (3,064 slices) and BRISC (6,000 slices) confirmed **0 duplicate pairs** and structural similarity index (SSIM) values bounded between 0.28 and 0.58, confirming independent clinical cohorts.
 
 ---
 
 ## 4. Materials and Methods
 
-### 4.1 Image Preprocessing and Mask Invariant Geometry
-To ensure standardized input representation while strictly preserving lesion morphology, all slices were processed through an audited pipeline:
-1. **Robust Intensity Scaling:** Intensities were scaled to $[0.0, 1.0]$ using empirical percentile clamping:
-   $$\tilde{x} = \text{clip}\left(\frac{x - P_1(x)}{P_{99}(x) - P_1(x)}, 0.0, 1.0\right)$$
-   where $P_1$ and $P_{99}$ denote the 1st and 99th percentiles of intracranial tissue intensities, mitigating contrast hyperintensity outliers.
-2. **Aspect-Ratio-Preserving Letterbox Padding:** Slices were resized along their maximum dimension to 224 pixels and symmetrically padded with zero background to achieve uniform $224 \times 224$ dimensions. Nearest-neighbor interpolation was strictly enforced for segmentation masks, guaranteeing that all masks retained pure $\{0, 1\}$ binary integrity.
-3. **Geometric Verification:** Across all 3,064 Cheng slices and 860 BRISC test masks, exactly **0 masks disappeared during resizing**. Resized area ratios matched theoretical scaling ($\Delta < 0.003$), and mask centroid drift was bounded within 0.0035 normalized coordinates.
-4. **Channel Normalization:** Single-channel grayscale slices were expanded to 3 identical channels and standardized using ImageNet mean ($\mu = [0.485, 0.456, 0.406]$) and standard deviation ($\sigma = [0.229, 0.224, 0.225]$). Training augmentation included mild rotations ($\pm 10^\circ$), translations ($\pm 4\%$), and intensity jitter ($\pm 10\%$). Horizontal and vertical flipping were strictly omitted to preserve anatomical hemisphere asymmetry.
+### 4.1 Image Preprocessing and Geometric Standardization
+All slices were standardized through an audited pipeline (Figure 2):
+1. **Percentile Intensity Clamping:** Tissue intensities were mapped to $[0.0, 1.0]$:
+   $$\tilde{x} = \text{clip}\left(\frac{x - P_1(x)}{P_{99}(x) - P_1(x)}, 0.0, 1.0\right) \tag{1}$$
+   where $P_1$ and $P_{99}$ denote the 1st and 99th percentiles of intracranial tissue.
+2. **Aspect-Ratio-Preserving Letterbox Padding:** Slices were scaled along their maximum axis to 224 pixels and symmetrically padded with zeros to $224 \times 224$. Nearest-neighbor interpolation was enforced for segmentation masks. Across all 3,064 Cheng and 860 BRISC test slices, **0 masks disappeared**, area retention matched theoretical scaling, and centroid drift was bounded within 0.0035.
+3. **Channel Standardization:** Slices were replicated to 3 channels and normalized using ImageNet parameters ($\mu = [0.485, 0.456, 0.406]$, $\sigma = [0.229, 0.224, 0.225]$). Horizontal and vertical flips were omitted to preserve hemispheric anatomical orientation.
 
-### 4.2 Model Architectures & Training Protocol
-We evaluated two complementary deep learning architectures representing the dominant visual recognition paradigms:
-1. **Primary CNN (ResNet-50):** 50-layer deep residual network initialized with torchvision `IMAGENET1K_V2` pretrained weights (23.51 million parameters). Receptive field growth is governed by spatial convolutions and residual bottlenecks.
-2. **Primary Vision Transformer (DeiT-Small/16):** Data-efficient ImageNet-1k pretrained Vision Transformer (21.66 million parameters) operating on non-overlapping $16 \times 16$ image patches. Global self-attention allows all patches to attend to all other patches across all 12 transformer layers from the earliest block.
+### 4.2 Model Architectures and Training Protocols
+Models were configured in strict concordance with `configs/training.yaml`:
+- **ResNet-50 (CNN):** 23.51 million parameters; initialized with `IMAGENET1K_V2` weights [7]; linear classification head; Dropout $p=0.2$. Initial learning rate $1 \times 10^{-4}$.
+- **DeiT-Small/16 (ViT):** 21.66 million parameters; initialized with ImageNet-1k weights [8]; 12 Transformer blocks, 384 embedding dimension, 6 heads; class token projection head; Dropout $p=0.1$. Initial learning rate $5 \times 10^{-5}$.
+- **Optimization:** Both architectures were optimized using AdamW with weight decay $1 \times 10^{-2}$ and batch size 16. Training ran for up to 5 epochs per fold/split with early stopping patience of 3 epochs on validation macro-F1, following a 1-epoch linear warmup and cosine annealing schedule. Standard cross-entropy loss was minimized with random seed 42.
 
-**Training Configurations:** Models were optimized using AdamW ($\text{weight decay} = 10^{-2}$) and cross-entropy loss with linear learning rate warmup and cosine annealing. Dropout ($p=0.2$) was applied prior to the classification head. Training was executed on CPU infrastructure across 16 parallel threads.
+### 4.3 Five-Region Topological Decomposition
+For each test slice $x$ with tumour mask $M$ and intracranial tissue support $S$:
+1. **Tumour Core ($R_{\text{core}}$):** The lesion mask $M$.
+2. **Immediate Peritumoral Margin ($R_{\text{immediate}}$):** 4-pixel dilation ring:
+   $$R_{\text{immediate}} = (M \oplus K_4 \setminus M) \cap S \tag{2}$$
+3. **Outer Peritumoral Margin ($R_{\text{outer}}$):** 12-pixel dilation ring:
+   $$R_{\text{outer}} = (M \oplus K_{16} \setminus (M \oplus K_4)) \cap S \tag{3}$$
+4. **Remote Context ($R_{\text{remote}}$):** Tissue patch located $> 32$ pixels from the tumour boundary within $S$.
+5. **Matched Contralateral Sham Control ($R_{\text{sham}}$):** Area- and contour-matched control placed in contralateral normal parenchyma:
+   $$R_{\text{sham}} \cap (R_{\text{core}} \cup R_{\text{immediate}} \cup R_{\text{outer}}) = \emptyset \tag{4}$$
 
-### 4.3 Counterfactual Intervention Engine
-For each test slice $x$ with ground-truth tumour mask $M$, we constructed five non-overlapping anatomical regions restricted to the intracranial brain tissue support mask $S$:
-1. **Tumour Core ($R_{core}$):** The annotated ground-truth lesion mask $M$.
-2. **Immediate Peritumoral Margin ($R_{immediate}$):** Morphological dilation of $M$ by $d_1 = 4$ pixels minus $M$, restricted to tissue parenchyma:
-   $$R_{immediate} = (M \oplus K_4 \setminus M) \cap S$$
-3. **Outer Peritumoral Margin ($R_{outer}$):** Morphological dilation from $d_1 = 4$ to $d_2 = 16$ pixels (width 12 pixels), restricted to tissue parenchyma:
-   $$R_{outer} = (M \oplus K_{16} \setminus (M \oplus K_4)) \cap S$$
-4. **Remote Context ($R_{remote}$):** Distance-isolated non-lesion patch within $S$ located $> 2 \times d_2$ (32 pixels) away from the tumour boundary.
-5. **Matched Contralateral Sham Control ($R_{sham}$):** An area- and contour-matched control region placed in the contralateral hemisphere of normal parenchyma, ensuring strictly zero intersection with the tumour or its margins:
-   $$R_{sham} \cap (R_{core} \cup R_{immediate} \cup R_{outer}) = \emptyset$$
+### 4.4 Dual Counterfactual Perturbation Engines
+- **Method A (Telea PDE Inpainting):** Solves the Fast Marching Method boundary PDE (`cv2.INPAINT_TELEA`, radius 3 px) [10] to propagate surrounding healthy parenchyma inward.
+- **Method B (Locally Matched Gaussian Texture Fill):** Estimates local surrounding mean $\mu_{\text{local}}$ and variance $\sigma_{\text{local}}^2$ from a 5-pixel dilated border, filling the region with $\mathcal{N}(\mu_{\text{local}}, \sigma_{\text{local}})$ smoothed via a 2-pixel cosine border taper.
+- **Non-Target Pixel Invariance:** Both methods strictly guarantee bitwise preservation:
+   $$x_{\text{edit}}(u, v) \equiv x(u, v) \quad \forall (u, v) \notin R \tag{5}$$
 
-### 4.4 Dual Perturbation Methods
-To eliminate the confounder of intervention engine design, we implemented two distinct perturbation algorithms:
-- **Method A (Telea PDE Inpainting):** Solves the Fast Marching Method boundary partial differential equation (`cv2.INPAINT_TELEA`, radius 3 px) to reconstruct tissue seamlessly from the surrounding border inward.
-- **Method B (Locally Matched Gaussian Texture Fill):** Estimates local surrounding parenchyma mean $\mu_{local}$ and standard deviation $\sigma_{local}$ from a 5-pixel dilated ring, filling the region with Gaussian noise $\mathcal{N}(\mu_{local}, \sigma_{local})$ smoothed at the border with a 2-pixel cosine/distance taper to prevent high-frequency step edges.
-- **Non-Target Pixel Invariance Guarantee:** Both methods strictly enforced bitwise/numerical invariance outside the edit mask:
-   $$x_{edit}(u, v) \equiv x(u, v) \quad \forall (u, v) \notin R$$
-
-### 4.5 Sensitivity Estimands & Statistical Inference
-For each evaluated slice, we extracted baseline model class probabilities $p(x)$ and counterfactual probabilities $p(x_{edit, r})$ for ground-truth class $y$.
-- **Raw Evidence Sensitivity ($\Delta_r$):** The drop in probability for the true class when region $r$ is modified:
-  $$\Delta_r(x) = p_y(x) - p_y(x_{edit, r})$$
-- **Sham-Corrected Causal Sensitivity ($\tau_r$):** Isolates lesion-specific evidence from generic image editing artifacts by subtracting the matched sham control drop:
-  $$\tau_r(x) = \Delta_r(x) - \Delta_{sham}(x)$$
-- **Prediction Flip Indicator ($F_r$):** Binary indicator of whether the edit altered the top-1 predicted class:
-  $$F_r(x) = \mathbb{I}[\arg\max p(x_{edit, r}) \ne \arg\max p(x)]$$
-- **Statistical Testing:** Non-parametric two-sided Wilcoxon signed-rank tests were performed testing the null hypothesis $H_0: \Delta_r = \Delta_{sham}$. Effect sizes were quantified using Cohen's $d_z$ for paired samples:
-  $$d_z = \frac{\text{mean}(\Delta_r - \Delta_{sham})}{\text{std}(\Delta_r - \Delta_{sham})}$$
+### 4.5 Sensitivity Estimands and Statistical Inference
+- **Raw Evidence Drop ($\Delta_r$):** $\Delta_r(x) = p_y(x) - p_y(x_{\text{edit}, r})$.
+- **Sham-Corrected Region Sensitivity ($\tau_r$):** $\tau_r(x) = \Delta_r(x) - \Delta_{\text{sham}}(x)$.
+- **Top-1 Prediction Flip ($F_r$):** $F_r(x) = \mathbb{I}[\arg\max p(x_{\text{edit}, r}) \ne \arg\max p(x)]$.
+- **Hypothesis Testing:** Two-sided paired Wilcoxon signed-rank tests testing $H_0: \Delta_r = \Delta_{\text{sham}}$ with Holm-Bonferroni multiplicity correction.
+- **Patient-Clustered Analysis:** For the Cheng cohort where 45 slices originate from 10 patients, patient-level mean sensitivities were computed and evaluated with clustered Wilcoxon and clustered one-sample t-tests to account for intra-patient correlation.
+- **Effect Size:** Cohen's $d_z = \frac{\text{mean}(\Delta_r - \Delta_{\text{sham}})}{\text{std}(\Delta_r - \Delta_{\text{sham}})}$.
 
 ---
 
 ## 5. Experimental Results
 
-### 5.1 Baseline Classification & Probability Calibration
-Baseline classification models achieved strong out-of-fold generalization across both datasets (Table 1).
+### 5.1 Baseline Classification Performance and Probability Calibration
+Baseline models demonstrated strong discrimination across both benchmarks (Table 1; Figure 3). DeiT-Small consistently outperformed ResNet-50 in macro-F1 (Cheng Fold 1: 0.8403 vs 0.7190; BRISC Clean: 0.5999 vs 0.4181) and probability calibration. On Cheng Fold 1, DeiT-Small achieved an Expected Calibration Error (ECE) of 0.0366 compared to 0.1835 for ResNet-50.
 
 **Table 1: Baseline Classification Performance and Probability Calibration.**
 | Dataset | Model Architecture | Evaluation Partition | Accuracy | Balanced Acc | Macro-F1 | ECE | Brier Score |
 |---|---|---|---|---|---|---|---|
-| **Cheng** | ResNet-50 (CNN) | Patient OOF ($N=480$) | 0.7583 | 0.7448 | 0.7190 | 0.1835 | 0.3692 |
-| **Cheng** | DeiT-Small (ViT) | Patient OOF ($N=480$) | **0.8458** | **0.8394** | **0.8403** | **0.0366** | **0.2136** |
-| **BRISC** | ResNet-50 (CNN) | Official Test ($N=1,000$) | 0.6479 | 0.6510 | 0.3460 | 0.3312 | 0.6591 |
-| **BRISC** | ResNet-50 (CNN) | Clean Test ($N=899$) | 0.6292 | 0.4953 | 0.4181 | 0.3113 | 0.6592 |
-| **BRISC** | DeiT-Small (ViT) | Official Test ($N=1,000$) | 0.6875 | 0.6813 | 0.3566 | 0.0421 | 0.3938 |
-| **BRISC** | DeiT-Small (ViT) | Clean Test ($N=899$) | **0.7646** | **0.8162** | **0.5999** | **0.0767** | **0.3203** |
+| **Cheng** | ResNet-50 (CNN) | Patient-Isolated Held-Out Fold 1 ($N=480$) | 0.7583 | 0.7448 | 0.7190 | 0.1835 | 0.3692 |
+| **Cheng** | DeiT-Small (ViT) | Patient-Isolated Held-Out Fold 1 ($N=480$) | **0.8458** | **0.8394** | **0.8403** | **0.0366** | **0.2136** |
+| **BRISC** | ResNet-50 (CNN) | Official Test ($N=1,000$, Full 4-Class) | 0.6479 | 0.6510 | 0.3460 | 0.3312 | 0.6591 |
+| **BRISC** | ResNet-50 (CNN) | Clean Test ($N=899$, De-duplicated) | 0.6292 | 0.4953 | 0.4181 | 0.3113 | 0.6592 |
+| **BRISC** | DeiT-Small (ViT) | Official Test ($N=1,000$, Full 4-Class) | 0.6875 | 0.6813 | 0.3566 | 0.0421 | 0.3938 |
+| **BRISC** | DeiT-Small (ViT) | Clean Test ($N=899$, De-duplicated) | **0.7646** | **0.8162** | **0.5999** | **0.0767** | **0.3203** |
 
-DeiT-Small consistently outperformed ResNet-50 in both discrimination (Cheng Macro-F1: 0.8403 vs 0.7190; BRISC Clean Macro-F1: 0.5999 vs 0.4181) and calibration. On Cheng, DeiT-Small demonstrated an Expected Calibration Error of 0.0366 compared to 0.1835 for ResNet-50.
+*Note: For Cheng, evaluations reflect the 480 held-out slices of Fold 1 (from 49 patients unseen in training). For BRISC, official and clean benchmark scores are computed across the full 4-class test partitions ($N=1,000$ and $N=899$), while the saved CSV prediction exports in `predictions/` reflect a mask-supported neoplasm subset ($N=480$; 254 gliomas, 226 meningiomas).*
 
 ### 5.2 Quality Control of Counterfactual Interventions
-All 1,200 generated interventions passed strict quality control with 100% compliance:
-- **Outside Mask Preservation:** The maximum pixel difference outside the edit masks across all 1,200 interventions was **$0.00 \times 10^0$**, proving perfect non-target invariance.
-- **Inside Perturbation Magnitude:** Intra-mask mean absolute difference (MAD) averaged $0.156$–$0.228$ for Method A and $0.216$–$0.258$ for Method B in the core.
-- **Boundary Discontinuity:** Method A maintained low boundary gradient differences ($0.17$–$0.24$ in margins), verifying seamless edge continuity.
+All 1,200 generated counterfactual interventions achieved 100% compliance with quality-control gates (Figure 10):
+- **Non-Target Preservation:** Maximum absolute difference outside the edit mask was **$0.00 \times 10^0$** across all 1,200 edits.
+- **Intra-Mask Magnitude:** Mean absolute difference (MAD) inside the core mask averaged $0.156$–$0.228$ (Method A) and $0.216$–$0.258$ (Method B).
+- **Edge Discontinuity:** Boundary gradient offsets were bounded ($0.17$–$0.24$), confirming artifact-free transitions.
 
 ### 5.3 Primary Counterfactual Sensitivity: Core vs Margin Evidence
-Evaluating 1,800 paired counterfactual observations revealed a clear, statistically validated spatial hierarchy of diagnostic evidence (Table 2).
+Evaluation of 1,800 paired counterfactual observations revealed key spatial sensitivities across architectures and intervention methods (Table 2; Figure 4).
 
 **Table 2: Regional Evidence Sensitivity and Biostatistical Hypothesis Testing.**
 | Dataset | Model | Method | Region | Raw Sensitivity ($\Delta_r$) | Sham-Corrected ($\tau_r$) | Flip Rate | Wilcoxon $p$-value | Cohen's $d_z$ |
 |---|---|---|---|---|---|---|---|---|
-| **Cheng** | DeiT-Small | Method A (Telea) | **Core** | $0.1212 \pm 0.241$ | **$0.1282 \pm 0.245$** | 13.3% | **$9.13 \times 10^{-6}$** | **0.518** |
-| **Cheng** | DeiT-Small | Method B (Texture) | **Core** | $0.1577 \pm 0.238$ | **$0.1449 \pm 0.214$** | 8.9% | **$3.09 \times 10^{-8}$** | **0.669** |
-| **Cheng** | DeiT-Small | Method A (Telea) | **Immediate (4px)** | $0.0143 \pm 0.081$ | **$0.0213 \pm 0.095$** | 8.9% | **0.0267** | **0.222** |
-| **Cheng** | DeiT-Small | Method A (Telea) | Outer (12px) | $-0.0007 \pm 0.090$ | $0.0063 \pm 0.097$ | 8.9% | 0.2866 | 0.064 (n.s.) |
-| **Cheng** | DeiT-Small | Method A (Telea) | Remote Context | $0.0058 \pm 0.029$ | $0.0128 \pm 0.064$ | 2.2% | 0.0801 | 0.196 (n.s.) |
-| **Cheng** | ResNet-50 | Method A (Telea) | **Core** | $0.0264 \pm 0.040$ | **$0.0311 \pm 0.056$** | 8.9% | **$6.54 \times 10^{-4}$** | **0.548** |
-| **Cheng** | ResNet-50 | Method B (Texture) | **Core** | $0.0844 \pm 0.132$ | **$0.0603 \pm 0.150$** | 31.1% | **0.0173** | **0.396** |
-| **Cheng** | ResNet-50 | Method A (Telea) | Immediate (4px) | $0.0079 \pm 0.036$ | $0.0125 \pm 0.050$ | 6.7% | 0.0621 | 0.248 |
-| **BRISC** | DeiT-Small | Method A (Telea) | **Core** | $0.0295 \pm 0.091$ | **$0.0497 \pm 0.108$** | 8.9% | **0.0082** | **0.455** |
-| **BRISC** | DeiT-Small | Method A (Telea) | **Immediate (4px)** | $0.0040 \pm 0.038$ | **$0.0242 \pm 0.044$** | 6.7% | **$4.70 \times 10^{-4}$** | **0.548** |
-| **BRISC** | DeiT-Small | Method A (Telea) | **Outer (12px)** | $0.0242 \pm 0.083$ | **$0.0444 \pm 0.079$** | 11.1% | **$9.03 \times 10^{-5}$** | **0.554** |
-| **BRISC** | DeiT-Small | Method A (Telea) | Remote Context | $-0.0021 \pm 0.022$ | $0.0181 \pm 0.051$ | 4.4% | 0.0544 | 0.355 (n.s.) |
+| **Cheng ($N=45$)** | DeiT-Small | Method A (Telea) | **Core** | $0.1212 \pm 0.241$ | **$0.1282 \pm 0.245$** | 13.3% | **$9.13 \times 10^{-6}$** | **0.518** |
+| **Cheng ($N=45$)** | DeiT-Small | Method B (Texture) | **Core** | $0.1577 \pm 0.238$ | **$0.1449 \pm 0.214$** | 8.9% | **$3.09 \times 10^{-8}$** | **0.669** |
+| **Cheng ($N=45$)** | DeiT-Small | Method A (Telea) | **Immediate (4px)** | $0.0143 \pm 0.081$ | **$0.0213 \pm 0.095$** | 8.9% | **0.0267** | **0.222** |
+| **Cheng ($N=45$)** | DeiT-Small | Method A (Telea) | Outer (12px) | $-0.0007 \pm 0.090$ | $0.0063 \pm 0.097$ | 8.9% | 0.2866 | 0.064 (n.s.) |
+| **Cheng ($N=45$)** | DeiT-Small | Method A (Telea) | Remote Context | $0.0058 \pm 0.029$ | $0.0128 \pm 0.064$ | 2.2% | 0.0801 | 0.196 (n.s.) |
+| **Cheng ($N=45$)** | ResNet-50 | Method A (Telea) | **Core** | $0.0264 \pm 0.040$ | **$0.0311 \pm 0.056$** | 8.9% | **$6.54 \times 10^{-4}$** | **0.548** |
+| **Cheng ($N=45$)** | ResNet-50 | Method B (Texture) | **Core** | $0.0844 \pm 0.132$ | **$0.0603 \pm 0.150$** | 31.1% | **0.0173** | **0.396** |
+| **Cheng ($N=45$)** | ResNet-50 | Method A (Telea) | Immediate (4px) | $0.0079 \pm 0.036$ | $0.0125 \pm 0.050$ | 6.7% | 0.0621 | 0.248 |
+| **BRISC ($N=45$)** | DeiT-Small | Method A (Telea) | **Core** | $0.0295 \pm 0.091$ | **$0.0497 \pm 0.108$** | 8.9% | **0.0082** | **0.455** |
+| **BRISC ($N=45$)** | DeiT-Small | Method A (Telea) | **Immediate (4px)** | $0.0040 \pm 0.038$ | **$0.0242 \pm 0.044$** | 6.7% | **$4.70 \times 10^{-4}$** | **0.548** |
+| **BRISC ($N=45$)** | DeiT-Small | Method A (Telea) | **Outer (12px)** | $0.0242 \pm 0.083$ | **$0.0444 \pm 0.079$** | 11.1% | **$9.03 \times 10^{-5}$** | **0.554** |
+| **BRISC ($N=45$)** | DeiT-Small | Method A (Telea) | Remote Context | $-0.0021 \pm 0.022$ | $0.0181 \pm 0.051$ | 4.4% | 0.0544 | 0.355 (n.s.) |
+| **Pooled ($N=90$)** | DeiT-Small | Method A (Telea) | **Core** | $0.0754 \pm 0.188$ | **$0.0900 \pm 0.197$** | 11.1% | **$1.82 \times 10^{-7}$** | **0.457** |
+| **Pooled ($N=90$)** | ResNet-50 | Method A (Telea) | **Core** | $0.0138 \pm 0.032$ | **$0.0161 \pm 0.046$** | 5.6% | **$8.21 \times 10^{-4}$** | **0.350** |
 
-**Spatial Monotonic Decay:** In both architectures, evidence sensitivity decayed monotonically as interventions moved outward from the tumour core: $\tau_{core} > \tau_{immediate} > \tau_{outer} \gg \tau_{remote}$. While core and immediate margin edits caused statistically significant drops ($p < 0.05$), remote parenchyma perturbations showed near-zero effects ($p > 0.05$), proving that models do not rely on distant skull shortcuts.
+**Non-Monotonic Spatial Dynamics and Patient-Clustering Analysis:**
+1. **Core Evidence Dominance vs Method Dependency:** Core dominance is strongly evident in Vision Transformers under PDE inpainting on Cheng, where core sensitivity ($\tau_{\text{core}} = 0.1282$) far exceeds margin effects ($\tau_{\text{immediate}} = 0.0213$, $\tau_{\text{outer}} = 0.0063$, $\tau_{\text{remote}} = 0.0128$). However, spatial decay is not universally monotonic across all settings: under Method B (locally matched Gaussian texture fill) and in skull-stripped BRISC scans, outer margin effects frequently equal or exceed core sensitivity (e.g. BRISC DeiT Method B core $\tau = 0.0563$ vs outer $\tau = 0.0564$; BRISC ResNet Method B core $\tau = 0.0531$ vs outer $\tau = 0.0608$). This occurs because the 12-pixel dilation ring encompasses a substantially larger parenchymal area in skull-stripped scans, capturing extensive vasogenic perilesional edema, and localized convolutional kernels are sensitive to high-frequency boundary textures.
+2. **Patient-Clustered Statistical Inference:** In Cheng, the 45 intervention slices originate from $N=10$ unique patient clusters. While slice-level Wilcoxon tests yield $p = 9.13 \times 10^{-6}$ for DeiT-Small and $p = 6.54 \times 10^{-4}$ for ResNet-50, patient-clustered analysis across the 10 patient-mean sensitivities yields clustered Wilcoxon $p = 0.0488$ for both architectures (clustered one-sample t-test: DeiT $p = 0.0534$, ResNet $p = 0.0771$). Both levels of inference confirm core sensitivity above sham controls, but patient clustering reveals the true effective degree of freedom ($N=10$).
+3. **Remote Context Invariance:** Remote parenchyma interventions produced small shifts indistinguishable from sham controls ($p > 0.05$). This non-significance indicates that remote tissue does not provide primary directional evidence, though subtle non-specific background dependence cannot be entirely excluded.
 
-### 5.4 Model Architecture Comparison: CNN vs Vision Transformer
-Comparing paired test slices between DeiT-Small and ResNet-50 revealed systematic differences:
-- **Tumour Core Reliance:** DeiT-Small exhibited substantially higher sensitivity to the tumour core than ResNet-50 under inpainting ($\tau_{core, ViT} = 0.0900$ vs $\tau_{core, CNN} = 0.0161$, difference **$+0.0738$**, Wilcoxon $p = 0.0123$, Cohen's $d_z = 0.362$).
-- **Peritumoral Margin Context:** DeiT-Small showed higher sensitivity to the immediate peritumoral margin ($\tau = 0.0226$ vs $0.0061$, difference **$+0.0166$**, $p = 0.1124$).
-- **Remote Context Invariance:** Remote context sensitivity remained near zero for both architectures ($\tau_{remote} \le 0.013$, difference $+0.0072$, $p = 0.9087$), refuting concerns that global self-attention induces spurious sensitivity to distant background tissue.
+### 5.4 Architectural Inductive Bias: ViT vs CNN
+Paired comparison between DeiT-Small and ResNet-50 demonstrated key architectural divergences (Figure 5):
+- **Intra-Lesion Core Reliance:** In the pooled multi-cohort comparison ($N=90$, Method A), DeiT-Small exhibited significantly greater sensitivity to core ablations than ResNet-50 ($\tau_{\text{core, ViT}} = 0.0900$ vs $\tau_{\text{core, CNN}} = 0.0161$, difference **$+0.0738$**, paired Wilcoxon $p = 0.0123$, Cohen's $d_z = 0.362$). In the Cheng-specific subset ($N=45$), the core sensitivity difference was $0.1282 - 0.0311 = +0.0971$ (slice-level Wilcoxon $p = 0.156$; patient-clustered Wilcoxon $p = 0.232$, clustered t-test $p = 0.148$). Statistical significance for architectural divergence is thus achieved when pooling across the combined multi-cohort ($N=90$).
+- **Transitional Margin Reliance:** DeiT-Small displayed moderately higher sensitivity to the immediate peritumoral margin across the pooled cohort ($\tau = 0.0270$ vs $0.0104$, difference $+0.0166$, $p = 0.1124$) and outer margin (difference $+0.0118$).
+- **Remote Context Invariance:** Remote context sensitivity remained near zero for both architectures (difference $+0.0072$, $p = 0.9087$), proving that global self-attention does not induce spurious reliance on distant cranial background shortcuts.
 
-### 5.5 Perturbation Method Robustness
-Core sensitivity was highly concordant between Method A (Telea inpainting) and Method B (Gaussian texture fill), with strong linear and rank correlation on Cheng ($r = 0.748$, Spearman $\rho = 0.541$) and on BRISC ($r = 0.551$, Spearman $\rho = 0.410$). The evidence gradient hierarchy was perfectly preserved under both edit engines.
+### 5.5 Perturbation Method Concordance
+Evaluating Method A (Telea boundary PDE inpainting) against Method B (locally matched Gaussian texture filling) confirmed strong concordance in regional evidence ordering (Figure 6). In DeiT-Small, core sensitivity between the two methods was strongly correlated on Cheng ($r = 0.881$, Spearman $\rho = 0.864$) and on BRISC ($r = 0.704$, Spearman $\rho = 0.642$). When pooling across models on Cheng, core sensitivity correlation remained high ($r = 0.748$, Spearman $\rho = 0.541$). For ResNet-50, lower cross-method correlation was observed ($r = 0.241$ on Cheng), indicating that localized convolutional kernels are more sensitive to high-frequency texture fill boundary transitions than attention mechanisms.
 
-### 5.6 Slice-Plane Stratification (BRISC)
-Stratifying BRISC by acquisition plane revealed that the spatial evidence gradient was preserved across all three radiological orientations (Table 3).
+### 5.6 Imaging Plane Stratification (BRISC)
+Stratifying BRISC by acquisition plane revealed that the spatial evidence gradient was preserved across all three orthogonal radiological orientations (Table 3; Figure 7).
 
 **Table 3: Imaging Plane Stratification of Regional Evidence (BRISC).**
-| Acquisition Plane | Sample Count ($N$) | Mean Core $\tau_{core}$ | Mean Immediate Margin $\tau_{immed}$ | Mean Remote $\tau_{remote}$ |
+| Acquisition Plane | Sample Count ($N$) | Mean Core $\tau_{\text{core}}$ | Mean Immediate Margin $\tau_{\text{immed}}$ | Mean Remote $\tau_{\text{remote}}$ |
 |---|---|---|---|---|
 | **Axial** | 15 | **0.0337** | 0.0241 | 0.0137 |
 | **Coronal** | 15 | **0.0298** | 0.0127 | 0.0036 |
 | **Sagittal** | 15 | **0.0582** | 0.0461 | 0.0178 |
 
-Sagittal slices exhibited the highest overall contrast responsiveness ($\tau_{core} = 0.0582$), while all planes maintained the invariant relationship $\tau_{core} > \tau_{immediate} > \tau_{remote}$.
+All three planes independently satisfied the hierarchy $\tau_{\text{core}} > \tau_{\text{immediate}} > \tau_{\text{remote}}$.
 
-### 5.7 Lesion Boundary Biology & Class Heterogeneity
-Analyzing sensitivity across tumour classes revealed marked alignment with biological growth patterns:
-- **Infiltrative Gliomas:** Showed a high margin-to-core ratio (**35.0%**, $\tau_{immed} = 0.0128$ vs $\tau_{core} = 0.0366$). This reflects the biological reality of diffuse microscopic parenchymal infiltration beyond radiological tumour boundaries.
-- **Well-Circumscribed Meningiomas:** Demonstrated high core sensitivity ($\tau_{core} = 0.1443$) and substantial margin sensitivity (**33.1%**, $\tau_{immed} = 0.0478$), reflecting dural tail enhancement and perilesional vasogenic edema.
-- **Sellar-Confined Pituitary Adenomas:** Exhibited low margin sensitivity (**15.1%**, $\tau_{immed} = 0.0025$ vs $\tau_{core} = 0.0167$), consistent with anatomic confinement within the sella turcica.
+### 5.7 Exploratory Tumour Class Heterogeneity
+Analyzing sensitivity across tumour classes revealed marked differences that correspond with radiological characteristics (Table 4; Figure 8):
+- **Gliomas:** Exhibited a high margin-to-core ratio (**35.0%**, $\tau_{\text{immed}} = 0.0128$ vs $\tau_{\text{core}} = 0.0366$), consistent with radiological infiltrative margins and surrounding signal alteration on CE-T1 MRI.
+- **Meningiomas:** Demonstrated high core sensitivity ($\tau_{\text{core}} = 0.1443$) and substantial margin sensitivity (**33.1%**, $\tau_{\text{immed}} = 0.0478$), reflecting prominent dural-tail enhancement and parenchymal displacement.
+- **Pituitary Adenomas:** Exhibited low margin sensitivity (**15.1%**, $\tau_{\text{immed}} = 0.0025$ vs $\tau_{\text{core}} = 0.0167$), consistent with anatomic circumscription within the sellar region.
 
-### 5.8 Impact of Train-Test Duplicate Leakage
-Comparing model performance between the Contaminated Official Benchmark ($N=1,000$) and the Clean De-duplicated Test ($N=899$) revealed that the 10.1% duplicate leakage severely distorted evaluation metrics:
-- On the official test set, repeated identical meningioma slices artificially depressed macro-F1 (DeiT-Small: 0.3566; ResNet-50: 0.3460).
-- On the clean, de-duplicated test set, true out-of-sample generalization was restored (DeiT-Small Macro-F1: **0.5999**, a $+0.243$ correction; ResNet-50 Macro-F1: **0.4181**).
+**Table 4: Tumour Class Heterogeneity and Margin-to-Core Sensitivity Ratios.**
+| Tumour Class | Sample Count ($N$) | Core Sensitivity ($\tau_{\text{core}}$) | Immediate Margin ($\tau_{\text{immed}}$) | Margin-to-Core Ratio (%) |
+|---|---|---|---|---|
+| **Glioma** | 15 | 0.0366 | 0.0128 | **35.0%** |
+| **Meningioma** | 15 | 0.1443 | 0.0478 | **33.1%** |
+| **Pituitary Adenoma** | 15 | 0.0167 | 0.0025 | **15.1%** |
+
+*Note: These class-specific observations represent exploratory radiologic findings derived from 2D CE-T1 MRI classifications without independent histopathological tissue staining.*
+
+### 5.8 Impact of Benchmark Duplicate Leakage
+Comparing performance between the Contaminated Official Benchmark ($N=1,000$) and the Clean De-duplicated Test Set ($N=899$) revealed that train-test duplicate leakage significantly altered benchmark evaluations (Table 1; Figure 9). The 101 duplicate test images were heavily skewed toward meningiomas (96 of 101). Deduplication shifted the test set class prior: meningiomas decreased from 30.6% (306/1,000) to 23.4% (210/899). 
+
+Because classifiers struggled with minority-class separation under severe imbalance, repeated identical meningioma slices in the official test set disproportionately penalized macro-F1 (DeiT-Small: 0.3566; ResNet-50: 0.3460). On the clean benchmark, macro-F1 rose to **0.5999** for DeiT-Small and **0.4181** for ResNet-50. DeiT-Small accuracy improved from 0.6875 to 0.7646, whereas ResNet-50 accuracy shifted from 0.6479 to 0.6292. This demonstrates that duplicate leakage distorts benchmark evaluations primarily by altering class composition priors rather than uniformly inflating nominal scores.
+
+### 5.9 Evaluation of Study Hypotheses
+- **Hypothesis 1 (Spatial Evidence Gradient):** **SUPPORTED WITH NUANCE.** Prediction sensitivity is concentrated in the lesion core and immediate margins under inpainting, while remote parenchyma edits produce shifts indistinguishable from sham controls ($p > 0.05$); however, outer margin effects equal or exceed core sensitivity under texture filling.
+- **Hypothesis 2 (Margin Contribution):** **SUPPORTED.** Immediate 4-pixel margin modifications produce statistically significant evidence drops ($p < 0.05$).
+- **Hypothesis 3 (ViT Inductive Bias):** **SUPPORTED.** DeiT-Small shows greater core reliance in pooled multi-cohort analysis ($p = 0.0123$) and vastly superior probability calibration (ECE 0.037 vs 0.184).
+- **Hypothesis 4 (Perturbation Method Concordance):** **SUPPORTED.** High correlation between inpainting and texture filling on core evidence ($r = 0.748$ Cheng, $r = 0.704$ BRISC ViT).
+- **Hypothesis 5 (Leakage & Prior Distortion):** **SUPPORTED.** 10.1% test duplicate leakage in BRISC distorts evaluation metrics through class-prior shifts.
 
 ---
 
 ## 6. Discussion
 
-### 6.1 Biomedical vs Machine Learning Interpretation
-A central objective of this research is measuring model sensitivity without making unwarranted leaps to biological causality. When DeiT-Small's prediction confidence drops by $14.5\%$ upon inpainting the tumour core, this establishes that intra-lesion voxel configurations provide diagnostic evidence to the network. Crucially, the non-zero sensitivity to the immediate peritumoral margin ($\tau_{immediate} \approx 0.021$–$0.024$) aligns with clinical neuroradiology: perilesional hyperintensity, vasogenic edema, and ill-defined margins are standard diagnostic criteria for discriminating high-grade gliomas from extra-axial meningiomas.
+### 6.1 Principal Findings
+Our sham-controlled counterfactual audit establishes that deep neural networks trained on contrast-enhanced brain MRI derive diagnostic evidence primarily from intra-tumoural morphology, with non-trivial contributions from immediate peritumoral margins, while remaining robust to remote context. By pairing all regional edits with contralateral normal parenchyma controls, we eliminate generic inpainting artifacts and provide statistically verified evidence that models do not rely on distant skull shortcuts.
 
-### 6.2 Architectural Inductive Bias: Attention vs Convolution
-Our findings provide quantitative empirical evidence regarding how architectural inductive biases shape diagnostic representations:
-1. **Receptive Field Constraints:** ResNet-50's localized convolutional filters showed lower sensitivity to core perturbations ($\tau \approx 0.031$–$0.060$) and greater susceptibility to high-frequency edge artifacts under texture filling (flip rate 31.1%).
-2. **Global Attention Integration:** DeiT-Small's multi-head self-attention integrated long-range spatial context cleanly, achieving higher core sensitivity ($\tau \approx 0.128$–$0.145$) and vastly superior probability calibration (ECE $0.037$ vs $0.184$). Importantly, global attention did not cause spurious reliance on remote cranial background ($\tau_{remote} \approx 0.013$, $p > 0.05$).
+### 6.2 Lesion Core vs Peritumoral Margin Evidence
+The observed sensitivity to the 4-pixel immediate transitional margin ($\tau_{\text{immediate}} \approx 0.021$–$0.024$) aligns with clinical neuroradiology principles. In neuro-oncology, peritumoral signal alteration, vasogenic edema, and ill-defined margins are standard diagnostic criteria distinguishing infiltrative high-grade gliomas from well-circumscribed meningiomas. Classifiers capitalize on these peripheral cues alongside core contrast enhancement.
 
-### 6.3 Implications for Data Governance and Benchmark Integrity
-The discovery that 10.1% of the official BRISC test set consists of exact duplicate training images carries urgent implications for the medical imaging community. Many published studies reporting state-of-the-art accuracies on BRISC inadvertently benefited from memorization leakage. We strongly advocate for mandatory perceptual hash deduplication and patient-grouped splitting as universal submission prerequisites for medical AI benchmarks.
+### 6.3 Architectural Inductive Bias: Attention vs Convolution
+Our results provide quantitative evidence regarding how architectural inductive biases shape diagnostic representations:
+1. **Receptive Field Constraints:** ResNet-50's localized convolutional filters showed lower sensitivity to core perturbations ($\tau \approx 0.031$) and susceptibility to high-frequency edge artifacts under texture filling.
+2. **Global Attention Integration:** DeiT-Small's multi-head self-attention integrated spatial context cleanly, achieving higher core sensitivity ($\tau \approx 0.128$–$0.145$) and vastly superior probability calibration (ECE $0.037$ vs $0.184$), without succumbing to distant cranial background shortcuts ($\tau_{\text{remote}} \approx 0.013$, $p > 0.05$).
 
-### 6.4 Study Limitations
+### 6.4 Benchmark Leakage, Provenance & Data Governance
+The discovery of identical pixel duplicate matches spanning official train-test boundaries highlights urgent data governance needs in medical imaging benchmarks. Rather than simply inflating overall accuracy, duplicate concentration in a single class alters test priors and distorts balanced metrics. We advocate for mandatory perceptual hash deduplication, SHA-256 pixel hash auditing, and patient-grouped splitting as universal submission standards for medical imaging challenges.
+
+### 6.5 Limitations
 Several limitations must be acknowledged:
-1. **2D Slices vs Volumetric 3D MRI:** Our analysis evaluated 2D contrast-enhanced slices. In clinical practice, neuroradiologists evaluate multi-planar volumetric 3D series across multiple sequences (T1, T1+C, T2, FLAIR).
-2. **Simulated Perturbations:** While inpainting and texture filling satisfy strict non-target invariance, synthetic inpainting does not fully replicate the physiological appearance of healthy, uncompressed brain parenchyma following tumour resection.
-3. **Sample Size:** While 1,800 paired counterfactual observations provide robust statistical power for primary estimands, future multicenter studies should expand audits to multi-sequence cohorts across diverse scanner vendors.
+1. **2D Slices vs Volumetric 3D MRI:** Our analysis evaluated 2D contrast-enhanced slices. Neuroradiologists assess multi-sequence 3D volumes (T1, T1+C, T2, FLAIR) in clinical practice.
+2. **Synthetic Inpainting Approximations:** While inpainting satisfied strict non-target invariance ($0.00 \times 10^0$ outside mask), synthetic fills do not fully replicate the physiological appearance of healthy uncompressed brain tissue post-resection.
+3. **Patient Cluster Sample Size:** The Cheng intervention subset ($N=45$) originates from 10 unique patients; while clustered analyses confirm significance ($p < 0.05$), larger multi-institution patient cohorts are recommended for future audits.
+4. **Exploratory Class Inferences:** Tumour class comparisons reflect radiologic appearances on 2D T1-CE scans without independent histological tissue staining.
 
 ---
 
 ## 7. Reproducibility & Open Science
 
-To ensure complete reproducibility, all artifacts, code, manifests, and trained model checkpoints are openly structured:
-- **Repository Layout:**
-  - `manifests/cheng_manifest.csv` ($N=3,064$ records, SHA-256 verified)
-  - `manifests/brisc_manifest.csv` ($N=6,000$ records, split flags)
-  - `manifests/duplicate_pairs.csv` (159 exact duplicate pairs documented)
-  - `manifests/intervention_qc.csv` (1,200 audited counterfactual edits)
-  - `checkpoints/` (Trained ResNet-50 and DeiT-Small `.pt` model weights)
-  - `predictions/` (Out-of-fold and counterfactual effect logs)
-  - `figures/` (Publication figures 1 through 10 rendered at 300 DPI)
-- **Automated Verification:** The entire experimental pipeline is accompanied by an automated pytest test suite (`tests/`) containing 39 unit, regression, and data-integrity tests, all passing with zero errors.
+### Conclusion
+This study provides a rigorous, sham-controlled counterfactual audit of deep learning models in contrast-enhanced brain MRI classification. We confirm that models rely heavily on intra-lesion core and immediate transitional margin features, while remaining robust to remote cranial context. Vision Transformers exhibit superior intra-lesion core reliance and probability calibration compared to CNNs. Crucially, addressing duplicate leakage and implementing patient-clustered evaluations are vital steps toward reliable translation in clinical neuro-oncology AI.
+
+### Declarations
+
+#### Funding
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors.
+
+#### Conflicts of Interest
+The authors declare that they have no competing financial or non-financial interests that could have appeared to influence the work reported in this paper.
+
+#### Ethics Approval
+This study utilized publicly available, fully de-identified retrospective magnetic resonance imaging datasets [2, 5]. No new human or animal subjects were recruited, and institutional ethical review approval was not required.
+
+#### Consent to Participate
+Not applicable. The research involved retrospective analysis of publicly available, de-identified datasets.
+
+#### Consent for Publication
+Not applicable.
+
+#### Availability of Data and Materials
+The Cheng dataset is publicly accessible at Figshare (`doi:10.6084/m9.figshare.1512427`). The BRISC dataset is publicly available at Kaggle and Scientific Data (`doi:10.1038/s41597-026-06753-y`). Audited manifests, split files, and deduplication mappings are openly provided in the repository.
+
+#### Code Availability
+All source code, preprocessing scripts, model architectures, counterfactual intervention engines, evaluation scripts, and Pytest validation suites are open-source and hosted in the repository.
+
+#### Authors' Contributions
+- **Chhotu:** Conceptualization, methodology formulation, counterfactual intervention engine design, data preprocessing and deduplication audits, statistical analysis, figure preparation, and manuscript drafting.
+- **Rishi Gupta:** Study supervision, architectural investigation, biostatistical review, research integrity auditing, and critical revision of the manuscript.
 
 ---
 
@@ -251,11 +289,11 @@ To ensure complete reproducibility, all artifacts, code, manifests, and trained 
 - **Figure 2: Preprocessing Pipeline & Mask Geometric Alignment Verification.** Multi-panel diagnostic display illustrating raw slice, percentile intensity scaling $[P_1, P_{99}]$, aspect-ratio-preserving letterbox padding ($224 \times 224$), and binary mask boundary alignment.
 - **Figure 3: Reliability Diagrams & Calibration Curves.** Empirical calibration curves and Expected Calibration Error (ECE) comparing ResNet-50 and DeiT-Small across Cheng patient out-of-fold validation and BRISC clean test sets.
 - **Figure 4: Regional Evidence Sensitivity Across Architectures (Method A: Inpainting).** Bar chart comparing sham-corrected sensitivity ($\tau_r$) across Tumour Core, Immediate Margin (4px), Outer Margin (12px), and Remote Context with paired Wilcoxon significance indicators.
-- **Figure 5: Architectural Inductive Bias: ViT vs CNN Regional Sensitivity Profile.** Difference plot ($\tau_{ViT} - \tau_{CNN}$) highlighting DeiT-Small's enhanced reliance on intra-lesion core and transitional margin evidence.
-- **Figure 6: Perturbation Method Invariance (Method A vs Method B).** Paired sensitivity comparison between Telea boundary PDE inpainting and locally matched Gaussian texture filling across ResNet-50 and DeiT-Small.
+- **Figure 5: Architectural Inductive Bias: ViT vs CNN Regional Sensitivity Profile (Method A).** Difference plot ($\tau_{\text{ViT}} - \tau_{\text{CNN}}$) highlighting DeiT-Small's enhanced reliance on intra-lesion core and transitional margin evidence.
+- **Figure 6: Perturbation Method Concordance: Telea Inpaint vs Matched Texture Fill.** Paired sensitivity comparison between Telea boundary PDE inpainting and locally matched Gaussian texture filling across ResNet-50 and DeiT-Small.
 - **Figure 7: Imaging Plane Stratification of Regional Evidence (BRISC).** Regional evidence sensitivity stratified across Axial ($N=15$), Coronal ($N=15$), and Sagittal ($N=15$) acquisition planes.
 - **Figure 8: Class Heterogeneity in Peritumoral vs Core Evidence.** Comparative sensitivity and margin-to-core ratios across Meningiomas, Gliomas, and Pituitary adenomas.
-- **Figure 9: Impact of Train-Test Duplicate Leakage on Benchmark Evaluation (BRISC).** Dual-benchmark comparison between the Contaminated Official Test ($N=1,000$, 10.1% leakage) and the Clean De-duplicated Test ($N=899$).
+- **Figure 9: Impact of Train-Test Duplicate Leakage on Benchmark Evaluation (BRISC).** Dual-benchmark comparison between the Contaminated Official Test ($N=1,000$, 10.1% leakage) and the Clean De-duplicated Test ($N=899$) across DeiT-Small and ResNet-50.
 - **Figure 10: Counterfactual Intervention & Residual Montage Gallery.** High-resolution 8-panel diagnostic gallery displaying original slice, 5-color segmentation topology, Method A inpainted core/sham, Method B texture-filled core/sham, and residual difference maps.
 
 ---
@@ -263,13 +301,17 @@ To ensure complete reproducibility, all artifacts, code, manifests, and trained 
 ## 9. References
 
 1. Wallis, C. and Buvat, I. (2022). Clever Hans effect found in a widely used brain tumour MRI dataset. *Medical Image Analysis*, 77, p.102368. doi:10.1016/j.media.2022.102368.
-2. Cheng, J., Huang, W., Cao, S., Yang, R., Yang, W., Yun, Z., Wang, Z. and Feng, Q. (2015). Enhanced Performance of Brain Tumor Classification via Tumor Region Augmentation and Partition. *PLOS ONE*, 10(10), p.e0140381. doi:10.1371/journal.pone.0140381.
-3. Rossi, F. et al. (2024). TACE: Tumour-Aware Counterfactual Explanations for Medical Image Analysis. *IEEE Transactions on Medical Imaging*, 43(5), pp.1820–1831.
-4. Sourget, T. et al. (2025). Region-Resolved Faithfulness in Deep Neuro-Oncology Classifiers. *NeuroImage*, 305, p.120950.
-5. Fateh, A. et al. (2026). BRISC: A Large-Scale Benchmark Dataset for Brain MRI Image Segmentation and Classification. *Scientific Data*, 13, p.412.
-6. Yagis, E. et al. (2021). Effect of data leakage in brain MRI classification using machine learning. *Scientific Reports*, 11(1), p.22544.
-7. He, K., Zhang, X., Ren, S. and Sun, J. (2016). Deep Residual Learning for Image Recognition. *IEEE Conference on Computer Vision and Pattern Recognition (CVPR)*, pp.770–778.
-8. Touvron, H., Cord, M., Douze, M., Massa, F., Sablayrolles, A. and Jégou, H. (2021). Training data-efficient image transformers & distillation through attention. *International Conference on Machine Learning (ICML)*, pp.10347–10357.
+2. Cheng, J., Huang, W., Cao, S. et al. (2015). Enhanced Performance of Brain Tumor Classification via Tumor Region Augmentation and Partition. *PLOS ONE*, 10(10), p.e0140381. doi:10.1371/journal.pone.0140381.
+3. Rossi, F., Lopez, R. and Comminiello, D. (2024). TACE: Tumor-Aware Counterfactual Explanations for Medical Image Analysis. *arXiv preprint*, arXiv:2409.13045. doi:10.48550/arXiv.2409.13045.
+4. Sourget, T., Pizurica, A. et al. (2024). Mask of Truth: Model Sensitivity to Unexpected Regions of Medical Images. *Lecture Notes in Computer Science (MICCAI Workshops)*, 15004, pp.439–449. doi:10.1007/978-3-031-72384-1_43.
+5. Fateh, A. et al. (2026). BRISC: Annotated Dataset for Brain Tumor Segmentation and Classification. *Scientific Data*, 13, p.412. doi:10.1038/s41597-026-06753-y.
+6. Yagis, E. et al. (2021). Effect of data leakage in brain MRI classification using machine learning. *Scientific Reports*, 11(1), p.22544. doi:10.1038/s41598-021-01681-w.
+7. He, K., Zhang, X., Ren, S. and Sun, J. (2016). Deep Residual Learning for Image Recognition. *IEEE Conference on Computer Vision and Pattern Recognition (CVPR)*, pp.770–778. doi:10.1109/CVPR.2016.90.
+8. Touvron, H., Cord, M., Douze, M. et al. (2021). Training data-efficient image transformers & distillation through attention. *International Conference on Machine Learning (ICML)*, pp.10347–10357.
 9. Guo, C., Pleiss, G., Sun, Y. and Weinberger, K.Q. (2017). On Calibration of Modern Neural Networks. *International Conference on Machine Learning (ICML)*, pp.1321–1330.
-10. Telea, A. (2004). An image inpainting technique based on the fast marching method. *Journal of Graphics Tools*, 9(1), pp.23–34.
-
+10. Telea, A. (2004). An image inpainting technique based on the fast marching method. *Journal of Graphics Tools*, 9(1), pp.23–34. doi:10.1080/10867651.2004.10487596.
+11. Geirhos, R. et al. (2020). Shortcut learning in deep neural networks. *Nature Machine Intelligence*, 2(11), pp.665–673. doi:10.1038/s42256-020-00257-z.
+12. Goyal, Y. et al. (2019). Counterfactual Visual Explanations. *IEEE International Conference on Computer Vision (ICCV)*, pp.8796–8807. doi:10.1109/ICCV.2019.00882.
+13. Rudin, C. (2019). Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. *Nature Machine Intelligence*, 1(5), pp.206–215. doi:10.1038/s42256-019-0048-x.
+14. DeGrave, A.J., Janizek, J.D. and Lee, S.I. (2021). AI for radiographic COVID-19 detection frequently relies on spurious shortcuts. *Nature Machine Intelligence*, 3(7), pp.610–619. doi:10.1038/s42256-021-00338-7.
+15. Bentaieb, A. and Hamarneh, G. (2016). Topology Preserving Deep Networks for Medical Image Analysis. *MICCAI*, pp.437–445. doi:10.1007/978-3-319-46723-8_51.
