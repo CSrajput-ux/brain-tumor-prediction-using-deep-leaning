@@ -1,0 +1,28 @@
+Category,Cohort_or_Model,Condition_or_Method,Sample_N,Metric_or_Parameter,Value,Test_Statistic,p_value,Inference
+Patient-Clustered Test (Cheng Core),DeiT-Small,Method A (Telea Inpaint),10,Patient-mean tau_core,0.1349 +/- 0.1921,"W=47.0, t=2.22","Wilcoxon p=0.0244, t-test p=0.0267",Statistically significant above zero (p < 0.05)
+Patient-Clustered Test (Cheng Core),ResNet-50,Method A (Telea Inpaint),10,Patient-mean tau_core,0.0285 +/- 0.0452,"W=47.0, t=2.00","Wilcoxon p=0.0244, t-test p=0.0385",Statistically significant above zero (p < 0.05)
+Method Concordance Correlation,DeiT-Small,Region: core,90,Pearson r / Spearman rho,"r = +0.8540, rho = +0.7631",t = 15.40,"Pearson p = 1.05e-26, Spearman p = 2.27e-18",High concordance (invariant)
+Method Concordance Correlation,DeiT-Small,Region: immediate,90,Pearson r / Spearman rho,"r = +0.4862, rho = +0.5856",t = 5.22,"Pearson p = 1.19e-06, Spearman p = 1.34e-09",Low/moderate concordance
+Method Concordance Correlation,DeiT-Small,Region: outer,90,Pearson r / Spearman rho,"r = +0.1375, rho = +0.1076",t = 1.30,"Pearson p = 1.96e-01, Spearman p = 3.13e-01",Low/moderate concordance
+Method Concordance Correlation,DeiT-Small,Region: remote,90,Pearson r / Spearman rho,"r = +0.4361, rho = +0.2937",t = 4.55,"Pearson p = 1.73e-05, Spearman p = 4.95e-03",Low/moderate concordance
+Method Concordance Correlation,ResNet-50,Region: core,90,Pearson r / Spearman rho,"r = +0.0893, rho = +0.0864",t = 0.84,"Pearson p = 4.02e-01, Spearman p = 4.18e-01",Low/moderate concordance
+Method Concordance Correlation,ResNet-50,Region: immediate,90,Pearson r / Spearman rho,"r = -0.0518, rho = -0.0248",t = -0.49,"Pearson p = 6.28e-01, Spearman p = 8.16e-01",Low/moderate concordance
+Method Concordance Correlation,ResNet-50,Region: outer,90,Pearson r / Spearman rho,"r = -0.0874, rho = +0.0019",t = -0.82,"Pearson p = 4.13e-01, Spearman p = 9.86e-01",Low/moderate concordance
+Method Concordance Correlation,ResNet-50,Region: remote,90,Pearson r / Spearman rho,"r = +0.1749, rho = +0.0071",t = 1.67,"Pearson p = 9.92e-02, Spearman p = 9.47e-01",Low/moderate concordance
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method A (Telea) | Region: core,70,tau_sham_corrected,+0.0791 +/- 0.2109,W = 1751.0,Wilcoxon p = 1.4610e-03,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method A (Telea) | Region: immediate,70,tau_sham_corrected,+0.0271 +/- 0.0719,W = 1823.0,Wilcoxon p = 3.4041e-04,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method A (Telea) | Region: outer,70,tau_sham_corrected,+0.0287 +/- 0.0683,W = 1836.0,Wilcoxon p = 2.5708e-04,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method A (Telea) | Region: remote,70,tau_sham_corrected,+0.0122 +/- 0.0535,W = 1546.0,Wilcoxon p = 3.7855e-02,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method B (Texture) | Region: core,70,tau_sham_corrected,+0.0919 +/- 0.1820,W = 2121.0,Wilcoxon p = 1.3654e-07,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method B (Texture) | Region: immediate,70,tau_sham_corrected,+0.0203 +/- 0.0680,W = 1693.0,Wilcoxon p = 4.1894e-03,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method B (Texture) | Region: outer,70,tau_sham_corrected,+0.0572 +/- 0.0839,W = 2153.0,Wilcoxon p = 4.9538e-08,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,DeiT-Small,Method B (Texture) | Region: remote,70,tau_sham_corrected,-0.0100 +/- 0.0656,W = 1020.0,Wilcoxon p = 9.0356e-01,Non-significant
+Correctly-Classified-Only Sensitivity,ResNet-50,Method A (Telea) | Region: core,67,tau_sham_corrected,+0.0229 +/- 0.0473,W = 1720.0,Wilcoxon p = 1.4209e-04,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,ResNet-50,Method A (Telea) | Region: immediate,67,tau_sham_corrected,+0.0083 +/- 0.0416,W = 1405.0,Wilcoxon p = 4.8296e-02,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,ResNet-50,Method A (Telea) | Region: outer,67,tau_sham_corrected,+0.0079 +/- 0.0796,W = 1273.0,Wilcoxon p = 2.0128e-01,Non-significant
+Correctly-Classified-Only Sensitivity,ResNet-50,Method A (Telea) | Region: remote,67,tau_sham_corrected,+0.0068 +/- 0.0273,W = 1531.0,Wilcoxon p = 7.1689e-03,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,ResNet-50,Method B (Texture) | Region: core,67,tau_sham_corrected,+0.0491 +/- 0.1713,W = 1416.0,Wilcoxon p = 4.1786e-02,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,ResNet-50,Method B (Texture) | Region: immediate,67,tau_sham_corrected,+0.0254 +/- 0.1817,W = 1314.0,Wilcoxon p = 1.3716e-01,Non-significant
+Correctly-Classified-Only Sensitivity,ResNet-50,Method B (Texture) | Region: outer,67,tau_sham_corrected,+0.0705 +/- 0.1884,W = 1598.0,Wilcoxon p = 2.0705e-03,Statistically significant drop (p < 0.05)
+Correctly-Classified-Only Sensitivity,ResNet-50,Method B (Texture) | Region: remote,67,tau_sham_corrected,-0.0024 +/- 0.2233,W = 1084.0,Wilcoxon p = 6.3441e-01,Non-significant
+Architectural Comparison (DeiT vs ResNet),Pooled Multi-Cohort (N=90),Method A (Telea) Core Sensitivity,90,Paired tau difference (DeiT - ResNet),+0.0738 +/- 0.2037,"W = 2670.0, t = 3.44","Wilcoxon p = 0.0061, t-test p = 0.0004",DeiT-Small exhibits significantly greater core sensitivity (p = 0.0123)

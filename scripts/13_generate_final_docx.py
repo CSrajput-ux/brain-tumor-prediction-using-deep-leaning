@@ -88,7 +88,7 @@ def build_docx(output_path: Path):
     p_title.paragraph_format.space_after = Pt(12)
     run_title = p_title.add_run(
         "Tumour-Core, Peritumoral-Margin, and Remote-Context Evidence in Brain MRI Classification: "
-        "A Sham-Controlled, Plane-Stratified Counterfactual Audit Across CNN and Vision Transformer Models"
+        "A Sham-Controlled Counterfactual Audit with Descriptive Plane Stratification Across CNN and Vision Transformer Models"
     )
     format_run(run_title, size_pt=16, bold=True, color=RGBColor(15, 45, 89))
 
@@ -143,8 +143,8 @@ def build_docx(output_path: Path):
     sections_abstract = [
         ("Background: ", "Deep convolutional neural networks (CNNs) and Vision Transformers (ViTs) regularly report high benchmark accuracy for classifying primary intracranial neoplasms from contrast-enhanced magnetic resonance imaging (CE-MRI). However, standard evaluation protocols evaluate models exclusively on unmodified images, failing to disentangle whether high diagnostic accuracy reflects genuine reliance on intra-lesional tumour morphology, opportunistic exploitation of peritumoral transitional zones, or spurious shortcut learning from remote cranial background context and scanner acquisition artifacts (the 'Clever Hans' effect)."),
         ("Methods: ", "We establish a literature-informed, fully reproducible counterfactual evaluation framework to audit region-resolved diagnostic evidence across the Cheng brain tumour MRI cohort (N = 3,064 slices, 233 patients) and the multi-plane BRISC benchmark (N = 6,000 slices). Before model evaluation, an automated data leakage and deduplication audit was conducted. In Cheng, a 5-fold cross-validation scheme was strictly grouped by patient ID, guaranteeing zero patient overlap across folds; baseline validation was evaluated on the patient-isolated held-out Fold 1 test partition (N = 480 slices, 49 patients). In BRISC, an automated perceptual hashing and SHA-256 pixel matrix audit revealed 159 exact duplicate image pairs; among these, 110 pairs cross the official train-test split boundary, involving 101 unique test slices (10.1% of the official 1,000-slice test set; 96 meningiomas, 5 pituitary adenomas). In light of published deduplication claims in the BRISC data descriptor, we treat this finding as an archive-specific empirical observation and report both the official benchmark (N = 1,000) and a de-duplicated clean benchmark (N = 899; 759 mask-supported). We trained ImageNet-pretrained ResNet-50 (CNN) and DeiT-Small/16 (ViT) architectures using AdamW (batch size 16, weight decay 10^-2, initial learning rate 10^-4 for ResNet-50 with dropout 0.2, 5 x 10^-5 for DeiT-Small with dropout 0.1, 1-epoch linear warmup, early stopping patience 3, max 5 epochs). We engineered a five-region topological taxonomy for each slice: tumour core (R_core), immediate peritumoral margin (R_immediate, 4-pixel dilation ring), outer margin (R_outer, 12-pixel ring), remote brain parenchyma (R_remote), and an area- and contour-matched contralateral sham control (R_sham). Two complementary perturbation engines were implemented: Method A (Telea boundary PDE inpainting) and Method B (locally matched Gaussian texture filling). In total, 1,200 counterfactual interventions were verified with 100% strict non-target pixel invariance (|Delta| < 10^-5 outside mask). We evaluated 1,800 paired counterfactual observations across models and datasets, computing raw sensitivity (Delta_r = p_y(x) - p_y(x_edit, r)) and sham-corrected region sensitivity (tau_r = Delta_r - Delta_sham), paired Wilcoxon signed-rank tests with Holm-Bonferroni correction, patient-clustered analyses across patient clusters, and Cohen's d_z effect sizes."),
-        ("Results: ", "Perturbing the tumour core produced the largest evidence drop under boundary PDE inpainting across both models (p < 10^-3). On Cheng (N = 45 slices across N = 10 patient clusters), DeiT-Small demonstrated a sham-corrected sensitivity of tau_core = 0.1282 +/- 0.248 (slice-level Wilcoxon p = 9.13 x 10^-6, patient-clustered Wilcoxon p = 0.0488, d_z = 0.518) under inpainting and tau_core = 0.1449 +/- 0.217 under texture filling. ResNet-50 on Cheng showed tau_core = 0.0311 +/- 0.057 (slice-level p = 6.54 x 10^-4, patient-clustered p = 0.0488, d_z = 0.548) under inpainting. In a pooled multi-cohort comparison (N = 90, Method A across 55 independent clusters), DeiT-Small exhibited significantly greater core evidence reliance than ResNet-50 (tau_core, ViT = 0.0900 vs tau_core, CNN = 0.0161, difference +0.0738, slice-level paired Wilcoxon p = 0.0123, cluster-level Wilcoxon p = 0.0162, Linear Mixed Model beta = +0.074, p < 0.001, d_z = 0.362) alongside superior probability calibration (Cheng 10-bin Expected Calibration Error: DeiT-Small 0.0366 vs ResNet-50 0.1835). Immediate peritumoral margin modifications also induced statistically significant evidence drops (tau_immediate = 0.0213 +/- 0.096, p = 0.0267 on Cheng; tau_immediate = 0.0239 +/- 0.063, p = 0.0152 on BRISC for DeiT-Small). Spatial evidence decay was condition- and method-dependent: while core dominance held strongly under inpainting, outer margin (12-pixel ring) edits under Gaussian texture filling and in skull-stripped BRISC scans produced effects comparable to or approaching the core (tau approx 0.030 - 0.060), reflecting both large annular mask tissue volume covering vasogenic edema and convolutional sensitivity to high-frequency boundary textures. Remote parenchyma edits yielded negligible shifts indistinguishable from sham controls (p > 0.05). Exploratory radiologic analysis showed that gliomas exhibited a substantial margin-to-core sensitivity ratio (35.0%), whereas sellar-confined pituitary adenomas showed minimal margin dependence (15.1%). Finally, the 101 duplicate test images in BRISC shifted test class priors, altering macro-F1 across full 4-class test sets (DeiT-Small: 0.8030 official vs 0.8344 clean; ResNet-50: 0.7095 official vs 0.6991 clean) and within neoplasm evaluation subsets."),
-        ("Discussion: ", "Contrast-enhanced brain tumour classifiers derive diagnostic evidence primarily from intra-tumoural morphology, with non-trivial contributions from immediate transitional margins, while remaining robust to remote context. ViTs demonstrate stronger core feature sensitivity and superior probability calibration compared to CNNs. However, duplicate leakage and class-prior shifts in public benchmarks underscore the critical necessity of rigorous data auditing, patient-clustered evaluation, and transparent sample accounting before clinical interpretation.")
+        ("Results: ", "Core edits produced the largest average effect in selected Telea comparisons. On Cheng (45 slices from 10 patient clusters), DeiT-Small core sensitivity was 0.1282 under Telea inpainting and 0.1449 under texture filling; ResNet-50 core sensitivity was 0.0311 under Telea inpainting. The pooled architecture contrast was +0.0738 (DeiT-Small 0.0900; ResNet-50 0.0161), with unadjusted p = 0.0123 but Holm-adjusted p = 0.0980; it is therefore exploratory rather than confirmatory. Remote effects were smaller and not statistically distinguishable from sham in the reported Telea tests. Full four-class BRISC macro-F1 was 0.8030 versus 0.8344 for DeiT-Small and 0.7095 versus 0.6991 for ResNet-50 on the official and locally de-duplicated sets, respectively."),
+        ("Discussion: ", "These single-run, limited-sample analyses provide descriptive evidence that sensitivity depends on region, edit method, architecture, and cohort. The architecture contrast is inconclusive after multiplicity adjustment. The locally observed BRISC duplicates are reported as an archive-specific finding; they do not establish a property of every BRISC release.")
     ]
 
     for label, text in sections_abstract:
@@ -264,7 +264,7 @@ def build_docx(output_path: Path):
         "non-specific perturbation sensitivity."
     )
     add_p(
-        "To resolve these challenges, we design and execute a literature-informed, sham-controlled, plane-stratified counterfactual audit "
+        "To resolve these challenges, we design and execute a literature-informed, sham-controlled counterfactual audit with descriptive plane stratification "
         "across CNN (ResNet-50) and Vision Transformer (DeiT-Small/16) architectures (Figure 1). We investigate five central scientific hypotheses: "
         "(Hypothesis 1) Model prediction sensitivity decays as interventions move from the tumour core through transitional peritumoral margins "
         "into remote normal parenchyma, with remote perturbations producing negligible shifts indistinguishable from sham controls; "
@@ -331,7 +331,7 @@ def build_docx(output_path: Path):
         "that are byte-identical copies of training/validation images (96 meningiomas and 5 pituitary adenomas). "
         "Because external replication audits report varying hash-cleaning counts, we present this local finding as an empirical observation specific to the downloaded archive release rather than a definitive indictment of the published benchmark design. "
         "We report both the official benchmark (N = 1,000) and the local de-duplicated clean subset (N = 899; 759 mask-supported clean slices) side-by-side. "
-        "Deduplication screening between Cheng and BRISC confirmed 0 duplicate pairs and SSIM values < 0.58."
+        "Cross-dataset screening found no exact decoded-pixel matches and SSIM values below 0.58; this does not rule out source-level overlap after preprocessing."
     )
     add_sec("3.4  Image Preprocessing and Mask Invariant Geometry", level=2)
     add_p(
@@ -344,15 +344,14 @@ def build_docx(output_path: Path):
         "Models were configured in strict concordance with configs/training.yaml: "
         "(1) ResNet-50 (CNN, 23.51M parameters) with IMAGENET1K_V2 pretrained weights [7], linear classification head, Dropout p = 0.2, and initial learning rate 1 x 10^-4; "
         "(2) DeiT-Small/16 (ViT, 21.66M parameters) operating on 16 x 16 patches with global self-attention across 12 transformer layers [8], class token projection head, Dropout p = 0.1, and initial learning rate 5 x 10^-5. "
-        "Both architectures were optimized using AdamW with weight decay of 1 x 10^-2 and batch size 16. Training was conducted for up to 5 epochs per fold/split with early stopping patience of 3 epochs on validation macro-F1, "
-        "following a 1-epoch linear warmup and cosine annealing schedule. Standard cross-entropy loss was minimized with random seed 42."
+        "Both architectures were optimized using AdamW with weight decay of 1 x 10^-2 and batch size 16. Training was conducted for up to 5 epochs per fold/split with early stopping patience of 3 epochs on validation macro-F1, following a 1-epoch linear warmup and cosine annealing schedule. Standard cross-entropy loss was minimized with random seed 42. These are single-seed, limited-epoch baseline runs and are not presented as optimized or state-of-the-art benchmarks."
     )
     add_sec("3.6  Five-Region Topological Decomposition", level=2)
     add_p(
         "For each test slice with lesion mask M and brain tissue support S, we engineered five mutually exclusive regions: "
         "(1) Tumour Core R_core = M; (2) Immediate Margin R_immediate = (M (+) K_4 \ M) cap S (4-pixel dilation ring); "
         "(3) Outer Margin R_outer = (M (+) K_16 \ (M (+) K_4)) cap S (12-pixel ring); (4) Remote Context R_remote: normal tissue patch > 32 px away; "
-        "(5) Matched Contralateral Sham Control R_sham: area- and contour-matched normal parenchyma control in the opposite hemisphere."
+        "(5) Matched Contralateral Sham Control R_sham: area- and contour-matched normal parenchyma control in the opposite hemisphere. Only the sham was area- and contour-matched to the core; margin and remote regions differ in area. Between-region magnitudes are therefore not interpreted as anatomy-only effects or normalized per pixel."
     )
     add_sec("3.7  Dual Perturbation Methods and Non-Target Invariance", level=2)
     add_p(
@@ -373,9 +372,7 @@ def build_docx(output_path: Path):
     add_sec("4  Experimental Setup and Results")
     add_sec("4.1  Baseline Classification Performance and Calibration", level=2)
     add_p(
-        "Baseline models demonstrated strong generalization across both benchmarks (Table 1; Figure 3). DeiT-Small consistently outperformed ResNet-50 "
-        "in macro-F1 (Cheng Fold 1: 0.8403 vs 0.7190; BRISC Clean: 0.5999 vs 0.4181) and probability calibration. On Cheng Fold 1, DeiT-Small achieved an "
-        "Expected Calibration Error (ECE) of 0.0366 compared to 0.1835 for ResNet-50."
+        "Table 1 reports single-run baseline performance. On the full four-class BRISC partitions, DeiT-Small macro-F1 was 0.8030 (official) and 0.8344 (locally de-duplicated), while ResNet-50 macro-F1 was 0.7095 and 0.6991. On Cheng Fold 1, DeiT-Small ECE was 0.0366 and ResNet-50 ECE was 0.1835. These results are descriptive because training used one seed and a limited epoch budget."
     )
 
     # Add Table 1
@@ -393,10 +390,6 @@ def build_docx(output_path: Path):
         ["BRISC", "ResNet-50 (CNN)", "Clean Test (N=899, De-duplicated)", "0.6963", "0.6815", "0.6991", "0.3790", "0.6505"],
         ["BRISC", "DeiT-Small (ViT)", "Official Test (N=1,000, Full 4-Class)", "0.7880", "0.8094", "0.8030", "0.0719", "0.2864"],
         ["BRISC", "DeiT-Small (ViT)", "Clean Test (N=899, De-duplicated)", "0.8265", "0.8330", "0.8344", "0.0901", "0.2448"],
-        ["BRISC (Sub)", "ResNet-50 (CNN)", "Neoplasm Batch (N=480; 2-Class)", "0.6479", "0.6510", "0.3460", "0.3312", "0.6591"],
-        ["BRISC (Sub)", "ResNet-50 (CNN)", "Clean Neoplasm Batch (N=397)", "0.6247", "0.6349", "0.4383", "0.3061", "0.6595"],
-        ["BRISC (Sub)", "DeiT-Small (ViT)", "Neoplasm Batch (N=480; 2-Class)", "0.6875", "0.6813", "0.3566", "0.0421", "0.3938"],
-        ["BRISC (Sub)", "DeiT-Small (ViT)", "Clean Neoplasm Batch (N=397)", "0.7456", "0.7294", "0.3716", "0.0718", "0.3303"]
     ]
     t1 = doc.add_table(rows=len(t1_data), cols=8)
     t1.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -424,7 +417,7 @@ def build_docx(output_path: Path):
     r_t1_fn = p_t1_fn.add_run(
         "Note: For Cheng, evaluations reflect the 480 held-out slices of Fold 1 (from 49 patients unseen in training). "
         "For BRISC, official and clean benchmark scores are computed across the full 4-class test partitions (N=1,000 and N=899, preserved in predictions/test_predictions_*_brisc.csv and *_brisc_clean.csv), "
-        "alongside the mask-supported neoplasm evaluation subset (N=480 / N=397, preserved in predictions/test_predictions_*_neoplasm_480.csv)."
+        "The mask-supported two-class files are used only for the counterfactual audit; they are excluded from benchmark performance comparisons because their original macro-F1 values used an inconsistent four-label averaging convention."
     )
     format_run(r_t1_fn, size_pt=8.5, italic=True)
 
@@ -450,7 +443,7 @@ def build_docx(output_path: Path):
     p_t2_title = doc.add_paragraph()
     p_t2_title.paragraph_format.space_before = Pt(8)
     p_t2_title.paragraph_format.space_after = Pt(3)
-    r_t2_title = p_t2_title.add_run("Table 2: Regional Evidence Sensitivity and Biostatistical Hypothesis Testing (Recalculated from Raw Observations).")
+    r_t2_title = p_t2_title.add_run("Table 2: Selected Regional Evidence Contrasts and Biostatistical Tests.")
     format_run(r_t2_title, size_pt=10, bold=True)
 
     t2_data = [
@@ -497,7 +490,7 @@ def build_docx(output_path: Path):
         "This occurs because the 12-pixel dilation ring encompasses a substantially larger parenchymal area in skull-stripped scans, capturing extensive vasogenic perilesional edema, and localized convolutional kernels are sensitive to high-frequency boundary textures. "
         "(2) Patient-Clustered Statistical Inference: In Cheng, the 45 intervention slices originate from N = 10 unique patient clusters. "
         "While slice-level Wilcoxon tests yield p = 9.13 x 10^-6 for DeiT-Small and p = 6.54 x 10^-4 for ResNet-50, patient-clustered analysis across the 10 patient-mean sensitivities yields clustered Wilcoxon p = 0.0488 for both architectures (clustered one-sample t-test: DeiT p = 0.0534, ResNet p = 0.0771). "
-        "Both levels of inference confirm core sensitivity above sham controls, but patient clustering reveals the true effective degree of freedom (N = 10). "
+        "The clustered results are borderline (Wilcoxon p = 0.0488; t-test p = 0.0534 for DeiT-Small and 0.0771 for ResNet-50) and are treated as exploratory given the 10-patient effective sample. "
         "(3) Remote Context Invariance: Remote parenchyma interventions produced small shifts indistinguishable from sham controls (p > 0.05). "
         "This non-significance indicates that remote tissue does not provide primary directional evidence, though subtle non-specific background dependence cannot be entirely excluded."
     )
@@ -508,10 +501,10 @@ def build_docx(output_path: Path):
         "(1) Tumour Core Reliance: In the pooled multi-cohort comparison (N = 90, Method A across 55 independent clusters), DeiT-Small exhibited substantially higher sensitivity to the tumour core than ResNet-50 under inpainting "
         "(tau_core, ViT = 0.0900 vs tau_core, CNN = 0.0161, difference +0.0738, slice-level Wilcoxon p = 0.0123, Cohen's d_z = 0.362). Crucially, under cluster-level inference accounting for the 55 independent clusters (10 Cheng patient clusters + 45 independent BRISC cases), the architectural superiority remains robust: cluster-level Wilcoxon p = 0.0162, cluster-level t-test p = 0.00177, and Linear Mixed-Effects Modeling fixed effect beta_ViT = +0.074 (z = 3.756, p < 0.001). "
         "In the Cheng-specific subset (N = 45), the core sensitivity difference was 0.1282 - 0.0311 = 0.0971 (slice-level Wilcoxon p = 0.156; patient-clustered Wilcoxon p = 0.232, clustered t-test p = 0.148). "
-        "Statistical significance for architectural divergence is thus achieved when pooling across the combined multi-cohort (N = 90, 55 clusters); "
+        "The unadjusted pooled contrast should be interpreted cautiously: its Holm-adjusted p value is 0.0980, so the architecture comparison is inconclusive as a confirmatory claim; "
         "(2) Peritumoral Margin Context: DeiT-Small showed higher sensitivity to the immediate margin (+0.0166, p = 0.1124) and outer margin (+0.0118); "
         "(3) Remote Context Invariance: Remote sensitivity was near zero for both architectures (tau <= 0.013, difference +0.0072, p = 0.9087), "
-        "refuting concerns that global self-attention induces spurious sensitivity to distant cranial background tissue."
+        "providing no evidence in this sample of a difference in remote-context sensitivity."
     )
 
     add_sec("4.5  Perturbation Method Concordance", level=2)
@@ -533,7 +526,7 @@ def build_docx(output_path: Path):
     p_t3_title = doc.add_paragraph()
     p_t3_title.paragraph_format.space_before = Pt(8)
     p_t3_title.paragraph_format.space_after = Pt(3)
-    r_t3_title = p_t3_title.add_run("Table 3: Imaging Plane Stratification of Regional Evidence (BRISC).")
+    r_t3_title = p_t3_title.add_run("Table 3: Descriptive BRISC Plane Summary Across Both Architectures and Both Edit Methods.")
     format_run(r_t3_title, size_pt=10, bold=True)
 
     t3_data = [
@@ -572,7 +565,7 @@ def build_docx(output_path: Path):
     p_t4_title = doc.add_paragraph()
     p_t4_title.paragraph_format.space_before = Pt(8)
     p_t4_title.paragraph_format.space_after = Pt(3)
-    r_t4_title = p_t4_title.add_run("Table 4: Tumour Class Heterogeneity and Margin-to-Core Sensitivity Ratios.")
+    r_t4_title = p_t4_title.add_run("Table 4: Exploratory Cheng Class Summary Across Both Architectures and Both Edit Methods.")
     format_run(r_t4_title, size_pt=10, bold=True)
 
     t4_data = [
@@ -602,7 +595,7 @@ def build_docx(output_path: Path):
     add_sec("4.8  Impact of Benchmark Duplicate Leakage", level=2)
     add_p(
         "Comparing performance between the Contaminated Official Benchmark (N = 1,000) and the Clean De-duplicated Test Set (N = 899) "
-        "revealed that train-test duplicate leakage significantly altered benchmark evaluations (Table 1; Figure 9). The 101 duplicate test images "
+        "showed that the locally identified train-test duplicates coincided with different full-test metrics (Table 1; Figure 9). The 101 duplicate test images "
         "were heavily skewed toward meningiomas (96 of 101). Deduplication shifted the test set class prior: meningiomas decreased from 30.6% (306/1,000) to 23.4% (210/899). "
         "Because classifiers struggled with minority-class separation under severe imbalance, repeated identical meningioma slices in the official test set disproportionately penalized macro-F1 "
         "(DeiT-Small: 0.3566; ResNet-50: 0.3460). On the clean benchmark, macro-F1 rose to 0.5999 for DeiT-Small and 0.4181 for ResNet-50. "
@@ -655,11 +648,12 @@ def build_docx(output_path: Path):
     decs = [
         ("Funding: ", "This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors."),
         ("Conflicts of Interest: ", "The authors declare that they have no competing financial or non-financial interests that could have appeared to influence the work reported in this paper."),
-        ("Ethics Approval: ", "This study utilized publicly available, fully de-identified retrospective magnetic resonance imaging datasets [2, 5]. No new human or animal subjects were recruited, and institutional ethical review approval was not required."),
+        ("Ethics Approval: ", "This study analysed only publicly available, de-identified retrospective image datasets [2, 5]. It involved no recruitment, intervention, or access to identifiable information. The authors determined that institutional review was not required for this secondary analysis; this determination should be confirmed against the requirements of the target journal and institution before submission."),
         ("Consent to Participate: ", "Not applicable. The research involved retrospective analysis of publicly available, de-identified datasets."),
         ("Consent for Publication: ", "Not applicable."),
-        ("Availability of Data and Materials: ", "The Cheng dataset is publicly accessible at Figshare (doi:10.6084/m9.figshare.1512427). The BRISC dataset is publicly available at Kaggle and Scientific Data (doi:10.1038/s41597-026-06753-y). Audited manifests, split files, and deduplication mappings are openly provided in the repository."),
-        ("Code Availability: ", "All source code, preprocessing scripts, model architectures, counterfactual intervention engines, evaluation scripts, and Pytest validation suites are open-source and hosted in the repository."),
+        ("Availability of Data and Materials: ", "The Cheng dataset is publicly accessible at Figshare (doi:10.6084/m9.figshare.1512427). BRISC is publicly available at Kaggle and Scientific Data (doi:10.1038/s41597-026-06753-y; CC BY 4.0). Audited manifests, split files, prediction files, and duplicate mappings are available in the project repository: https://github.com/CSrajput-ux/brain-tumor-prediction-using-deep-leaning."),
+        ("Code and Checkpoint Availability: ", "The project repository contains source code, preprocessing scripts, model configurations, counterfactual engines, evaluation scripts, prediction files, and the local checkpoints used for this analysis: https://github.com/CSrajput-ux/brain-tumor-prediction-using-deep-leaning. A permanent archival DOI and independent reproduction package have not yet been created; they are required before publication."),
+        ("Generative AI Use: ", "Generative AI tools were used for language and editorial assistance during manuscript preparation. They were not used to generate study data, images, statistical analyses, or scientific conclusions. The authors reviewed the manuscript and take responsibility for the final content."),
         ("Authors' Contributions: ", "Chhotu: Conceptualization, methodology formulation, counterfactual intervention engine design, data preprocessing and deduplication audits, statistical analysis, figure preparation, and manuscript drafting. Rishi Gupta: Study supervision, architectural investigation, biostatistical review, research integrity auditing, and critical revision of the manuscript.")
     ]
     for lbl, txt in decs:
