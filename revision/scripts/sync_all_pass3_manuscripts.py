@@ -41,3 +41,4 @@ for fname in ["paper/manuscript.md", "Brain_MRI_Research_Paper_Final.md"]:
 
     p.write_text(text, encoding="utf-8")
     print(f"Synchronized Pass 3 fixes to {fname}")
+

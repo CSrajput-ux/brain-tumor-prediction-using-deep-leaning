@@ -101,3 +101,4 @@ if audit_path.exists():
         writer.writerows(a_rows)
 
     print(f"Successfully formatted and updated {audit_path}")
+

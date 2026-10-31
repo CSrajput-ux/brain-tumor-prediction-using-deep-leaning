@@ -370,3 +370,4 @@ finally:
     pythoncom.CoUninitialize()
 
 print("All Word and PDF documents synchronized successfully.")
+
