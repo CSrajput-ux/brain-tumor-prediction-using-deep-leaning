@@ -161,12 +161,13 @@ def save_diagnostic_montage(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--num-samples-per-class", type=int, default=15)
+    parser = argparse.ArgumentParser(description="Generate counterfactual interventions for brain MRI.")
+    parser.add_argument("--num-samples-per-class", type=int, default=20, help="Number of samples per class for Cheng (default: 20 -> 60 slices)")
     parser.add_argument("--montages-per-class", type=int, default=3)
     parser.add_argument("--output-csv", type=Path, default=ROOT / "manifests" / "intervention_qc.csv")
     parser.add_argument("--montage-dir", type=Path, default=ROOT / "reports" / "intervention_montages")
     parser.add_argument("--report-path", type=Path, default=ROOT / "reports" / "intervention_qc_report.md")
+    parser.add_argument("--mode", choices=["qc", "eval"], default="qc", help="qc: 120-slice pool (1,200 records); eval: 90-slice balanced pool (900 records)")
     args = parser.parse_args()
 
     args.montage_dir.mkdir(parents=True, exist_ok=True)
@@ -219,7 +220,20 @@ def main() -> None:
     print(f"\nProcessing BRISC Clean Test Slices (Total available: {len(brisc_test)})...")
     b_class_counts: dict[tuple[str, str], int] = {}
     b_montage_counts: dict[str, int] = {}
-    samples_per_plane = max(1, args.num_samples_per_class // 3)
+
+    # Target counts per (class, plane) cell
+    if args.mode == "qc":
+        # Exactly reproduces the 60-slice BRISC pool (1200 records in intervention_qc.csv)
+        brisc_targets = {
+            ("glioma", "axial"): 20, ("glioma", "coronal"): 5, ("glioma", "sagittal"): 5,
+            ("meningioma", "axial"): 5, ("meningioma", "coronal"): 5, ("meningioma", "sagittal"): 5,
+            ("pituitary", "axial"): 5, ("pituitary", "coronal"): 5, ("pituitary", "sagittal"): 5,
+        }
+    else:
+        # Balanced 45-slice pool (5 per cell across 9 cells)
+        brisc_targets = {
+            (cls, pl): 5 for cls in ["glioma", "meningioma", "pituitary"] for pl in ["axial", "coronal", "sagittal"]
+        }
 
     for idx in range(len(brisc_test)):
         sample = brisc_test[idx]
@@ -228,8 +242,9 @@ def main() -> None:
         if cls_name == "no_tumor":
             continue
         pair_key = (cls_name, plane)
+        target_cnt = brisc_targets.get(pair_key, 5)
         current_cnt = b_class_counts.get(pair_key, 0)
-        if current_cnt >= samples_per_plane:
+        if current_cnt >= target_cnt:
             continue
 
         raw_img = sample["display_image"].numpy()

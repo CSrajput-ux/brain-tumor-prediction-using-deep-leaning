@@ -322,18 +322,29 @@ Reviewers: Multidisciplinary Research Team (Computer-Vision Engineer, Biostatist
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--epochs", type=int, default=3)
-    parser.add_argument("--batch-size", type=int, default=16)
-    parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--weight-decay", type=float, default=1e-2)
-    parser.add_argument("--folds", type=str, default="fold_1,fold_2")
+    parser = argparse.ArgumentParser(description="Baseline model training for Cheng and BRISC benchmarks.")
+    parser.add_argument("--config", type=Path, default=ROOT / "configs" / "training.yaml", help="Path to training YAML config")
+    parser.add_argument("--epochs", type=int, default=None, help="Override epochs from config")
+    parser.add_argument("--batch-size", type=int, default=None, help="Override batch size from config")
+    parser.add_argument("--lr", type=float, default=None, help="Override learning rate from config")
+    parser.add_argument("--weight-decay", type=float, default=None, help="Override weight decay from config")
+    parser.add_argument("--folds", type=str, default="fold_1", help="Cheng folds to train/evaluate (default: fold_1 for patient-isolated benchmark)")
     parser.add_argument("--max-train-batches", type=int, default=None)
     parser.add_argument("--max-val-batches", type=int, default=None)
     parser.add_argument("--checkpoints-dir", type=Path, default=ROOT / "checkpoints")
     parser.add_argument("--predictions-dir", type=Path, default=ROOT / "predictions")
     parser.add_argument("--reports-dir", type=Path, default=ROOT / "reports")
     args = parser.parse_args()
+
+    # Automatically load configuration from configs/training.yaml
+    training_cfg: dict[str, Any] = {}
+    if args.config.exists():
+        import yaml
+        with open(args.config, "r", encoding="utf-8") as f:
+            training_cfg = yaml.safe_load(f)
+        print(f"Loaded training configuration from {args.config}")
+    else:
+        print(f"Warning: Configuration file {args.config} not found. Using defaults.")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Running baseline training on device: {device}")
@@ -344,14 +355,25 @@ def main() -> None:
     brisc_results: dict[str, dict] = {}
 
     for arch in ["resnet50", "deit_small_patch16_224"]:
+        # Resolve architecture-specific hyperparameters from YAML
+        cfg_key = "resnet50" if arch == "resnet50" else "deit_small"
+        arch_cfg = training_cfg.get(cfg_key, {})
+
+        epochs = args.epochs if args.epochs is not None else arch_cfg.get("max_epochs", 5)
+        batch_size = args.batch_size if args.batch_size is not None else arch_cfg.get("batch_size", 16)
+        lr = args.lr if args.lr is not None else arch_cfg.get("learning_rate", 1e-4 if arch == "resnet50" else 5e-5)
+        weight_decay = args.weight_decay if args.weight_decay is not None else arch_cfg.get("weight_decay", 1e-2)
+
+        print(f"\nConfiguring {arch.upper()}: epochs={epochs}, batch_size={batch_size}, lr={lr}, weight_decay={weight_decay}")
+
         # Train Cheng folds
         c_res = train_cheng_folds(
             arch,
             selected_folds,
-            args.epochs,
-            args.batch_size,
-            args.lr,
-            args.weight_decay,
+            epochs,
+            batch_size,
+            lr,
+            weight_decay,
             device,
             args.checkpoints_dir,
             args.predictions_dir,
@@ -363,10 +385,10 @@ def main() -> None:
         # Train BRISC
         b_res = train_brisc_baseline(
             arch,
-            args.epochs,
-            args.batch_size,
-            args.lr,
-            args.weight_decay,
+            epochs,
+            batch_size,
+            lr,
+            weight_decay,
             device,
             args.checkpoints_dir,
             args.predictions_dir,
