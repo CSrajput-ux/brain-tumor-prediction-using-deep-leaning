@@ -28,3 +28,4 @@ jobs:
       - name: Run Pytest across all phases
         run: |
           python -m pytest tests/
+
