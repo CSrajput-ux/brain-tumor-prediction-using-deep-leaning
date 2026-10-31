@@ -189,34 +189,31 @@ Paired comparison between DeiT-Small and ResNet-50 demonstrated key architectura
 Evaluating Method A (Telea boundary PDE inpainting) against Method B (locally matched Gaussian texture filling) confirmed strong concordance in regional evidence ordering (Figure 6). In DeiT-Small, core sensitivity between the two methods was strongly correlated on Cheng ($r = 0.881$, Spearman $\rho = 0.864$) and on BRISC ($r = 0.704$, Spearman $\rho = 0.642$). When pooling across models on Cheng, core sensitivity correlation remained high ($r = 0.748$, Spearman $\rho = 0.541$). For ResNet-50, lower cross-method correlation was observed ($r = 0.241$ on Cheng), indicating that localized convolutional kernels are more sensitive to high-frequency texture fill boundary transitions than attention mechanisms.
 
 ### 5.6 Imaging Plane Stratification (BRISC)
-Stratifying BRISC by acquisition plane revealed that the spatial evidence gradient was preserved across all three orthogonal radiological orientations (Table 3; Figure 7):
-- **Axial ($N=15$):** $\tau_{\text{core}} = 0.0337 > \tau_{\text{immed}} = 0.0241 > \tau_{\text{remote}} = 0.0137$
-- **Coronal ($N=15$):** $\tau_{\text{core}} = 0.0298 > \tau_{\text{immed}} = 0.0127 > \tau_{\text{remote}} = 0.0036$
-- **Sagittal ($N=15$):** $\tau_{\text{core}} = 0.0582 > \tau_{\text{immed}} = 0.0461 > \tau_{\text{remote}} = 0.0178$
+Stratifying BRISC by acquisition plane revealed that the spatial evidence gradient varied across the three orthogonal radiological orientations (Table 3; Figure 8). Tumour-core sensitivity was highest in each plane, but the ordering of the surrounding regions was not uniform. In particular, axial remote-context sensitivity exceeded immediate-margin sensitivity (0.0312 vs 0.0283), yielding the axial ordering: Core (0.0492) > Outer margin (0.0469) > Remote context (0.0312) > Immediate margin (0.0283). In coronal slices, ordering was Core (0.0370) > Outer (0.0175) > Immediate (0.0118) > Remote (0.0027); and in sagittal slices, Core (0.0690) > Immediate (0.0317) > Outer (0.0259) > Remote (0.0082).
 
 **Table 3: Imaging Plane Stratification of Regional Evidence (BRISC, DeiT-Small, Method A).**
-| Acquisition Plane | Sample Count ($N$) | Mean Core $\tau_{\text{core}}$ | Mean Immediate Margin $\tau_{\text{immed}}$ | Mean Remote $\tau_{\text{remote}}$ |
-|---|---|---|---|---|
-| **Axial** | 15 | **0.0337** | 0.0241 | 0.0137 |
-| **Coronal** | 15 | **0.0298** | 0.0127 | 0.0036 |
-| **Sagittal** | 15 | **0.0582** | 0.0461 | 0.0178 |
+| Acquisition Plane | Sample Count ($N$) | Mean Core $\tau_{\text{core}}$ | Mean Immediate Margin $\tau_{\text{immed}}$ | Mean Outer Margin $\tau_{\text{outer}}$ | Mean Remote $\tau_{\text{remote}}$ |
+|---|---|---|---|---|---|
+| **Axial** | 15 | **0.0492** | 0.0283 | 0.0469 | 0.0312 |
+| **Coronal** | 15 | **0.0370** | 0.0118 | 0.0175 | 0.0027 |
+| **Sagittal** | 15 | **0.0690** | 0.0317 | 0.0259 | 0.0082 |
 
-All three planes independently satisfied the hierarchy $\tau_{\text{core}} > \tau_{\text{immediate}} > \tau_{\text{remote}}$.
+The unweighted mean across the three planes exactly reproduces the overall BRISC DeiT inpainting sensitivities reported in Table 2: Core ((0.0492 + 0.0370 + 0.0690)/3 = 0.0517), Immediate margin ((0.0283 + 0.0118 + 0.0317)/3 = 0.0239), Outer margin ((0.0469 + 0.0175 + 0.0259)/3 = 0.0301), and Remote context ((0.0312 + 0.0027 + 0.0082)/3 = 0.0140). These plane-stratified findings are descriptive and do not establish statistically significant differences between acquisition planes.
 
 ### 5.7 Exploratory Tumour Class Heterogeneity
-Analyzing sensitivity across tumour classes revealed marked differences that correspond with radiological characteristics (Table 4; Figure 8):
-- **Gliomas:** Exhibited a high margin-to-core ratio (**35.0%**, $\tau_{\text{immed}} = 0.0128$ vs $\tau_{\text{core}} = 0.0366$), consistent with radiological infiltrative margins and surrounding signal alteration on CE-T1 MRI.
-- **Meningiomas:** Demonstrated high core sensitivity ($\tau_{\text{core}} = 0.1443$) and substantial margin sensitivity (**33.1%**, $\tau_{\text{immed}} = 0.0478$), reflecting prominent dural-tail enhancement and parenchymal displacement.
-- **Pituitary Adenomas:** Exhibited low margin sensitivity (**15.1%**, $\tau_{\text{immed}} = 0.0025$ vs $\tau_{\text{core}} = 0.0167$), consistent with anatomic circumscription within the sellar region.
+Analyzing sensitivity across Cheng tumour classes revealed marked differences in regional reliance across the 45 evaluated slices (Table 4; Figure 9):
+- **Gliomas ($N=15$):** Exhibited a high margin-to-core sensitivity ratio (**67.2%**, $\tau_{\text{immed}} = 0.0268$ vs $\tau_{\text{core}} = 0.0398$), indicating substantial model reliance on transitional perilesional parenchyma in this exploratory subset.
+- **Meningiomas ($N=15$):** Demonstrated pronounced core sensitivity ($\tau_{\text{core}} = 0.3438$) with modest margin sensitivity (**9.8%**, $\tau_{\text{immed}} = 0.0338$), reflecting primary sensitivity to internal lesion features.
+- **Pituitary Adenomas ($N=15$):** Exhibited circumscribed presentation where outer margin perturbations showed higher sensitivity than core removal ($\tau_{\text{core}} = 0.0009$, $\tau_{\text{immed}} = 0.0034$, $\tau_{\text{outer}} = 0.0392$).
 
-**Table 4: Tumour Class Heterogeneity and Margin-to-Core Sensitivity Ratios (DeiT-Small, Method A).**
-| Tumour Class | Sample Count ($N$) | Core Sensitivity ($\tau_{\text{core}}$) | Immediate Margin ($\tau_{\text{immed}}$) | Margin-to-Core Ratio (%) |
-|---|---|---|---|---|
-| **Glioma** | 15 | 0.0366 | 0.0128 | **35.0%** |
-| **Meningioma** | 15 | 0.1443 | 0.0478 | **33.1%** |
-| **Pituitary Adenoma** | 15 | 0.0167 | 0.0025 | **15.1%** |
+**Table 4: Tumour Class Heterogeneity and Margin-to-Core Sensitivity Ratios (Cheng, DeiT-Small, Method A).**
+| Tumour Class | Sample Count ($N$) | Core Sensitivity ($\tau_{\text{core}}$) | Immediate Margin ($\tau_{\text{immed}}$) | Outer Margin ($\tau_{\text{outer}}$) | Remote Context ($\tau_{\text{remote}}$) | Margin-to-Core Ratio (%) |
+|---|---|---|---|---|---|---|
+| **Glioma** | 15 | **0.0398** | 0.0268 | -0.0066 | 0.0218 | **67.2%** |
+| **Meningioma** | 15 | **0.3438** | 0.0338 | -0.0136 | 0.0165 | **9.8%** |
+| **Pituitary Adenoma** | 15 | **0.0009** | 0.0034 | 0.0392 | 0.0001 | **360.2%** |
 
-*Note: These class-specific observations represent exploratory radiologic findings derived from 2D CE-T1 MRI classifications without independent histopathological tissue staining.*
+The unweighted class mean sensitivity across the 45 Cheng slices reproduces Table 2 exactly: Core ((0.0398 + 0.3438 + 0.0009)/3 = 0.1282), Immediate margin ((0.0268 + 0.0338 + 0.0034)/3 = 0.0213), Outer margin ((-0.0066 - 0.0136 + 0.0392)/3 = 0.0063), and Remote context ((0.0218 + 0.0165 + 0.0001)/3 = 0.0128). These class-specific observations represent exploratory findings derived from 2D CE-T1 MRI classifications on 15 slices per class from 10 patients without independent histopathological tissue validation; they should not be interpreted as establishing histological tumour infiltration, edema biology, or radiological causation.
 
 ### 5.8 Impact of Benchmark Duplicate Leakage
 Comparing performance between the official benchmark ($N=1,000$) and the de-duplicated clean test set ($N=899$) revealed that train-test duplicate leakage in the distributed archive release altered evaluation metrics (Table 1; Figure 9). The 101 duplicate test images were heavily skewed toward meningiomas (96 of 101), altering test set class balance upon deduplication. On the full 4-class test set, clean macro-F1 was **0.8344** for DeiT-Small and **0.6991** for ResNet-50. Within the mask-supported neoplasm subset, repeated identical meningiomas penalized minority-class balance, yielding macro-F1 of **0.5999** for DeiT-Small and **0.4181** for ResNet-50 upon deduplication. This demonstrates that duplicate leakage distorts benchmark evaluations primarily by altering class composition priors rather than uniformly inflating nominal scores.
