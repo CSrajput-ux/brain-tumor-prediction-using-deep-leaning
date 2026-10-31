@@ -1,0 +1,4 @@
+plane,n,core_tau,immediate_tau,outer_tau,remote_tau
+Axial,15,0.0492,0.0283,0.0469,0.0312
+Coronal,15,0.037,0.0118,0.0175,0.0027
+Sagittal,15,0.069,0.0317,0.0259,0.0082
