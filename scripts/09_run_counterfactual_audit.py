@@ -41,13 +41,15 @@ def load_trained_model(
 ) -> torch.nn.Module:
     """Load model checkpoint into evaluation mode."""
     model = build_model(architecture, num_classes=num_classes, pretrained=False)
-    if checkpoint_path.exists():
-        ckpt = torch.load(checkpoint_path, map_location="cpu")
-        state_dict = ckpt["model_state_dict"] if "model_state_dict" in ckpt else ckpt
-        model.load_state_dict(state_dict, strict=False)
-        print(f"Loaded checkpoint from {checkpoint_path}")
-    else:
-        print(f"Warning: Checkpoint {checkpoint_path} not found. Running with initialized weights.")
+    if not checkpoint_path.exists():
+        raise FileNotFoundError(
+            f"CRITICAL ERROR: Required checkpoint '{checkpoint_path}' does not exist. "
+            f"Execution halted to prevent auditing on uninitialized random weights."
+        )
+    ckpt = torch.load(checkpoint_path, map_location="cpu")
+    state_dict = ckpt["model_state_dict"] if "model_state_dict" in ckpt else ckpt
+    model.load_state_dict(state_dict, strict=True)
+    print(f"Loaded verified checkpoint strictly from {checkpoint_path}")
     model.to(device)
     model.eval()
     return model
