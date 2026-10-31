@@ -76,8 +76,8 @@ p7_text = (
     "For DeiT-Small on Cheng, Telea removal of the tumour core yielded a mean sham-corrected sensitivity of 0.1282 (slice-level Wilcoxon p = 9.13×10⁻⁶; condition-level Holm-adjusted p = 3.65×10⁻⁵; "
     "patient-clustered two-sided Wilcoxon W = 8.0, p = 0.0488 [one-sided W = 47.0, p = 0.0244] across N = 10 patient clusters); the corresponding ResNet-50 value was 0.0311 (condition-level Holm-adjusted p = 2.62×10⁻³; patient-clustered p = 0.0488). "
     "On BRISC, DeiT-Small core sensitivity was 0.0517 (raw two-sided p = 0.0320; condition-level Holm-adjusted p = 0.0639; 32-test family Holm-adjusted p = 0.6072, not significant after family-wise error rate control under either strategy). "
-    "The pooled analysis comprised 10 verified Cheng patient-level clusters and 45 BRISC image-level sample clusters (patient-level linkage within BRISC was unavailable; therefore, the BRISC units should not be interpreted as 45 independently verified patients; cluster-level Wilcoxon W = 483.0, p = 0.0162; paired t-test t(54) = 3.29, p = 0.00177; Linear Mixed Model fixed effect β = +0.074, SE = 0.020, z = 3.756, p < 0.001; non-significant cohort interaction p = 0.234). "
-    "Exploratory radiologic analysis showed that gliomas exhibited a substantial immediate-margin-to-core sensitivity ratio (67.2%; τ_immed = 0.0268 vs τ_core = 0.0398), meningiomas exhibited pronounced core reliance (τ_core = 0.3438 vs τ_immed = 0.0338; ratio 9.8%), and pituitary adenomas showed minimal immediate margin dependence (τ_immed = 0.0034 vs τ_core = 0.0009; outer margin τ_outer = 0.0392, ratio 360.2%). "
+    "The pooled analysis comprised 10 verified Cheng patient-level clusters and 45 BRISC image-level sample clusters (patient-level linkage within BRISC was unavailable; therefore, the BRISC units should not be interpreted as 45 independently verified patients; cluster-level Wilcoxon W = 483.0, p = 0.0162; paired t-test t(54) = 3.29, p = 0.00177; Linear Mixed Model fixed effect β = +0.074, SE = 0.020, z = 3.756, p < 0.001; non-significant cohort interaction p = 0.234, indicating no statistically significant evidence of effect modification across cohorts, though non-significance does not prove equivalence). "
+    "Exploratory radiologic analysis showed that gliomas exhibited a substantial immediate-margin-to-core sensitivity ratio (67.2%; τ_immed = 0.0268 vs τ_core = 0.0398), meningiomas exhibited pronounced core reliance (τ_core = 0.3438 vs τ_immed = 0.0338; ratio 9.8%), and pituitary adenomas exhibited minimal core sensitivity (τ_core = 0.0009 vs τ_immed = 0.0034; the elevated 360.2% ratio is an exploratory mathematical artifact of a near-zero core denominator rather than biological infiltration). "
     "Remote-region effects were not statistically distinguishable from sham in primary comparisons. In the evaluated BRISC archive, 159 exact duplicate pairs and 101 cross-split test matches were identified; this archive-specific finding was addressed by evaluating both official (N = 1,000) and clean (N = 899) partitions. These experiments provide a retrospective mechanistic audit of spatial reliance in single-run baseline models, not clinical validation or evidence of diagnostic deployability."
 )
 set_para_text(doc.paragraphs[7], p7_text, font_size=10.0)
@@ -194,6 +194,16 @@ doc.paragraphs[178].alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 for r in doc.paragraphs[178].runs:
     r.font.name = "Times New Roman"
     r.font.size = Pt(10)
+
+# References 3, 4, 14 metadata updates
+doc.paragraphs[182].text = "[3]\tRossi, E.B., Lopez, E., Comminiello, D.: TACE: Tumor-Aware Counterfactual Explanations. arXiv preprint arXiv:2409.13045 (2024). https://doi.org/10.48550/arXiv.2409.13045"
+set_para_text(doc.paragraphs[182], doc.paragraphs[182].text, font_size=9.5)
+
+doc.paragraphs[183].text = "[4]\tSourget, T., Hestbek-Møller, M., Jiménez-Sánchez, A., Xu, J.J., Cheplygina, V.: Mask of truth: model sensitivity to unexpected regions of medical images. J. Imaging Inform. Med. 38, 245–258 (2025). https://doi.org/10.1007/s10278-025-01531-5"
+set_para_text(doc.paragraphs[183], doc.paragraphs[183].text, font_size=9.5)
+
+doc.paragraphs[193].text = "[14]\tDeGrave, A.J., Janizek, J.D., Lee, S.-I.: AI for radiographic COVID-19 detection selects shortcuts over signal. Nat. Mach. Intell. 3(7), 610–619 (2021). https://doi.org/10.1038/s42256-021-00338-7"
+set_para_text(doc.paragraphs[193], doc.paragraphs[193].text, font_size=9.5)
 
 # Table 2
 def set_cell(cell, text, bold=False, font_size=8.5, align=WD_ALIGN_PARAGRAPH.CENTER):

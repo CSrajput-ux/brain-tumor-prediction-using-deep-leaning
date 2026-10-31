@@ -10,13 +10,14 @@ ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINTS_DIR = ROOT / "checkpoints"
 MANIFEST_FILE = ROOT / "configs" / "checkpoint_manifest.json"
 
-def verify_checksum(file_path: Path, expected_hash: str) -> bool:
+def verify_checksum(file_path: Path, expected_hash: str) -> tuple[bool, str]:
+    """Compute SHA-256 and compare against expected hash."""
     hasher = hashlib.sha256()
     with open(file_path, "rb") as f:
         while chunk := f.read(1024 * 1024):
             hasher.update(chunk)
     actual_hash = hasher.hexdigest()
-    return actual_hash == expected_hash, actual_hash
+    return (actual_hash == expected_hash), actual_hash
 
 def main():
     parser = argparse.ArgumentParser(description="Download and verify baseline checkpoints.")
@@ -43,7 +44,22 @@ def main():
                 url = f"{args.mirror_base_url.rstrip('/')}/{fname}"
                 print(f"Downloading {fname} from {url}...")
                 CHECKPOINTS_DIR.mkdir(parents=True, exist_ok=True)
-                urllib.request.urlretrieve(url, local_path)
+                temp_path = local_path.with_suffix(".tmp")
+                try:
+                    urllib.request.urlretrieve(url, temp_path)
+                    ok, actual_hash = verify_checksum(temp_path, expected_hash)
+                    if ok:
+                        temp_path.replace(local_path)
+                    else:
+                        temp_path.unlink(missing_ok=True)
+                        print(f"[FAIL] Downloaded {fname} hash mismatch!\n  Expected: {expected_hash}\n  Actual:   {actual_hash}")
+                        all_pass = False
+                        continue
+                except Exception as e:
+                    temp_path.unlink(missing_ok=True)
+                    print(f"[ERROR] Failed to download {fname} from {url}: {e}")
+                    all_pass = False
+                    continue
             else:
                 print(f"[MISSING] {fname}: File not present on disk. Deposit weight file or specify --mirror-base-url.")
                 all_pass = False
@@ -58,10 +74,10 @@ def main():
 
     if all_pass:
         print("\nAll registered model checkpoints verified strictly.")
+        sys.exit(0)
     else:
         print("\nOne or more checkpoint integrity checks failed.")
-        if args.verify_only:
-            sys.exit(1)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

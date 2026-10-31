@@ -1,6 +1,7 @@
 """End-to-end intervention generation and evaluation pipeline."""
 from __future__ import annotations
 
+import hashlib
 from typing import Any
 import numpy as np
 
@@ -48,8 +49,11 @@ def process_sample_interventions(
             "passed_qc": qc_a["passed_qc"],
         })
 
-        # Method B: Locally matched texture fill
-        edit_b = fill_region_matched_texture(image, reg_mask, tissue_mask=tissue, feather_radius=2, seed=seed)
+        # Method B: Locally matched intensity and Gaussian noise fill with edge feathering.
+        # Generate sample- and region-unique deterministic seed to prevent unintended noise pattern repetition.
+        seed_hash = hashlib.md5(f"{sample_id}_{reg_name}_{seed}".encode("utf-8")).hexdigest()
+        unique_region_seed = int(seed_hash[:8], 16) % (2**31 - 1)
+        edit_b = fill_region_matched_texture(image, reg_mask, tissue_mask=tissue, feather_radius=2, seed=unique_region_seed)
         qc_b = compute_intervention_quality(image, edit_b, reg_mask)
         edited_images[f"{reg_name}_method_b"] = edit_b
         qc_records.append({
@@ -69,4 +73,3 @@ def process_sample_interventions(
         })
 
     return edited_images, qc_records
-

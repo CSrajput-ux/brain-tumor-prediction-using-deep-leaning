@@ -2,7 +2,7 @@
 
 Implements two complementary methods specified in Part 8.2:
 - Method A: Seamless local inpainting using Telea / Navier-Stokes (cv2.inpaint).
-- Method B: Locally matched intensity and Gaussian texture fill with edge feathering.
+- Method B: Locally matched intensity and Gaussian noise fill with edge feathering.
 
 Both methods enforce strict non-target pixel invariance:
     edited_image[mask == 0] == original_image[mask == 0]
@@ -57,7 +57,12 @@ def fill_region_matched_texture(
     feather_radius: int = 2,
     seed: int = 42,
 ) -> np.ndarray:
-    """Method B: Fill targeted region with local surrounding mean and Gaussian texture.
+    """Method B: Fill targeted region with local surrounding mean and Gaussian noise with feathering.
+
+    Estimates first- and second-order intensity moments (mean and variance) from surrounding
+    tissue and synthesizes intensity-matched Gaussian noise, feathered at the boundary to prevent
+    cliff discontinuities. Evaluates perturbation invariance against zero-structure intensity-matched
+    noise without assuming synthetic anatomical MRI texture reproduction.
 
     Args:
         image: (H, W) float32 array in [0.0, 1.0].
@@ -67,7 +72,7 @@ def fill_region_matched_texture(
         feather_radius: Gaussian boundary smoothing radius to prevent high-frequency step edges.
         seed: Random seed for deterministic Gaussian noise.
     Returns:
-        (H, W) float32 array in [0.0, 1.0] with mask region texture-filled and 
+        (H, W) float32 array in [0.0, 1.0] with mask region noise-filled and 
         all non-mask pixels bitwise/numerically identical to input.
     """
     if np.count_nonzero(mask) == 0:
@@ -109,4 +114,3 @@ def fill_region_matched_texture(
     result = image.copy()
     result[mask_bool] = fill_val[mask_bool]
     return np.clip(result, 0.0, 1.0)
-

@@ -19,6 +19,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
+from statsmodels.stats.multitest import multipletests
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -47,6 +48,7 @@ Hypothesis: Vision Transformers (global self-attention) exhibit greater intra-le
 |---|---|---|---|---|---|---|---|
 """
     # Architecture comparison across pooled cohort (N=90)
+    arch_tests = []
     for method in ["telea_inpaint", "matched_texture_fill"]:
         for reg in ["core", "immediate", "outer", "remote"]:
             sub_cnn = df[(df["architecture"] == "resnet50") & (df["method"] == method) & (df["region"] == reg)]
@@ -61,18 +63,30 @@ Hypothesis: Vision Transformers (global self-attention) exhibit greater intra-le
                 dz = (diff / std_diff) if std_diff > 1e-6 else 0.0
                 w_res = stats.wilcoxon(tau_vit - tau_cnn, alternative="two-sided")
                 pval = float(w_res.pvalue)
-                # 8-test family adjustment (2 methods x 4 regions)
-                # Core Method A is rank 1 (p=0.0123 x 8 = 0.0980)
-                p_holm = min(1.0, pval * 8) if (method == "telea_inpaint" and reg == "core") else min(1.0, pval * 7)
+                arch_tests.append({
+                    "region": reg,
+                    "method": method,
+                    "cnn_mean": float(np.mean(tau_cnn)),
+                    "cnn_std": float(np.std(tau_cnn)),
+                    "vit_mean": float(np.mean(tau_vit)),
+                    "vit_std": float(np.std(tau_vit)),
+                    "diff": float(diff),
+                    "pval": pval,
+                    "dz": float(dz),
+                })
 
-                pval_str = f"{pval:.4e}" if pval < 0.001 else f"{pval:.4f}"
-                pholm_str = f"{p_holm:.4f}"
-                report += (
-                    f"| `{reg}` | {method} | "
-                    f"{np.mean(tau_cnn):.4f} ± {np.std(tau_cnn):.3f} | "
-                    f"{np.mean(tau_vit):.4f} ± {np.std(tau_vit):.3f} | "
-                    f"**{diff:+.4f}** | {pval_str} | {pholm_str} | {dz:.3f} |\n"
-                )
+    pvals = [t["pval"] for t in arch_tests]
+    reject, pvals_holm, _, _ = multipletests(pvals, method="holm")
+    for t, ph in zip(arch_tests, pvals_holm):
+        t["p_holm"] = float(ph)
+        pval_str = f"{t['pval']:.4e}" if t['pval'] < 0.001 else f"{t['pval']:.4f}"
+        pholm_str = f"{t['p_holm']:.4f}"
+        report += (
+            f"| `{t['region']}` | {t['method']} | "
+            f"{t['cnn_mean']:.4f} ± {t['cnn_std']:.3f} | "
+            f"{t['vit_mean']:.4f} ± {t['vit_std']:.3f} | "
+            f"**{t['diff']:+.4f}** | {pval_str} | {pholm_str} | {t['dz']:.3f} |\n"
+        )
 
     report += """
 *Note on Multiplicity: While the pooled paired difference in Method A Core sensitivity is nominally significant at raw p = 0.0123 (and cluster-level p = 0.0162 across 55 units), the multi-region step-down Holm-adjusted p-value is p_adj = 0.0980. Therefore, Vision Transformer architectural superiority is qualified as an exploratory finding rather than a confirmatory proof of universal superiority.*
@@ -109,7 +123,7 @@ Hypothesis: Region sensitivity rank order (Core > Immediate > Outer > Remote) is
 
 ## 3. Imaging-Plane Stratification (BRISC)
 
-Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orientations under the primary benchmark model (DeiT-Small, Method A Inpainting):
+Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orientations under the primary benchmark model (DeiT-Small, Method A Inpainting - Matches Table 3):
 
 | Imaging Plane | Sample Count (N) | Mean Core Sensitivity (τ_core) | Mean Immediate Margin (τ_immed) | Mean Outer Margin (τ_outer) | Mean Remote (τ_remote) |
 |---|---|---|---|---|---|
@@ -131,7 +145,7 @@ Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orient
 
 ## 4. Lesion Boundary Biology & Class Heterogeneity
 
-Exploratory evaluation of regional sensitivity across Cheng tumour classes under DeiT-Small (Method A):
+Exploratory evaluation of regional sensitivity across Cheng tumour classes under DeiT-Small (Method A Inpainting - Matches Table 4):
 
 | Tumour Class | Sample Count (N) | Core Sensitivity (τ_core) | Immediate Margin (τ_immed) | Outer Margin (τ_outer) | Remote Context (τ_remote) | Margin-to-Core Ratio (%) |
 |---|---|---|---|---|---|---|

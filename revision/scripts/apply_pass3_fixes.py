@@ -87,6 +87,7 @@ where multi-gigabyte raw MRI volumes and large binary checkpoints are excluded f
 import csv
 import json
 from pathlib import Path
+import sys
 import numpy as np
 from PIL import Image
 import torch
@@ -122,8 +123,8 @@ def setup_fixtures():
     if brisc_manifest.exists():
         with open(brisc_manifest, "r", encoding="utf-8") as f:
             first_row = next(csv.DictReader(f))
-        rel_img = first_row["relative_image_path"].replace("\\\\", "/")
-        rel_mask = first_row["relative_mask_path"].replace("\\\\", "/")
+        rel_img = first_row["relative_image_path"].replace("\\", "/")
+        rel_mask = first_row["relative_mask_path"].replace("\\", "/")
         target_img = ROOT / "brisc" / "brisc2025" / rel_img
         target_mask = ROOT / "brisc" / "brisc2025" / rel_mask
 
@@ -140,22 +141,27 @@ def setup_fixtures():
             print(f"Created BRISC mask fixture: {target_mask}")
 
     # 3. Checkpoint fixtures for test_checkpoint_structure in CI
+    # Check each required checkpoint individually so partial sets are completed.
     ckpts_dir = ROOT / "checkpoints"
     ckpts_dir.mkdir(parents=True, exist_ok=True)
-    existing_pts = list(ckpts_dir.glob("*.pt"))
-    if not existing_pts:
-        print("No .pt checkpoints found on disk. Generating test fixtures matching architecture schema...")
-        sys_path = ROOT
-        if str(sys_path) not in sys.path:
-            sys.path.insert(0, str(sys_path))
+
+    required_ckpts = [
+        ("resnet50", 3, "resnet50_cheng_fold_1.pt"),
+        ("resnet50", 4, "resnet50_brisc.pt"),
+        ("deit_small_patch16_224", 3, "deit_small_patch16_224_cheng_fold_1.pt"),
+        ("deit_small_patch16_224", 4, "deit_small_patch16_224_brisc.pt"),
+    ]
+
+    missing_ckpts = [item for item in required_ckpts if not (ckpts_dir / item[2]).exists()]
+    if missing_ckpts:
+        print(f"Generating {len(missing_ckpts)} missing checkpoint test fixtures...")
+        sys_path = str(ROOT)
+        if sys_path not in sys.path:
+            sys.path.insert(0, sys_path)
         from src.models import build_model
 
-        for arch, num_cls, fname in [
-            ("resnet50", 3, "resnet50_cheng_fold_1.pt"),
-            ("resnet50", 4, "resnet50_brisc.pt"),
-            ("deit_small_patch16_224", 3, "deit_small_patch16_224_cheng_fold_1.pt"),
-            ("deit_small_patch16_224", 4, "deit_small_patch16_224_brisc.pt"),
-        ]:
+        for arch, num_cls, fname in missing_ckpts:
+            pt_path = ckpts_dir / fname
             model = build_model(arch, num_classes=num_cls, pretrained=False)
             ckpt_obj = {
                 "epoch": 5,
@@ -164,7 +170,6 @@ def setup_fixtures():
                 "metrics": {"macro_f1": 0.84, "accuracy": 0.85, "balanced_accuracy": 0.84},
                 "val_metrics": {"macro_f1": 0.84, "accuracy": 0.85}
             }
-            pt_path = ckpts_dir / fname
             torch.save(ckpt_obj, pt_path)
             print(f"Generated test checkpoint fixture: {pt_path.name}")
 
@@ -192,13 +197,14 @@ ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINTS_DIR = ROOT / "checkpoints"
 MANIFEST_FILE = ROOT / "configs" / "checkpoint_manifest.json"
 
-def verify_checksum(file_path: Path, expected_hash: str) -> bool:
+def verify_checksum(file_path: Path, expected_hash: str) -> tuple[bool, str]:
+    \"\"\"Compute SHA-256 and compare against expected hash.\"\"\"
     hasher = hashlib.sha256()
     with open(file_path, "rb") as f:
         while chunk := f.read(1024 * 1024):
             hasher.update(chunk)
     actual_hash = hasher.hexdigest()
-    return actual_hash == expected_hash, actual_hash
+    return (actual_hash == expected_hash), actual_hash
 
 def main():
     parser = argparse.ArgumentParser(description="Download and verify baseline checkpoints.")
@@ -214,7 +220,7 @@ def main():
         manifest = json.load(f)
 
     all_pass = True
-    print(f"Auditing {len(manifest)} checkpoints from {MANIFEST_FILE.name}:\\n")
+    print(f"Auditing {len(manifest)} checkpoints from {MANIFEST_FILE.name}:\n")
 
     for fname, meta in manifest.items():
         expected_hash = meta["sha256"]
@@ -225,7 +231,22 @@ def main():
                 url = f"{args.mirror_base_url.rstrip('/')}/{fname}"
                 print(f"Downloading {fname} from {url}...")
                 CHECKPOINTS_DIR.mkdir(parents=True, exist_ok=True)
-                urllib.request.urlretrieve(url, local_path)
+                temp_path = local_path.with_suffix(".tmp")
+                try:
+                    urllib.request.urlretrieve(url, temp_path)
+                    ok, actual_hash = verify_checksum(temp_path, expected_hash)
+                    if ok:
+                        temp_path.replace(local_path)
+                    else:
+                        temp_path.unlink(missing_ok=True)
+                        print(f"[FAIL] Downloaded {fname} hash mismatch!\n  Expected: {expected_hash}\n  Actual:   {actual_hash}")
+                        all_pass = False
+                        continue
+                except Exception as e:
+                    temp_path.unlink(missing_ok=True)
+                    print(f"[ERROR] Failed to download {fname} from {url}: {e}")
+                    all_pass = False
+                    continue
             else:
                 print(f"[MISSING] {fname}: File not present on disk. Deposit weight file or specify --mirror-base-url.")
                 all_pass = False
@@ -235,15 +256,15 @@ def main():
         if ok:
             print(f"[PASS] {fname} (SHA-256: {actual_hash[:16]}...) - Verified")
         else:
-            print(f"[FAIL] {fname}: Hash mismatch!\\n  Expected: {expected_hash}\\n  Actual:   {actual_hash}")
+            print(f"[FAIL] {fname}: Hash mismatch!\n  Expected: {expected_hash}\n  Actual:   {actual_hash}")
             all_pass = False
 
     if all_pass:
-        print("\\nAll registered model checkpoints verified strictly.")
+        print("\nAll registered model checkpoints verified strictly.")
+        sys.exit(0)
     else:
-        print("\\nOne or more checkpoint integrity checks failed.")
-        if args.verify_only:
-            sys.exit(1)
+        print("\nOne or more checkpoint integrity checks failed.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

@@ -13,8 +13,8 @@ Hypothesis: Vision Transformers (global self-attention) exhibit greater intra-le
 | Region | Perturbation Method | CNN Sham-Corrected (τ) | ViT Sham-Corrected (τ) | Difference (ViT - CNN) | Raw Wilcoxon p | Holm-Adjusted p | Cohen's d_z |
 |---|---|---|---|---|---|---|---|
 | `core` | telea_inpaint | 0.0161 ± 0.046 | 0.0900 ± 0.196 | **+0.0738** | 0.0123 | 0.0980 | 0.362 |
-| `immediate` | telea_inpaint | 0.0061 ± 0.039 | 0.0226 ± 0.080 | **+0.0166** | 0.1124 | 0.7870 | 0.184 |
-| `outer` | telea_inpaint | 0.0064 ± 0.071 | 0.0182 ± 0.085 | **+0.0118** | 0.1732 | 1.0000 | 0.117 |
+| `immediate` | telea_inpaint | 0.0061 ± 0.039 | 0.0226 ± 0.080 | **+0.0166** | 0.1124 | 0.6746 | 0.184 |
+| `outer` | telea_inpaint | 0.0064 ± 0.071 | 0.0182 ± 0.085 | **+0.0118** | 0.1732 | 0.8660 | 0.117 |
 | `remote` | telea_inpaint | 0.0062 ± 0.027 | 0.0134 ± 0.060 | **+0.0072** | 0.9087 | 1.0000 | 0.114 |
 | `core` | matched_texture_fill | 0.0567 ± 0.162 | 0.1006 ± 0.173 | **+0.0439** | 0.0164 | 0.1147 | 0.198 |
 | `immediate` | matched_texture_fill | 0.0424 ± 0.171 | 0.0131 ± 0.099 | **-0.0293** | 0.6023 | 1.0000 | -0.140 |
@@ -44,7 +44,7 @@ Hypothesis: Region sensitivity rank order (Core > Immediate > Outer > Remote) is
 
 ## 3. Imaging-Plane Stratification (BRISC)
 
-Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orientations under the primary benchmark model (DeiT-Small, Method A Inpainting):
+Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orientations under the primary benchmark model (DeiT-Small, Method A Inpainting - Matches Table 3):
 
 | Imaging Plane | Sample Count (N) | Mean Core Sensitivity (τ_core) | Mean Immediate Margin (τ_immed) | Mean Outer Margin (τ_outer) | Mean Remote (τ_remote) |
 |---|---|---|---|---|---|
@@ -58,7 +58,7 @@ Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orient
 
 ## 4. Lesion Boundary Biology & Class Heterogeneity
 
-Exploratory evaluation of regional sensitivity across Cheng tumour classes under DeiT-Small (Method A):
+Exploratory evaluation of regional sensitivity across Cheng tumour classes under DeiT-Small (Method A Inpainting - Matches Table 4):
 
 | Tumour Class | Sample Count (N) | Core Sensitivity (τ_core) | Immediate Margin (τ_immed) | Outer Margin (τ_outer) | Remote Context (τ_remote) | Margin-to-Core Ratio (%) |
 |---|---|---|---|---|---|---|

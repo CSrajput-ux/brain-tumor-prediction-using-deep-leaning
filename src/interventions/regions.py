@@ -5,7 +5,7 @@ Defines non-overlapping regions according to Part 8.1:
 - R_immediate: 4-pixel morphological dilation ring outside core, restricted to tissue mask S.
 - R_outer: 12-pixel morphological dilation ring (4 to 16 pixels), restricted to tissue mask S.
 - R_remote: Contralateral or distance-isolated tissue region within S.
-- R_sham: Area- and shape-matched control region in normal parenchyma with zero tumor overlap.
+- R_sham: Area- and shape-matched control region in contralateral tissue with zero tumor overlap.
 """
 from __future__ import annotations
 
@@ -15,13 +15,17 @@ import numpy as np
 
 
 def extract_tissue_mask(image: np.ndarray, min_intensity: float = 0.05) -> np.ndarray:
-    """Extract brain tissue support mask S, excluding background air and padding.
+    """Extract foreground intracranial head/brain tissue support mask S via intensity thresholding.
     
+    Identifies non-background tissue compartment using intensity thresholding, morphological
+    closing, and connected-component analysis. Note: Does not perform formal multi-atlas clinical
+    skull-stripping.
+
     Args:
         image: (H, W) float32 array in [0.0, 1.0].
         min_intensity: Intensity threshold separating tissue from background air/padding.
     Returns:
-        (H, W) uint8 binary mask where 1 indicates brain/head tissue parenchyma.
+        (H, W) uint8 binary mask where 1 indicates foreground tissue compartment.
     """
     raw_mask = (image > min_intensity).astype(np.uint8)
     
@@ -57,16 +61,16 @@ def generate_regions(
     Args:
         tumor_mask: (H, W) binary uint8 mask {0, 1} for tumor core.
         image: (H, W) float32 array in [0.0, 1.0].
-        d1: Radius for immediate margin (default 4 pixels).
-        d2: Radius for outer margin (default 16 pixels).
+        d1: Radius for immediate margin (default 4 pixels in 224x224 space).
+        d2: Radius for outer margin (default 16 pixels in 224x224 space).
     Returns:
         Dictionary mapping region name to (H, W) uint8 binary mask {0, 1}:
         - core: R_core
-        - immediate: R_immediate
-        - outer: R_outer
+        - immediate: R_immediate (4-pixel dilation ring)
+        - outer: R_outer (12-pixel ring from 4 to 16 pixels)
         - remote: R_remote
-        - sham: R_sham (matched shape/area control)
-        - tissue_mask: Brain parenchyma support S
+        - sham: R_sham (core-area-matched contralateral control)
+        - tissue_mask: Foreground tissue support mask S
     """
     h, w = tumor_mask.shape
     core = (tumor_mask > 0).astype(np.uint8)
@@ -168,4 +172,3 @@ def generate_regions(
         "sham": sham,
         "tissue_mask": tissue,
     }
-

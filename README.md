@@ -28,7 +28,7 @@ This repository contains the complete implementation, audit manifests, trained c
 4. **Inductive Bias Disparity (ViT vs. CNN):**
    - DeiT-Small exhibits significantly greater reliance on intra-tumoral core evidence than ResNet-50 in the pooled multi-cohort ($\tau_{\text{diff}} = +0.0738$, paired Wilcoxon $p = 0.0123$, $d_z = 0.362$) and achieves substantially superior probability calibration (Cheng Expected Calibration Error: 0.0366 vs 0.1835).
 5. **Exploratory Radiological Heterogeneity Across Tumour Subtypes:**
-   - Infiltrative gliomas exhibit a substantial margin-to-core sensitivity ratio (35.0%), consistent with radiological perilesional border signals, whereas sellar-confined pituitary adenomas show minimal peripheral dependence (15.1%).
+   - In exploratory analyses under DeiT-Small (Method A), gliomas exhibit an immediate-margin-to-core sensitivity ratio of 67.2% (cross-dataset pooled reference 35.0%), meningiomas exhibit 9.8% (pooled 33.1%), and pituitary adenomas show 360.2% (pooled 15.1%). Notably, the elevated 360.2% pituitary ratio is an exploratory mathematical artifact of an infinitesimal core denominator (\tau_{\text{core}} = 0.0009) rather than evidence of biological infiltration.
 
 ---
 
@@ -110,7 +110,8 @@ python scripts\05_visualize_masks.py
 python scripts\06_smoke_test_models.py
 
 # Phase 5: Baseline Training & Probability Calibration
-python scripts\07_train_baseline.py
+# Primary benchmark evaluates held-out Fold 1; specify --folds fold_1,fold_2,fold_3,fold_4,fold_5 for full 5-fold CV
+python scripts\07_train_baseline.py --folds fold_1
 
 # Phase 6: Counterfactual Intervention Engine & Quality Control
 python scripts\08_generate_interventions.py
@@ -128,6 +129,16 @@ python scripts\10_generate_figures.py
 python scripts\13_generate_final_docx.py
 python scripts\14_generate_final_pdf.py
 ```
+
+
+### Checkpoint Integrity & Verification
+
+Canonical trained model weights are registered with SHA-256 digests in `configs/checkpoint_manifest.json`:
+```powershell
+# Audit local checkpoints against verified hashes
+python scripts\download_checkpoints.py --verify-only
+```
+*Note: In continuous integration environments where multi-gigabyte models are excluded, deterministic test fixtures are generated via `python scripts\setup_ci_fixtures.py`.*
 
 ### 3. Verify Entire Test Suite
 

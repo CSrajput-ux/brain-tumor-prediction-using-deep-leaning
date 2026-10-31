@@ -6,6 +6,7 @@ where multi-gigabyte raw MRI volumes and large binary checkpoints are excluded f
 import csv
 import json
 from pathlib import Path
+import sys
 import numpy as np
 from PIL import Image
 import torch
@@ -59,22 +60,27 @@ def setup_fixtures():
             print(f"Created BRISC mask fixture: {target_mask}")
 
     # 3. Checkpoint fixtures for test_checkpoint_structure in CI
+    # Check each required checkpoint individually so partial sets are completed.
     ckpts_dir = ROOT / "checkpoints"
     ckpts_dir.mkdir(parents=True, exist_ok=True)
-    existing_pts = list(ckpts_dir.glob("*.pt"))
-    if not existing_pts:
-        print("No .pt checkpoints found on disk. Generating test fixtures matching architecture schema...")
-        sys_path = ROOT
-        if str(sys_path) not in sys.path:
-            sys.path.insert(0, str(sys_path))
+
+    required_ckpts = [
+        ("resnet50", 3, "resnet50_cheng_fold_1.pt"),
+        ("resnet50", 4, "resnet50_brisc.pt"),
+        ("deit_small_patch16_224", 3, "deit_small_patch16_224_cheng_fold_1.pt"),
+        ("deit_small_patch16_224", 4, "deit_small_patch16_224_brisc.pt"),
+    ]
+
+    missing_ckpts = [item for item in required_ckpts if not (ckpts_dir / item[2]).exists()]
+    if missing_ckpts:
+        print(f"Generating {len(missing_ckpts)} missing checkpoint test fixtures...")
+        sys_path = str(ROOT)
+        if sys_path not in sys.path:
+            sys.path.insert(0, sys_path)
         from src.models import build_model
 
-        for arch, num_cls, fname in [
-            ("resnet50", 3, "resnet50_cheng_fold_1.pt"),
-            ("resnet50", 4, "resnet50_brisc.pt"),
-            ("deit_small_patch16_224", 3, "deit_small_patch16_224_cheng_fold_1.pt"),
-            ("deit_small_patch16_224", 4, "deit_small_patch16_224_brisc.pt"),
-        ]:
+        for arch, num_cls, fname in missing_ckpts:
+            pt_path = ckpts_dir / fname
             model = build_model(arch, num_classes=num_cls, pretrained=False)
             ckpt_obj = {
                 "epoch": 5,
@@ -83,7 +89,6 @@ def setup_fixtures():
                 "metrics": {"macro_f1": 0.84, "accuracy": 0.85, "balanced_accuracy": 0.84},
                 "val_metrics": {"macro_f1": 0.84, "accuracy": 0.85}
             }
-            pt_path = ckpts_dir / fname
             torch.save(ckpt_obj, pt_path)
             print(f"Generated test checkpoint fixture: {pt_path.name}")
 
