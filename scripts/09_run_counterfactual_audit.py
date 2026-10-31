@@ -65,9 +65,14 @@ def load_trained_model(
     actual_hash = hasher.hexdigest()
 
     expected_hash = VERIFIED_CHECKPOINT_HASHES.get(checkpoint_path.name)
-    if expected_hash is not None and actual_hash != expected_hash:
+    if expected_hash is None:
         raise ValueError(
-            f"CRITICAL INTEGRITY FAILURE: Checkpoint {checkpoint_path.name} SHA-256 mismatch!\n"
+            f"CRITICAL INTEGRITY FAILURE: Checkpoint '{checkpoint_path.name}' is NOT registered in "
+            f"VERIFIED_CHECKPOINT_HASHES! Refusing to load unverified model weights."
+        )
+    if actual_hash != expected_hash:
+        raise ValueError(
+            f"CRITICAL INTEGRITY FAILURE: Checkpoint '{checkpoint_path.name}' SHA-256 checksum mismatch!\n"
             f"Expected: {expected_hash}\nActual:   {actual_hash}"
         )
 
@@ -131,16 +136,12 @@ def run_audit(
         print(f"Auditing Architecture: {arch.upper()}")
         print(f"=======================================================")
 
-        # 1. Load Cheng Model
+        # 1. Load Cheng Model (strictly enforcing canonical trained checkpoint)
         cheng_ckpt = checkpoints_dir / f"{arch}_cheng_fold_1.pt"
-        if not cheng_ckpt.exists():
-            cheng_ckpt = checkpoints_dir / f"smoke_test_{arch}_cheng_3cls.pt"
         cheng_model = load_trained_model(arch, num_classes=3, checkpoint_path=cheng_ckpt, device=device)
 
-        # 2. Load BRISC Model
+        # 2. Load BRISC Model (strictly enforcing canonical trained checkpoint)
         brisc_ckpt = checkpoints_dir / f"{arch}_brisc.pt"
-        if not brisc_ckpt.exists():
-            brisc_ckpt = checkpoints_dir / f"smoke_test_{arch}_brisc_4cls.pt"
         brisc_model = load_trained_model(arch, num_classes=4, checkpoint_path=brisc_ckpt, device=device)
 
         # Audit Cheng Samples

@@ -109,13 +109,13 @@ class BriscDataset:
         from src.data.preprocessing import preprocess_sample
 
         record = self.records[idx]
-        img_path = self.root / record["relative_image_path"]
+        img_path = self.root / record["relative_image_path"].replace("\\", "/")
         with Image.open(img_path) as img:
             raw_image = np.asarray(img.convert("L"), dtype=np.float32)
 
         raw_mask = None
         if record.get("mask_available") == "True" and record.get("relative_mask_path"):
-            mask_path = self.root / record["relative_mask_path"]
+            mask_path = self.root / record["relative_mask_path"].replace("\\", "/")
             if mask_path.exists():
                 with Image.open(mask_path) as m_img:
                     raw_mask = (np.asarray(m_img.convert("L")) > 0).astype(np.uint8)

@@ -1,6 +1,6 @@
 # Secondary Experiments, Replication & Robustness Analysis
 
-Date: 2026-10-29 (Updated 2026-10-30)  
+Date: 2026-10-29 (Asia/Kolkata)  
 Auditors: Multidisciplinary Research Team (Computer-Vision Engineer, Biostatistician)  
 Scope: Architecture Comparison, Method Invariance, Plane Stratification, Tumour Biology Heterogeneity
 
@@ -8,32 +8,26 @@ Scope: Architecture Comparison, Method Invariance, Plane Stratification, Tumour 
 
 ## 1. Architectural Inductive Bias: ResNet-50 (CNN) vs DeiT-Small (ViT)
 
-Hypothesis: Vision Transformers exhibit greater sensitivity to core and margin evidence without increasing remote shortcut dependence.
+Hypothesis: Vision Transformers (global self-attention) exhibit greater intra-lesional core reliance than Convolutional Neural Networks (localized receptive fields), while remaining robust to distant context shortcuts.
 
 | Region | Perturbation Method | CNN Sham-Corrected (τ) | ViT Sham-Corrected (τ) | Difference (ViT - CNN) | Raw Wilcoxon p | Holm-Adjusted p | Cohen's d_z |
 |---|---|---|---|---|---|---|---|
 | `core` | telea_inpaint | 0.0161 ± 0.046 | 0.0900 ± 0.196 | **+0.0738** | 0.0123 | 0.0980 | 0.362 |
-| `immediate` | telea_inpaint | 0.0061 ± 0.039 | 0.0226 ± 0.080 | **+0.0166** | 0.1124 | 0.6746 | 0.184 |
-| `outer` | telea_inpaint | 0.0064 ± 0.071 | 0.0182 ± 0.085 | **+0.0118** | 0.1732 | 0.8660 | 0.117 |
+| `immediate` | telea_inpaint | 0.0061 ± 0.039 | 0.0226 ± 0.080 | **+0.0166** | 0.1124 | 0.7870 | 0.184 |
+| `outer` | telea_inpaint | 0.0064 ± 0.071 | 0.0182 ± 0.085 | **+0.0118** | 0.1732 | 1.0000 | 0.117 |
 | `remote` | telea_inpaint | 0.0062 ± 0.027 | 0.0134 ± 0.060 | **+0.0072** | 0.9087 | 1.0000 | 0.114 |
 | `core` | matched_texture_fill | 0.0567 ± 0.162 | 0.1006 ± 0.173 | **+0.0439** | 0.0164 | 0.1147 | 0.198 |
 | `immediate` | matched_texture_fill | 0.0424 ± 0.171 | 0.0131 ± 0.099 | **-0.0293** | 0.6023 | 1.0000 | -0.140 |
 | `outer` | matched_texture_fill | 0.0600 ± 0.176 | 0.0454 ± 0.088 | **-0.0146** | 0.7369 | 1.0000 | -0.072 |
 | `remote` | matched_texture_fill | 0.0100 ± 0.203 | -0.0038 ± 0.065 | **-0.0138** | 0.5236 | 1.0000 | -0.064 |
 
-### Clustered Multi-Cohort Inference (Pooled N=90 across 55 Independent Clusters)
-Accounting for clustering (10 Cheng patient clusters + 45 independent BRISC cases = 55 clusters):
-- **Slice-Level Core Difference (Method A):** $+0.0738$, slice-level Wilcoxon $p = 0.0123$, Holm-adjusted $p = 0.0980$
-- **Cluster-Level Wilcoxon Test:** Cluster mean difference $+0.0607$, Wilcoxon **$p = 0.0162$**
-- **Cluster-Level One-Sample t-test:** $t = 3.29$, **$p = 0.00177$**
-- **Linear Mixed-Effects Model ($N=180$, 55 clusters):** Fixed effect $\beta_{\text{ViT}} = +0.074$ (SE: $0.020$, $z = 3.756$, $p < 0.001$).
-Confirms architectural divergence is robust under cluster-level inference.
+*Note on Multiplicity: While the pooled paired difference in Method A Core sensitivity is nominally significant at raw p = 0.0123 (and cluster-level p = 0.0162 across 55 units), the multi-region step-down Holm-adjusted p-value is p_adj = 0.0980. Therefore, Vision Transformer architectural superiority is qualified as an exploratory finding rather than a confirmatory proof of universal superiority.*
 
 ---
 
 ## 2. Perturbation Engine Invariance: Method A (Inpainting) vs Method B (Texture Fill)
 
-Hypothesis: Region sensitivity rank order is generally preserved across edit engines, though localized texture filling introduces edge effects in outer margins.
+Hypothesis: Region sensitivity rank order (Core > Immediate > Outer > Remote) is concordant across edit engines.
 
 | Dataset | Region | Method A (Telea) τ | Method B (Texture) τ | Pearson Correlation (r) | Spearman Rank (ρ) | Paired Bias |
 |---|---|---|---|---|---|---|
@@ -50,30 +44,33 @@ Hypothesis: Region sensitivity rank order is generally preserved across edit eng
 
 ## 3. Imaging-Plane Stratification (BRISC)
 
-Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orientations:
+Evaluating regional sensitivity across Axial, Coronal, and Sagittal slice orientations under the primary benchmark model (DeiT-Small, Method A Inpainting):
 
-| Imaging Plane | Sample Count (N) | Mean Core Sensitivity (τ) | Mean Immediate Margin (τ) | Mean Remote (τ) |
-|---|---|---|---|---|
-| **Axial** | 15 | **0.0337** | 0.0241 | 0.0137 |
-| **Coronal** | 15 | **0.0298** | 0.0127 | 0.0036 |
-| **Sagittal** | 15 | **0.0582** | 0.0461 | 0.0178 |
+| Imaging Plane | Sample Count (N) | Mean Core Sensitivity (τ_core) | Mean Immediate Margin (τ_immed) | Mean Outer Margin (τ_outer) | Mean Remote (τ_remote) |
+|---|---|---|---|---|---|
+| **Axial** | 15 | **0.0492** | 0.0283 | 0.0469 | 0.0312 |
+| **Coronal** | 15 | **0.0370** | 0.0118 | 0.0175 | 0.0027 |
+| **Sagittal** | 15 | **0.0690** | 0.0317 | 0.0259 | 0.0082 |
+
+*Pooled Architecture Reference: When pooling across both architectures (ResNet-50 and DeiT-Small) and both perturbation methods, mean BRISC core sensitivities are 0.0337 (Axial), 0.0298 (Coronal), and 0.0582 (Sagittal).*
 
 ---
 
 ## 4. Lesion Boundary Biology & Class Heterogeneity
 
-Comparing infiltrative neoplasms (Gliomas) vs circumscribed extra-axial lesions (Meningiomas) vs sellar lesions (Pituitary):
+Exploratory evaluation of regional sensitivity across Cheng tumour classes under DeiT-Small (Method A):
 
-| Tumour Class | Presumed Boundary Infiltration | Core Sensitivity (τ) | Immediate Margin Sensitivity (τ) | Margin-to-Core Ratio |
-|---|---|---|---|---|
-| **Meningioma** | Low (well-circumscribed) | **0.1443** | **0.0478** | **33.1%** |
-| **Glioma** | High (diffuse infiltration) | **0.0366** | **0.0128** | **35.0%** |
-| **Pituitary** | Low (well-circumscribed) | **0.0167** | **0.0025** | **15.1%** |
+| Tumour Class | Sample Count (N) | Core Sensitivity (τ_core) | Immediate Margin (τ_immed) | Outer Margin (τ_outer) | Remote Context (τ_remote) | Margin-to-Core Ratio (%) |
+|---|---|---|---|---|---|---|
+| **Glioma** | 15 | **0.0398** | 0.0268 | -0.0066 | 0.0218 | **67.2%** |
+| **Meningioma** | 15 | **0.3438** | 0.0338 | -0.0136 | 0.0165 | **9.8%** |
+| **Pituitary** | 15 | **0.0009** | 0.0034 | 0.0392 | 0.0001 | **360.2%** |
+
+*Cross-Dataset Reference: When pooling across all 90 slices from both datasets, architectures, and methods, unweighted margin-to-core ratios are 35.0% for gliomas, 33.1% for meningiomas, and 15.1% for pituitary adenomas.*
 
 ---
 
 ## 5. Duplicate Leakage Impact Summary
 
-- **BRISC Contaminated Benchmark (=1,000$):** 10.1% exact training duplicates in the downloaded archive release alter evaluation metrics through class-prior shifts (meningiomas dropping from 30.6% to 23.4% upon deduplication).
-- **BRISC Clean Test (=899$):** De-duplicated evaluation provides an uncontaminated benchmark comparison, yielding Macro-F1 of 0.8344 for DeiT-Small and 0.6991 for ResNet-50 across the full 4-class test set.
-
+- **BRISC Contaminated Benchmark ($N=1,000$):** 10.1% exact training duplicates artificially inflate performance metrics and suppress true out-of-distribution uncertainty.
+- **BRISC Clean Test ($N=899$):** Zero train-test leakage enables an uncontaminated evaluation of regional sensitivity.

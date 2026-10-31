@@ -25,7 +25,10 @@ jobs:
           pip install -r requirements.txt
           pip install pypdf statsmodels
 
+      - name: Set up deterministic CI test fixtures
+        run: |
+          python scripts/setup_ci_fixtures.py
+
       - name: Run Pytest across all phases
         run: |
           python -m pytest tests/
-
