@@ -1,0 +1,36 @@
+{
+  "deit_small_patch16_224_brisc.pt": {
+    "sha256": "f7dcadc8e009eaed32929f55657e840e52675c4d79245565a75b0103077878fe",
+    "size_bytes": 260202973,
+    "architecture": "deit_small_patch16_224",
+    "dataset": "brisc",
+    "classes": 4,
+    "verified": true
+  },
+  "deit_small_patch16_224_cheng_fold_1.pt": {
+    "sha256": "f5545de00e1ceab9aaa7aa12a37121ca9e73454675d50065c1b65aaa99b4b33a",
+    "size_bytes": 260202599,
+    "architecture": "deit_small_patch16_224",
+    "dataset": "cheng",
+    "fold": "fold_1",
+    "classes": 3,
+    "verified": true
+  },
+  "resnet50_brisc.pt": {
+    "sha256": "057e78999057335e54e4821fb9ef240ee71df4c64afcbf66902da948d75627b0",
+    "size_bytes": 282650264,
+    "architecture": "resnet50",
+    "dataset": "brisc",
+    "classes": 4,
+    "verified": true
+  },
+  "resnet50_cheng_fold_1.pt": {
+    "sha256": "f40404094e4bddf7f344abd89071c4d8bb17b19d7ae2e15c01433562fec8d8c3",
+    "size_bytes": 282631351,
+    "architecture": "resnet50",
+    "dataset": "cheng",
+    "fold": "fold_1",
+    "classes": 3,
+    "verified": true
+  }
+}

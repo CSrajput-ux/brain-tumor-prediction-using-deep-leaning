@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import sys
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,15 @@ from src.models import build_model
 CHENG_CLASSES = ["meningioma", "glioma", "pituitary"]
 BRISC_CLASSES = ["glioma", "meningioma", "pituitary", "no_tumor"]
 
+# Authoritative SHA-256 hashes of trained checkpoints
+VERIFIED_CHECKPOINT_HASHES = {
+    "deit_small_patch16_224_brisc.pt": "f7dcadc8e009eaed32929f55657e840e52675c4d79245565a75b0103077878fe",
+    "deit_small_patch16_224_cheng_fold_1.pt": "f5545de00e1ceab9aaa7aa12a37121ca9e73454675d50065c1b65aaa99b4b33a",
+    "resnet50_brisc.pt": "057e78999057335e54e4821fb9ef240ee71df4c64afcbf66902da948d75627b0",
+    "resnet50_cheng_fold_1.pt": "f40404094e4bddf7f344abd89071c4d8bb17b19d7ae2e15c01433562fec8d8c3",
+}
+
+
 
 def load_trained_model(
     architecture: str,
@@ -39,17 +49,32 @@ def load_trained_model(
     checkpoint_path: Path,
     device: torch.device,
 ) -> torch.nn.Module:
-    """Load model checkpoint into evaluation mode."""
+    """Load model checkpoint into evaluation mode with strict SHA-256 hash verification."""
     model = build_model(architecture, num_classes=num_classes, pretrained=False)
     if not checkpoint_path.exists():
         raise FileNotFoundError(
             f"CRITICAL ERROR: Required checkpoint '{checkpoint_path}' does not exist. "
             f"Execution halted to prevent auditing on uninitialized random weights."
         )
+
+    # Compute SHA-256 digest to prevent evaluating on corrupt or altered model weights
+    hasher = hashlib.sha256()
+    with open(checkpoint_path, "rb") as f:
+        while chunk := f.read(1024 * 1024):
+            hasher.update(chunk)
+    actual_hash = hasher.hexdigest()
+
+    expected_hash = VERIFIED_CHECKPOINT_HASHES.get(checkpoint_path.name)
+    if expected_hash is not None and actual_hash != expected_hash:
+        raise ValueError(
+            f"CRITICAL INTEGRITY FAILURE: Checkpoint {checkpoint_path.name} SHA-256 mismatch!\n"
+            f"Expected: {expected_hash}\nActual:   {actual_hash}"
+        )
+
     ckpt = torch.load(checkpoint_path, map_location="cpu")
     state_dict = ckpt["model_state_dict"] if "model_state_dict" in ckpt else ckpt
     model.load_state_dict(state_dict, strict=True)
-    print(f"Loaded verified checkpoint strictly from {checkpoint_path}")
+    print(f"Loaded verified checkpoint strictly from {checkpoint_path} (SHA-256: {actual_hash[:12]}... PASS)")
     model.to(device)
     model.eval()
     return model

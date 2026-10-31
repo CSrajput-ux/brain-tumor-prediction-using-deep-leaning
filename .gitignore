@@ -5,6 +5,7 @@ __pycache__/
 *.so
 .pytest_cache/
 .ipynb_checkpoints/
+!checkpoints/manifest.json
 
 # Virtual Environments
 venv/
@@ -31,6 +32,7 @@ prepared_*/
 
 # Large Binary Model Checkpoints (Excluded from git tracking; see reports/baseline_training_report.md)
 checkpoints/
+!checkpoints/manifest.json
 *.pt
 *.pth
 *.ckpt

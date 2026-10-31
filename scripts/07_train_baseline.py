@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import random
 import sys
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,17 @@ from src.models import (
 CHENG_CLASSES = ["meningioma", "glioma", "pituitary"]
 BRISC_CLASSES = ["glioma", "meningioma", "pituitary", "no_tumor"]
 
+def set_seed(seed: int = 42) -> None:
+    """Set random seed across Python, NumPy, and PyTorch for deterministic execution."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+
 
 def train_cheng_folds(
     architecture: str,
@@ -53,6 +65,7 @@ def train_cheng_folds(
     predictions_dir: Path,
     max_train_batches: int | None = None,
     max_val_batches: int | None = None,
+    dropout: float = 0.2,
 ) -> dict[str, Any]:
     print(f"\n=======================================================")
     print(f"Starting Cheng 5-Fold Training: {architecture.upper()}")
@@ -73,7 +86,7 @@ def train_cheng_folds(
 
         print(f"Train samples: {len(train_ds)} (across {train_folds}), Held-out val samples: {len(val_ds)} ({fold_name})")
 
-        model = build_model(architecture, num_classes=3, pretrained=True).to(device)
+        model = build_model(architecture, num_classes=3, pretrained=True, dropout=dropout).to(device)
         optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
         criterion = nn.CrossEntropyLoss()
 
@@ -166,6 +179,7 @@ def train_brisc_baseline(
     predictions_dir: Path,
     max_train_batches: int | None = None,
     max_val_batches: int | None = None,
+    dropout: float = 0.2,
 ) -> dict[str, Any]:
     print(f"\n=======================================================")
     print(f"Starting BRISC Training: {architecture.upper()}")
@@ -183,7 +197,7 @@ def train_brisc_baseline(
 
     print(f"BRISC Splits: Train = {len(train_ds)}, Val = {len(val_ds)}, Official Test = {len(test_official_ds)}, Clean Test = {len(test_clean_ds)}")
 
-    model = build_model(architecture, num_classes=4, pretrained=True).to(device)
+    model = build_model(architecture, num_classes=4, pretrained=True, dropout=dropout).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     criterion = nn.CrossEntropyLoss()
 
@@ -346,6 +360,10 @@ def main() -> None:
     else:
         print(f"Warning: Configuration file {args.config} not found. Using defaults.")
 
+    seed = int(training_cfg.get("common", {}).get("seed", 42))
+    set_seed(seed)
+    print(f"Applied random seed: {seed}")
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Running baseline training on device: {device}")
 
@@ -363,8 +381,9 @@ def main() -> None:
         batch_size = args.batch_size if args.batch_size is not None else arch_cfg.get("batch_size", 16)
         lr = args.lr if args.lr is not None else arch_cfg.get("learning_rate", 1e-4 if arch == "resnet50" else 5e-5)
         weight_decay = args.weight_decay if args.weight_decay is not None else arch_cfg.get("weight_decay", 1e-2)
+        dropout = float(arch_cfg.get("dropout", 0.2 if arch == "resnet50" else 0.1))
 
-        print(f"\nConfiguring {arch.upper()}: epochs={epochs}, batch_size={batch_size}, lr={lr}, weight_decay={weight_decay}")
+        print(f"\nConfiguring {arch.upper()}: epochs={epochs}, batch_size={batch_size}, lr={lr}, weight_decay={weight_decay}, dropout={dropout}")
 
         # Train Cheng folds
         c_res = train_cheng_folds(
@@ -379,6 +398,7 @@ def main() -> None:
             args.predictions_dir,
             args.max_train_batches,
             args.max_val_batches,
+            dropout=dropout,
         )
         cheng_results[arch] = c_res
 
@@ -394,6 +414,7 @@ def main() -> None:
             args.predictions_dir,
             args.max_train_batches,
             args.max_val_batches,
+            dropout=dropout,
         )
         brisc_results[arch] = b_res
 

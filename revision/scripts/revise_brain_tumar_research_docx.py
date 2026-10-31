@@ -1,10 +1,10 @@
 """Perform complete scientific revision of 'brain _tumar_research.docx'.
 
 Resolves all audit findings from Audit_Counterfactual_Manuscript.docx and reviewer critique:
-- Resolves CR-01: Reconciles BRISC DeiT Telea Core p-value to raw p = 0.0320 and Holm-adjusted p = 0.1278 (4-region) / 0.6072 (32-test family).
-- Resolves CR-02: Reports Cheng patient-clustered Wilcoxon as W = 47.0, two-sided p = 0.0488 (one-sided p = 0.0244) across N = 10 patient clusters.
-- Resolves CR-03: Integrates formal Linear Mixed-Effects Model (beta = +0.074, SE = 0.020, z = 3.756, p < 0.001 across 55 clusters).
-- Resolves MA-04 to MA-13: Reconciles sample accounting (120 QC slices / 1200 records vs 90 eval slices / 1800 records), sham contour guarantees (100% contour retention, 0% circular fallback), plane arithmetic ordering, exploratory class heterogeneity, and provenance.
+- Resolves CR-01: Reconciles BRISC DeiT Telea Core p-value to raw p = 0.0320 and Holm-adjusted p = 0.0639 (4-region) / 0.6072 (32-test family).
+- Resolves CR-02: Reports Cheng patient-clustered Wilcoxon as W = 8.0, two-sided p = 0.0488 (one-sided W = 47.0, p = 0.0244) across N = 10 patient clusters.
+- Resolves CR-03: Integrates formal Linear Mixed-Effects Model (beta = +0.074, SE = 0.020, z = 3.756, p < 0.001 across 55 clusters; cluster Wilcoxon W = 483.0, p = 0.0162; t-test t(54) = 3.29, p = 0.00177).
+- Resolves MA-04 to MA-13: Reconciles sample accounting (120 QC slices / 1200 records vs 90 eval slices / 1800 records), sham contour guarantees (100% contour template used, 0% circular fallback, 95.8% exact 1.0000 parity, mean ratio 0.9975 +/- 0.0227, mean template Dice 0.9986 +/- 0.0130), plane arithmetic ordering, exploratory class heterogeneity, and provenance.
 """
 import sys, re
 from pathlib import Path
@@ -15,7 +15,7 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 import pandas as pd
 
 sys.stdout.reconfigure(encoding='utf-8')
-ROOT = Path(r"c:\Users\jkgga\Downloads\brain")
+ROOT = Path(__file__).resolve().parents[2]
 REV_DIR = ROOT / "revision"
 
 # Source document from clean original backup
@@ -89,9 +89,9 @@ p7_text = (
     "and linear mixed-effects models. On the Cheng Fold 1 partition, DeiT-Small achieved accuracy 0.8458, macro-F1 0.8403 and expected calibration error (ECE) 0.0366; "
     "ResNet-50 achieved 0.7583, 0.7190 and 0.1835. On the BRISC clean 899-image test set, DeiT-Small achieved accuracy 0.8265 and macro-F1 0.8344, against 0.6963 and 0.6991 for ResNet-50. "
     "For DeiT-Small on Cheng, Telea removal of the tumour core yielded a mean sham-corrected sensitivity of 0.1282 (slice-level Wilcoxon p = 9.13×10⁻⁶; condition-level Holm-adjusted p = 3.65×10⁻⁵; "
-    "patient-clustered two-sided Wilcoxon p = 0.0488, W = 47.0 across N = 10 patient clusters); the corresponding ResNet-50 value was 0.0311 (patient-clustered p = 0.0488). "
-    "On BRISC, DeiT-Small core sensitivity was 0.0517 (raw two-sided p = 0.0320; condition-level Holm-adjusted p = 0.0640; 32-test family Holm-adjusted p = 0.6072, not significant after experiment-wide correction). "
-    "In the pooled comparison across 55 clusters, DeiT-Small showed greater core reliance than ResNet-50 (difference +0.0738; slice-level p = 0.0123; cluster-level Wilcoxon p = 0.0162; "
+    "patient-clustered two-sided Wilcoxon W = 8.0, p = 0.0488 [one-sided W = 47.0, p = 0.0244] across N = 10 patient clusters); the corresponding ResNet-50 value was 0.0311 (condition-level Holm-adjusted p = 2.62×10⁻³; patient-clustered p = 0.0488). "
+    "On BRISC, DeiT-Small core sensitivity was 0.0517 (raw two-sided p = 0.0320; condition-level Holm-adjusted p = 0.0639; 32-test family Holm-adjusted p = 0.6072, not significant after family-wise error rate control under either strategy). "
+    "In the pooled comparison across 55 clusters, DeiT-Small showed greater core reliance than ResNet-50 (difference +0.0738; slice-level p = 0.0123; cluster-level Wilcoxon W = 483.0, p = 0.0162; paired t-test t(54) = 3.29, p = 0.00177; "
     "Linear Mixed Model fixed effect β = +0.074, SE = 0.020, z = 3.756, p < 0.001). Remote-region effects were not statistically distinguishable from sham in primary comparisons. "
     "In the evaluated BRISC archive, 159 exact duplicate pairs and 101 cross-split test matches were identified; this archive-specific finding was addressed by evaluating both official (N = 1,000) "
     "and clean (N = 899) partitions. These experiments provide a retrospective mechanistic audit of spatial reliance in single-run baseline models, not clinical validation or evidence of diagnostic deployability."
@@ -112,11 +112,42 @@ set_para_text(doc.paragraphs[41], p41_text, font_size=10.0)
 # P052: Sham placement empirical guarantees (MA-07)
 p52_text = (
     "Contralateral sham controls were constructed via vertical midline reflection into the contralateral normal brain parenchyma, followed by affine in-tissue translation "
-    "wherever mirrored contours overlapped the peritumoral exclusion zone or intracranial tissue boundaries. Across all 120 evaluated slices, 100% of sham controls successfully retained "
-    "the reflected tumour contour (22.5% direct vertical reflection, 77.5% affine translated contour; 0% circular fallback), achieving near-perfect area parity (mean sham-to-core area ratio 0.998 ± 0.023)."
+    "wherever mirrored contours overlapped the peritumoral exclusion zone or intracranial tissue boundaries. Across all 120 evaluated QC slices, 100% of sham interventions (120/120) utilized "
+    "the patient's lesion-derived mirrored contour template (22.5% direct vertical reflection, 77.5% affine translated contour; 0% circular fallback). Across all 120 slices, 95.8% (115/120) achieved "
+    "exact 1.0000 geometric parity with the lesion core, while 4.2% (5/120) experienced peripheral clipping against intracranial tissue masks (minimum area ratio 0.7525), yielding an overall mean "
+    "sham-to-core area ratio of 0.9975 ± 0.0227 and mean template Dice overlap of 0.9986 ± 0.0130."
 )
 if len(doc.paragraphs) > 52:
     set_para_text(doc.paragraphs[52], p52_text, font_size=10.0)
+
+# P107: Table 2 Multiplicity Note
+set_para_text(
+    doc.paragraphs[107],
+    "Note: Raw Wilcoxon two-sided p-values with step-down Holm-Bonferroni correction within each 4-region hypothesis family. "
+    "*For BRISC DeiT Core, condition-level Holm adjustment yields p = 0.0639 (Rank 3/4, multiplier 2); under the complete 32-test study-wide family (Table S1), p = 0.6072; "
+    "both confirm non-significance at α = 0.05. n.s.: not significant.",
+    font_size=9.0, italic=True
+)
+
+# P110: Patient-clustered inference (CR-02)
+p110_text = (
+    "Patient-clustered statistical inference. In Cheng, the 45 intervention slices originate from N = 10 unique patient clusters. While slice-level Wilcoxon tests yield "
+    "p = 9.13 × 10⁻⁶ for DeiT-Small and p = 6.54 × 10⁻⁴ for ResNet-50, patient-clustered analysis across the 10 patient-mean sensitivities yields clustered Wilcoxon "
+    "W = 8.0, two-sided p = 0.0488 (one-sided W = 47.0, p = 0.0244) for both architectures (clustered one-sample t-test: DeiT t = 2.22, p = 0.0534, ResNet t = 2.00, p = 0.0771). "
+    "Both levels of inference confirm core sensitivity above sham controls, but patient clustering reveals the true effective degrees of freedom (N = 10)."
+)
+set_para_text(doc.paragraphs[110], p110_text, font_size=10.0)
+
+# P117: Architectural comparison & LME (CR-03)
+p117_text = (
+    "Intra-lesion core reliance. In the pooled multi-cohort comparison (N = 90, Method A), DeiT-Small showed higher mean sensitivity to core ablations than ResNet-50 "
+    "(τcore,ViT = 0.0900 vs τcore,CNN = 0.0161; difference +0.0738; slice-level paired Wilcoxon p = 0.0123; Cohen’s dz = 0.362). Crucially, under cluster-level inference "
+    "accounting for the 55 independent clusters (10 Cheng patient clusters + 45 independent BRISC cases), the architectural superiority of Vision Transformers remains robust: "
+    "cluster-level Wilcoxon W = 483.0, two-sided p = 0.0162, cluster-level paired t-test t(54) = 3.29, p = 0.00177, and Linear Mixed-Effects Modeling fixed effect "
+    "βViT = +0.074 (SE = 0.020, Wald z = 3.756, p < 0.001). In the Cheng-specific subset (N = 45), the core sensitivity difference was 0.1282 − 0.0311 = +0.0971 "
+    "(slice-level Wilcoxon p = 0.156; patient-clustered Wilcoxon p = 0.232, clustered t-test p = 0.148). Statistical significance for architectural divergence is thus achieved when pooling across the combined multi-cohort (N = 90, 55 clusters)."
+)
+set_para_text(doc.paragraphs[117], p117_text, font_size=10.0)
 
 # P125: Update Plane Stratification text with corrected arithmetic ordering (MA-09)
 p125_text = (
@@ -143,9 +174,9 @@ set_para_text(doc.paragraphs[131], p131_text, font_size=10.0)
 # P134, P135, P136: Class bullets without biological causation claims
 set_para_text(doc.paragraphs[134], "Gliomas. A high margin-to-core sensitivity ratio (67.2%; τ_immed = 0.0268 vs τ_core = 0.0398), indicating substantial model reliance on transitional perilesional parenchyma in this exploratory 15-slice subset.", font_size=10.0)
 set_para_text(doc.paragraphs[135], "Meningiomas. Pronounced core sensitivity (τ_core = 0.3438) with modest immediate margin sensitivity (9.8%; τ_immed = 0.0338), reflecting dominant sensitivity to internal lesion features.", font_size=10.0)
-set_para_text(doc.paragraphs[136], "Pituitary adenomas. Circumscribed presentation where outer margin perturbations showed higher sensitivity than core removal (τ_core = 0.0009 vs τ_outer = 0.0392).", font_size=10.0)
+set_para_text(doc.paragraphs[136], "Pituitary adenomas. Minimal immediate margin sensitivity (τ_immed = 0.0034) with outer annular sensitivity (τ_outer = 0.0392), consistent with circumscribed intrasellar anatomy.", font_size=10.0)
 
-# P173: Ethics Approval
+# Declarations
 doc.paragraphs[173].text = (
     "Ethics approval and consent to participate. This study analysed publicly available, fully de-identified retrospective magnetic resonance imaging datasets (Cheng et al. [2] and BRISC [5]). "
     "The study protocol was reviewed and determined to be exempt from full institutional committee review by the Institutional Ethics Committee of Manipal University Jaipur under "
@@ -157,17 +188,15 @@ for r in doc.paragraphs[173].runs:
     r.font.name = "Times New Roman"
     r.font.size = Pt(10)
 
-# P176: Code Availability
 doc.paragraphs[176].text = (
     "Code and checkpoint availability. Source code, preprocessing scripts, model architectures, counterfactual intervention engines, evaluation scripts and validation test suites are open-source and "
-    "hosted in the project repository: https://github.com/CSrajput-ux/brain-tumor-prediction-using-deep-leaning. Checkpoint SHA-256 hashes and hardware environment manifests are documented in revision/reports/environment_manifest.json."
+    "hosted in the project repository: https://github.com/CSrajput-ux/brain-tumor-prediction-using-deep-leaning. Checkpoint SHA-256 hashes and hardware environment manifests are documented in revision/reports/environment_manifest.json and configs/checkpoint_manifest.json."
 )
 doc.paragraphs[176].alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 for r in doc.paragraphs[176].runs:
     r.font.name = "Times New Roman"
     r.font.size = Pt(10)
 
-# P177: Generative AI & Licences
 doc.paragraphs[177].text = (
     "Generative AI and AI-assisted technologies. During manuscript preparation, the authors utilized large language model assistance (Google DeepMind Antigravity) for code development, "
     "data analysis verification, statistical integrity checking, figure rendering, and scientific language editing. The authors reviewed and edited all resulting content, performed all data checks, "
@@ -180,7 +209,6 @@ for r in doc.paragraphs[177].runs:
     r.font.name = "Times New Roman"
     r.font.size = Pt(10)
 
-# P178: Author contributions
 doc.paragraphs[178].text = "Author contributions. Chhotu Rajput: conceptualisation, methodology, counterfactual intervention engine design, data auditing, experimental execution, statistical analysis, figure generation, writing – original draft. Rishi Gupta: supervision, project administration, methodology review, scientific validation, writing – review and editing. Both authors approved the final version."
 doc.paragraphs[178].alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 for r in doc.paragraphs[178].runs:
@@ -188,7 +216,7 @@ for r in doc.paragraphs[178].runs:
     r.font.size = Pt(10)
 
 # -------------------------------------------------------------
-# 3. UPDATE TABLE 2 (CR-01 Reconciliation)
+# 3. UPDATE TABLE 2 (CR-01 Reconciliation across full table)
 # -------------------------------------------------------------
 def set_cell(cell, text, bold=False, font_size=8.5, align=WD_ALIGN_PARAGRAPH.CENTER):
     cell.text = text
@@ -200,15 +228,46 @@ def set_cell(cell, text, bold=False, font_size=8.5, align=WD_ALIGN_PARAGRAPH.CEN
         r.bold = bold
 
 t2 = doc.tables[1]
-# Row 9: BRISC DeiT Telea Core
-# Update raw p, holm p, cohen dz, and sd_tau
+
+# Row 1: Cheng DeiT Telea Core (multiplier 4 on raw p = 9.13e-6 -> 3.65e-5)
+set_cell(t2.rows[1].cells[8], "3.65×10⁻⁵", font_size=8.5)
+
+# Row 6: Cheng ResNet Telea Core (multiplier 4 on raw p = 6.54e-4 -> 2.62e-3)
+set_cell(t2.rows[6].cells[8], "2.62×10⁻³", font_size=8.5)
+
+# Row 9: BRISC DeiT Telea Core (CR-01)
 set_cell(t2.rows[9].cells[4], "0.0367 ± 0.096", font_size=8.5)
 set_cell(t2.rows[9].cells[5], "0.0517 ± 0.120", font_size=8.5)
 set_cell(t2.rows[9].cells[6], "8.9%", font_size=8.5)
 set_cell(t2.rows[9].cells[7], "0.0320", font_size=8.5)
-set_cell(t2.rows[9].cells[8], "0.0640 [0.6072]*", font_size=8.5)
+set_cell(t2.rows[9].cells[8], "0.0639 [0.6072]*", font_size=8.5)
 set_cell(t2.rows[9].cells[9], "0.432", font_size=8.5)
-print("Updated Table 2 Row 9 (BRISC DeiT Telea Core) with empirical statistics.")
+
+# Row 10: BRISC DeiT Telea Immediate
+set_cell(t2.rows[10].cells[4], "0.0089 ± 0.048", font_size=8.5)
+set_cell(t2.rows[10].cells[5], "0.0239 ± 0.063", font_size=8.5)
+set_cell(t2.rows[10].cells[6], "6.7%", font_size=8.5)
+set_cell(t2.rows[10].cells[7], "0.0152", font_size=8.5)
+set_cell(t2.rows[10].cells[8], "0.0455", font_size=8.5)
+set_cell(t2.rows[10].cells[9], "0.381", font_size=8.5)
+
+# Row 11: BRISC DeiT Telea Outer
+set_cell(t2.rows[11].cells[4], "0.0150 ± 0.065", font_size=8.5)
+set_cell(t2.rows[11].cells[5], "0.0301 ± 0.071", font_size=8.5)
+set_cell(t2.rows[11].cells[6], "11.1%", font_size=8.5)
+set_cell(t2.rows[11].cells[7], "0.0049", font_size=8.5)
+set_cell(t2.rows[11].cells[8], "0.0197", font_size=8.5)
+set_cell(t2.rows[11].cells[9], "0.425", font_size=8.5)
+
+# Row 12: BRISC DeiT Telea Remote
+set_cell(t2.rows[12].cells[4], "−0.0010 ± 0.018", font_size=8.5)
+set_cell(t2.rows[12].cells[5], "0.0140 ± 0.056", font_size=8.5)
+set_cell(t2.rows[12].cells[6], "6.7%", font_size=8.5)
+set_cell(t2.rows[12].cells[7], "0.2815", font_size=8.5)
+set_cell(t2.rows[12].cells[8], "0.2815", font_size=8.5)
+set_cell(t2.rows[12].cells[9], "0.249 (n.s.)", font_size=8.5)
+
+print("Updated Table 2 (Cheng & BRISC) with exact empirical statistics.")
 
 # -------------------------------------------------------------
 # 4. RESTORE FULL MULTI-REGION COLUMNS IN TABLES 3 & 4
@@ -254,34 +313,27 @@ t4_old._tbl.getparent().remove(t4_old._tbl)
 print("Replaced Table 4 with full 7-column class heterogeneity table.")
 
 # -------------------------------------------------------------
-# 5. APPEND SUPPLEMENTARY TABLES S1, S2, AND S3
+# 5. ATTACH SUPPLEMENTARY TABLES S1, S2, S3
 # -------------------------------------------------------------
-doc.add_page_break()
-
-p_s_title = doc.add_paragraph()
-set_para_text(p_s_title, "Supplementary Material", font_size=14.0, bold=True, align=WD_ALIGN_PARAGRAPH.LEFT)
-
 # Table S1
 p_s1 = doc.add_paragraph()
-set_para_text(p_s1, "Supplementary Table S1 Complete pre-specified family of 32 region-versus-sham counterfactual inferential comparisons with family-wise Holm–Bonferroni error control.", font_size=10.0, italic=True)
+set_para_text(p_s1, "\nSupplementary Table S1 Complete 32-test inferential family across all dataset, architecture, intervention method, and anatomical region combinations.", font_size=10.0, italic=True)
 
 df_s1 = pd.read_csv(REV_DIR / "tables" / "table_s1_inferential_family32.csv")
-t_s1 = doc.add_table(rows=len(df_s1) + 1, cols=9)
+t_s1 = doc.add_table(rows=len(df_s1) + 1, cols=7)
 t_s1.alignment = WD_TABLE_ALIGNMENT.CENTER
-s1_headers = ["Dataset", "Model", "Method", "Region", "N", "Mean τr ± SD", "Raw Wilcoxon p", "Cohen's dz", "Holm-adj. p"]
+s1_headers = ["Dataset & Model", "Method", "Region", "N", "Mean τ ± SD", "Raw p-value", "Holm-adj. p (32-family)"]
 for c_idx, h in enumerate(s1_headers):
     set_cell(t_s1.cell(0, c_idx), h, bold=True, font_size=8.0)
 
 for r_idx, (_, row) in enumerate(df_s1.iterrows()):
     vals = [
-        str(row['dataset']),
-        str(row['model']),
-        str(row['method']).replace("Method ", ""),
+        f"{row['dataset']} {row['model']}",
+        str(row['method']),
         str(row['region']),
         str(int(row['n'])),
         f"{row['mean_tau']:+.4f} ± {row['sd_tau']:.4f}",
         f"{row['raw_p']:.4e}" if row['raw_p'] < 0.001 else f"{row['raw_p']:.4f}",
-        f"{row['cohen_dz']:.3f}",
         f"{row['holm_adj_p']:.4e}" if row['holm_adj_p'] < 0.001 else f"{row['holm_adj_p']:.4f}"
     ]
     for c_idx, val in enumerate(vals):
@@ -315,7 +367,7 @@ for r_idx, (_, row) in enumerate(df_s2.iterrows()):
 
 # Table S3
 p_s3 = doc.add_paragraph()
-set_para_text(p_s3, "\nSupplementary Table S3 Secondary inferential statistics: patient-clustered tests (Cheng, N=10 clusters), method concordance correlations (Method A vs B, N=90), correctly-classified-only subsets (N=70 DeiT, N=67 ResNet), and formal Linear Mixed-Effects Model (N=180, 55 clusters).", font_size=10.0, italic=True)
+set_para_text(p_s3, "\nSupplementary Table S3 Secondary inferential statistics: patient-clustered tests (Cheng, N=10 clusters), method concordance correlations (Method A vs B, N=90), correctly-classified-only subsets (N=70 DeiT, N=67 ResNet), cluster-level paired inference across 55 clusters (Wilcoxon W=483.0, p=0.0162; t-test t=3.29, p=0.00177), and formal Linear Mixed-Effects Model (N=180, beta=+0.074, SE=0.020, z=3.756, p<0.001).", font_size=10.0, italic=True)
 
 df_s3 = pd.read_csv(REV_DIR / "tables" / "table_s3_secondary_and_clustered_statistics.csv")
 t_s3 = doc.add_table(rows=len(df_s3) + 1, cols=7)
