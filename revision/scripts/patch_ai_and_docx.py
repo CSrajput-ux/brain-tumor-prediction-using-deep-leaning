@@ -43,3 +43,4 @@ else:
     )
     p_rev.write_text(t_rev, encoding="utf-8")
     print("Regex replacement completed for apply_final_manuscript_docx.py")
+

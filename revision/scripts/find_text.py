@@ -25,3 +25,4 @@ for term, matched_files in results.items():
     print(f"=== Term: '{term}' ({len(matched_files)} files) ===")
     for mf in matched_files[:15]:
         print("  ", mf)
+
