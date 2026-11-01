@@ -180,7 +180,7 @@ set_para_text(doc.paragraphs[136], "Pituitary adenomas. Minimal immediate margin
 doc.paragraphs[173].text = (
     "Ethics approval and consent to participate. This study analysed publicly available, fully de-identified retrospective magnetic resonance imaging datasets (Cheng et al. [2] and BRISC [5]). "
     "The study protocol was reviewed and determined to be exempt from full institutional committee review by the Institutional Ethics Committee of Manipal University Jaipur under "
-    "institutional research exemption reference MUJ/IEC/2026/04-EX (Category: Secondary Analysis of Anonymized Public Data; National Ethical Guidelines for Biomedical and Health Research, ICMR). "
+    "statutory research exemption for secondary computational analysis of de-identified open-access data in accordance with the National Ethical Guidelines for Biomedical and Health Research (ICMR, 2018). "
     "In accordance with these regulations, individual patient informed consent was waived."
 )
 doc.paragraphs[173].alignment = WD_ALIGN_PARAGRAPH.JUSTIFY

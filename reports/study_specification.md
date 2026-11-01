@@ -34,7 +34,7 @@
 
 | Dataset | Modality & Description | Total Available | Partitioning & Leakage Control | Evaluated Samples |
 |:---|:---|:---:|:---|:---:|
-| **Cheng et al. (2015)** | T1-weighted contrast-enhanced brain MRI (233 patients; Meningioma: 708, Glioma: 1,426, Pituitary: 930) | 3,064 slices | 5-fold cross-validation strictly grouped by patient ID (`patient_id`); **0 patient overlap** across folds | $N=480$ out-of-fold slices in Fold 1 test partition |
+| **Cheng et al. (2015)** | T1-weighted contrast-enhanced brain MRI (233 patients; Meningioma: 708, Glioma: 1,426, Pituitary: 930) | 3,064 slices | 5-fold cross-validation strictly grouped by patient ID (`patient_id`); **0 patient overlap** across folds | $N=480$ evaluated out-of-fold slices (41 patients) drawn from the 645-slice Fold 1 partition (47 patients) |
 | **BRISC (Fateh et al., 2026)** | Multi-plane contrast-enhanced brain MRI (4 classes: Glioma, Meningioma, Pituitary, No-Tumour; Axial, Coronal, Sagittal) | 6,000 slices | Official Benchmark ($5,000$ train / $1,000$ test). Deduplication audit isolated 101 leaked test duplicates $\to$ **BRISC Clean Test Set** ($N=899$) | $N=480$ test slices; $N=45$ plane-stratified audit slices ($15$ Axial, $15$ Coronal, $15$ Sagittal) |
 
 ---

@@ -1,14 +1,15 @@
 stage_id,dataset,stage_name,total_input,excluded_count,exclusion_reason,usable_count,notes
 FLOW-01,Cheng,Raw MRI Archive Ingestion,3064,0,None,3064,233 distinct patients in MATLAB .mat struct
 FLOW-02,Cheng,Percentile Intensity Scaling & Geometry,3064,0,None,3064,Zero masks lost; centroid drift < 0.0035
-FLOW-03,Cheng,Patient-Isolated 5-Fold Splitting,3064,0,None,3064,Zero patient overlap across all 5 folds
-FLOW-04,Cheng,Fold 1 Held-Out Test Evaluation,3064,2584,Folds 2-5 cross-validation partitions,480,Fold 1 test partition out-of-fold inference (49 unseen patients)
-FLOW-05,Cheng,Counterfactual Intervention Cohort,480,435,Class-balanced selection (15/class),45,45 slices from 10 patients audited across 5 regions
-FLOW-06,Cheng,Intervention QC Manifest Verification,3064,3004,QC sampled cohort,60,60 slices (including all 45 evaluated slices) with 100% QC compliance
-FLOW-07,BRISC,Raw Image Archive Ingestion,6000,0,None,6000,5000 train / 1000 test across 4 classes
-FLOW-08,BRISC,Test Mask Availability Filter,1000,140,No tumor / missing mask,860,Neoplasm slices with ground-truth masks
-FLOW-09,BRISC,Perceptual Hashing Duplicate Audit,1000,101,Exact duplicate of training image,899,101 test slices are exact copies of train slices
-FLOW-10,BRISC,Clean Mask-Supported Benchmark,860,101,Train-test duplicate leakage,759,Audited clean test set with ground-truth masks
-FLOW-11,BRISC,Multi-Plane Stratified Intervention Cohort,759,714,Plane- and class-balanced sample,45,15 Axial / 15 Coronal / 15 Sagittal across 3 tumor classes
-FLOW-12,BRISC,Intervention QC Manifest Verification,1000,940,QC sampled cohort,60,60 slices (including all 45 evaluated slices) with 100% QC compliance
-FLOW-13,Pooled,Paired Counterfactual Observations,90,0,None,1800,90 slices x 5 regions x 2 methods x 2 models in predictions/intervention_effects.csv
+FLOW-03,Cheng,Patient-Isolated 5-Fold Splitting,3064,0,None,3064,233 distinct patients partitioned across 5 folds (47; 47; 46; 46; 47 patients) with zero patient overlap
+FLOW-04,Cheng,Fold 1 Held-Out Split Partition,3064,2419,Folds 2-5 cross-validation partitions,645,Full held-out Fold 1 split partition (645 slices across 47 unseen patients)
+FLOW-05,Cheng,Evaluated Baseline Prediction Subset,645,165,Fixed 30-batch inference cap (30x16),480,Evaluated baseline prediction subset (480 slices across 41 unseen patients)
+FLOW-06,Cheng,Counterfactual Intervention Cohort,480,435,Class-balanced selection (15/class),45,45 slices from 10 patients audited across 5 regions
+FLOW-07,Cheng,Intervention QC Manifest Verification,3064,3004,QC sampled cohort,60,60 slices (including all 45 evaluated slices) with 100% QC compliance
+FLOW-08,BRISC,Raw Image Archive Ingestion,6000,0,None,6000,5000 train / 1000 test across 4 classes
+FLOW-09,BRISC,Test Mask Availability Filter,1000,140,No tumor / missing mask,860,Neoplasm slices with ground-truth masks
+FLOW-10,BRISC,Train-Test Cross-Split Duplicate Audit,1000,101,Exact duplicate of training image,899,101 test slices are exact copies of train slices (cross-split de-duplicated test benchmark)
+FLOW-11,BRISC,Clean Mask-Supported Benchmark,860,101,Train-test duplicate leakage,759,Audited clean test set with ground-truth masks
+FLOW-12,BRISC,Multi-Plane Stratified Intervention Cohort,759,714,Plane- and class-balanced sample,45,15 Axial / 15 Coronal / 15 Sagittal across 3 tumor classes
+FLOW-13,BRISC,Intervention QC Manifest Verification,1000,940,QC sampled cohort,60,60 slices (including all 45 evaluated slices) with 100% QC compliance
+FLOW-14,Pooled,Paired Counterfactual Observations,90,0,None,1800,90 slices x 5 regions x 2 methods x 2 models in predictions/intervention_effects.csv

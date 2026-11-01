@@ -65,7 +65,7 @@ p7_text = (
     "We conducted a sham-controlled, region-resolved counterfactual audit on two contrast-enhanced MRI cohorts: the Cheng dataset (3,064 slices from 233 patients; "
     "three tumour classes) and the multi-plane BRISC dataset (6,000 slices; glioma, meningioma, pituitary tumour and no-tumour classes). "
     "Cheng partitions were generated with patient-grouped five-fold stratification; the exported baseline prediction file represents the held-out Fold 1 partition "
-    "(480 slices from 49 patients), not pooled predictions from all five folds. ResNet-50 and DeiT-Small/16 were fine-tuned from ImageNet-pretrained weights. "
+    "(an evaluated baseline prediction subset of 480 slices from 41 unseen patients drawn from the 645-slice, 47-patient Fold 1 partition), not pooled predictions from all five folds. ResNet-50 and DeiT-Small/16 were fine-tuned from ImageNet-pretrained weights. "
     "For each eligible tumour-containing slice we defined the tumour core, a 4-pixel immediate margin, a 12-pixel outer margin, remote tissue and a contralateral sham region, "
     "and perturbed each region with Telea inpainting and locally matched Gaussian texture filling. Technical non-target pixel invariance (|Δ| < 10⁻⁵) was verified across an "
     "image quality control pool of 120 slices (60 per dataset; 1,200 intervention records). The model sensitivity audit evaluated 90 matched slices (45 per dataset), "
@@ -158,10 +158,9 @@ set_para_text(doc.paragraphs[131], p131_text, font_size=10.0)
 
 # Declarations
 doc.paragraphs[173].text = (
-    "Ethics approval and consent to participate. This study analysed publicly available, fully de-identified retrospective magnetic resonance imaging datasets (Cheng et al. [2] and BRISC [5]). "
-    "The study protocol was reviewed and determined to be exempt from full institutional committee review by the Institutional Ethics Committee of Manipal University Jaipur under "
-    "institutional research exemption reference MUJ/IEC/2026/04-EX (Category: Secondary Analysis of Anonymized Public Data; National Ethical Guidelines for Biomedical and Health Research, ICMR). "
-    "In accordance with these regulations, individual patient informed consent was waived."
+    "Ethics approval and consent to participate. This study utilized publicly available, fully de-identified retrospective magnetic resonance imaging datasets (Cheng et al. [2] and BRISC [5]) in strict compliance with their respective open-access data licenses. "
+    "In accordance with the Indian Council of Medical Research (ICMR) National Ethical Guidelines for Biomedical and Health Research Involving Human Participants (2018) and COPE standards for secondary research on anonymized public benchmark data, "
+    "this computational investigation did not involve prospective patient recruitment, intervention, or identifiable personal health information, and institutional ethical committee review and individual informed consent were exempt. No individual re-identification was attempted."
 )
 doc.paragraphs[173].alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 for r in doc.paragraphs[173].runs:
@@ -178,8 +177,7 @@ for r in doc.paragraphs[176].runs:
     r.font.size = Pt(10)
 
 doc.paragraphs[177].text = (
-    "Generative AI and AI-assisted technologies. During manuscript preparation, the authors utilized large language model assistance (Google DeepMind Antigravity) for code development, "
-    "data analysis verification, statistical integrity checking, figure rendering, and scientific language editing. The authors reviewed and edited all resulting content, performed all data checks, "
+    "Generative AI and AI-assisted technologies. During manuscript preparation, the authors utilized large language model assistance (Google DeepMind Antigravity powered by Gemini and OpenAI ChatGPT) for code implementation assistance, automated unit testing, script-level biostatistical verification, figure/table generation scripts, document synchronization, and scientific language editing. The authors reviewed and edited all resulting content, performed all data checks, "
     "and take full responsibility for the content of the published article.\\n\\n"
     "Dataset Licences: The Cheng dataset is distributed under the Creative Commons Attribution 4.0 International license (CC BY 4.0; Figshare doi:10.6084/m9.figshare.1512427). "
     "The BRISC dataset is distributed under the Creative Commons Attribution 4.0 International license (CC BY 4.0; Scientific Data doi:10.1038/s41597-026-06753-y)."
@@ -189,7 +187,7 @@ for r in doc.paragraphs[177].runs:
     r.font.name = "Times New Roman"
     r.font.size = Pt(10)
 
-doc.paragraphs[178].text = "Author contributions. Chhotu Rajput: conceptualisation, methodology, counterfactual intervention engine design, data auditing, experimental execution, statistical analysis, figure generation, writing – original draft. Rishi Gupta: supervision, project administration, methodology review, scientific validation, writing – review and editing. Both authors approved the final version."
+doc.paragraphs[178].text = "Author contributions. Chhotu Rajput: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data Curation, Writing - Original Draft, Visualization. Rishi Gupta: Supervision, Resources, Writing - Review & Editing, Project administration. Both authors read and approved the final manuscript."
 doc.paragraphs[178].alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 for r in doc.paragraphs[178].runs:
     r.font.name = "Times New Roman"

@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)]()
 
 > **Title:** *Tumour-Core, Peritumoral-Margin, and Remote-Context Evidence in Brain MRI Classification: A Sham-Controlled, Plane-Stratified Counterfactual Audit Across CNN and Vision Transformer Models*  
-> **Authors:** Chhotu$^{1*}$ and Rishi Gupta$^{2}$  
+> **Authors:** Chhotu Rajput$^{1*}$ and Rishi Gupta$^{2}$  
 > **Affiliation:** Manipal University Jaipur, Jaipur, Rajasthan, India  
 > **Target Venue:** *Medical Image Analysis (MedIA) / IEEE Transactions on Medical Imaging (TMI)*  
 > **Full Manuscript:** [`Brain_MRI_Research_Paper_Final.md`](file:///Brain_MRI_Research_Paper_Final.md) | [`paper/manuscript.md`](file:///paper/manuscript.md)
@@ -154,9 +154,9 @@ python -m pytest tests -v
 If you use this codebase, audit methodologies, or counterfactual intervention framework in your research, please cite:
 
 ```bibtex
-@article{chhotu2026braincounterfactual,
+@article{rajput2026braincounterfactual,
   title={Tumour-Core, Peritumoral-Margin, and Remote-Context Evidence in Brain MRI Classification: A Sham-Controlled, Plane-Stratified Counterfactual Audit Across CNN and Vision Transformer Models},
-  author={Chhotu and Gupta, Rishi},
+  author={Rajput, Chhotu and Gupta, Rishi},
   journal={Medical Image Analysis},
   year={2026}
 }
