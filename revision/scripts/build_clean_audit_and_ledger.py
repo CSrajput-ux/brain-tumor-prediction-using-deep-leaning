@@ -395,3 +395,4 @@ if audit_path.exists():
 sync_py = ROOT / "revision" / "scripts" / "sync_ledger_and_audit.py"
 sync_py.write_text(sync_code, encoding="utf-8")
 print(f"Rewrote {sync_py} with exact schemas.")
+

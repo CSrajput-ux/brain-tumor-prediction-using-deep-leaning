@@ -36,3 +36,4 @@ with open(docx_py, "w", encoding="utf-8") as f:
     f.write(code)
 
 print("Updated apply_final_manuscript_docx.py successfully.")
+

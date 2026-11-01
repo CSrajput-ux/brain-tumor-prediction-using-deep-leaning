@@ -30,3 +30,4 @@ reject, pvals_holm, _, _ = multipletests(pvals, method="holm")
 for t, ph in zip(tests, pvals_holm):
     t["p_holm"] = float(ph)
     print(f"{t['method']:20s} {t['region']:10s} | diff={t['diff_mean']:+.4f} | raw_p={t['pval']:.4f} | holm_p={t['p_holm']:.4f} | dz={t['dz']:.3f}")
+

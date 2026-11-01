@@ -30,3 +30,4 @@ with open(ROOT / "revision" / "scripts" / "apply_pass3_fixes.py", "w", encoding=
     f.write(new_text)
 
 print("Updated revision/scripts/apply_pass3_fixes.py successfully.")
+

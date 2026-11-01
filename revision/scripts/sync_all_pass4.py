@@ -105,3 +105,4 @@ python scripts\\download_checkpoints.py --verify-only
     print("Updated README.md")
 
 print("All markdown files synchronized.")
+
