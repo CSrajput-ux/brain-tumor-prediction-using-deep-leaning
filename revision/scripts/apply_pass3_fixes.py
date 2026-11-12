@@ -98,47 +98,67 @@ ROOT = Path(__file__).resolve().parents[1]
 def setup_fixtures():
     print("Setting up deterministic CI test fixtures...")
 
-    # 1. Cheng dataset fixture for ChengDataset[0]
+    # 1. Cheng dataset fixtures for ChengDataset across splits
     cheng_manifest = ROOT / "manifests" / "cheng_manifest.csv"
     if cheng_manifest.exists():
+        cheng_paths = set()
         with open(cheng_manifest, "r", encoding="utf-8") as f:
-            first_row = next(csv.DictReader(f))
-        rel_path = first_row["relative_image_path"]
-        target_mat = ROOT / "cheng" / rel_path
-        if not target_mat.exists():
-            target_mat.parent.mkdir(parents=True, exist_ok=True)
-            # Create valid MATLAB v7 struct for cjdata
-            mock_cjdata = {
-                "label": 1,
-                "PID": "PATIENT_001",
-                "image": np.ones((512, 512), dtype=np.int16) * 100,
-                "tumorMask": np.pad(np.ones((64, 64), dtype=np.uint8), 224),
-                "tumorBorder": np.array([[224, 224], [288, 288]], dtype=np.float64),
-            }
-            savemat(str(target_mat), {"cjdata": mock_cjdata})
-            print(f"Created Cheng test fixture: {target_mat}")
+            reader = list(csv.DictReader(f))
+            if reader:
+                cheng_paths.add(reader[0]["relative_image_path"])
+                seen_splits = set()
+                for row in reader:
+                    sp = row.get("official_split")
+                    if sp and sp not in seen_splits:
+                        seen_splits.add(sp)
+                        cheng_paths.add(row["relative_image_path"])
 
-    # 2. BRISC dataset fixture for BriscDataset[0]
+        mock_cjdata = {
+            "label": 1,
+            "PID": "PATIENT_001",
+            "image": np.ones((512, 512), dtype=np.int16) * 100,
+            "tumorMask": np.pad(np.ones((64, 64), dtype=np.uint8), 224),
+            "tumorBorder": np.array([[224, 224], [288, 288]], dtype=np.float64),
+        }
+        for rel_path in cheng_paths:
+            target_mat = ROOT / "cheng" / rel_path
+            if not target_mat.exists():
+                target_mat.parent.mkdir(parents=True, exist_ok=True)
+                savemat(str(target_mat), {"cjdata": mock_cjdata})
+                print(f"Created Cheng test fixture: {target_mat}")
+
+    # 2. BRISC dataset fixtures for BriscDataset across splits
     brisc_manifest = ROOT / "manifests" / "brisc_manifest.csv"
     if brisc_manifest.exists():
+        brisc_pairs = []
         with open(brisc_manifest, "r", encoding="utf-8") as f:
-            first_row = next(csv.DictReader(f))
-        rel_img = first_row["relative_image_path"].replace("\\", "/")
-        rel_mask = first_row["relative_mask_path"].replace("\\", "/")
-        target_img = ROOT / "brisc" / "brisc2025" / rel_img
-        target_mask = ROOT / "brisc" / "brisc2025" / rel_mask
+            reader = list(csv.DictReader(f))
+            if reader:
+                brisc_pairs.append((reader[0]["relative_image_path"], reader[0].get("relative_mask_path", "")))
+                seen_splits = set()
+                for row in reader:
+                    sp = row.get("official_split")
+                    if sp and sp not in seen_splits:
+                        seen_splits.add(sp)
+                        brisc_pairs.append((row["relative_image_path"], row.get("relative_mask_path", "")))
 
-        if not target_img.exists():
-            target_img.parent.mkdir(parents=True, exist_ok=True)
-            img = Image.fromarray(np.ones((512, 512), dtype=np.uint8) * 128, mode="L")
-            img.save(target_img)
-            print(f"Created BRISC image fixture: {target_img}")
+        for rel_img, rel_mask in brisc_pairs:
+            rel_img = rel_img.replace("\\", "/")
+            target_img = ROOT / "brisc" / "brisc2025" / rel_img
+            if not target_img.exists():
+                target_img.parent.mkdir(parents=True, exist_ok=True)
+                img = Image.fromarray(np.ones((512, 512), dtype=np.uint8) * 128, mode="L")
+                img.save(target_img)
+                print(f"Created BRISC image fixture: {target_img}")
 
-        if not target_mask.exists():
-            target_mask.parent.mkdir(parents=True, exist_ok=True)
-            mask = Image.fromarray(np.pad(np.ones((64, 64), dtype=np.uint8) * 255, 224), mode="L")
-            mask.save(target_mask)
-            print(f"Created BRISC mask fixture: {target_mask}")
+            if rel_mask:
+                rel_mask = rel_mask.replace("\\", "/")
+                target_mask = ROOT / "brisc" / "brisc2025" / rel_mask
+                if not target_mask.exists():
+                    target_mask.parent.mkdir(parents=True, exist_ok=True)
+                    mask = Image.fromarray(np.pad(np.ones((64, 64), dtype=np.uint8) * 255, 224), mode="L")
+                    mask.save(target_mask)
+                    print(f"Created BRISC mask fixture: {target_mask}")
 
     # 3. Checkpoint fixtures for test_checkpoint_structure in CI
     # Check each required checkpoint individually so partial sets are completed.
