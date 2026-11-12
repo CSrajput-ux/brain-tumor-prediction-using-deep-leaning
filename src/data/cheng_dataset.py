@@ -14,7 +14,7 @@ def _scalar(value: Any) -> Any:
         value = value[0, 0]
     try:
         return value.item()
-    except AttributeError:
+    except (AttributeError, ValueError):
         return value
 
 
