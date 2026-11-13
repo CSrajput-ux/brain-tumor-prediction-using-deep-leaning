@@ -222,19 +222,19 @@ def run():
     print("  [OK] P112: Added remote area confound, QC pool provenance, and widened per-1,000-px range")
 
     # -------------------------------------------------------------
-    # 15. P116 & P123 - Fig 6 and Fig 7 panel artwork labels
+    # 15. P116 & P123 - Fig 6 and Fig 7 clean captions (Option B)
     # -------------------------------------------------------------
     replace_in_para(
         paras[116],
-        "Fig. 6 Architectural inductive bias, ViT versus CNN regional sensitivity profile (Method A):",
-        "Fig. 6 Architectural inductive bias, ViT versus CNN regional sensitivity profile (Method A; labelled as Figure 5 in embedded panel artwork):"
+        " (Method A; labelled as Figure 5 in embedded panel artwork):",
+        " (Method A):"
     )
     replace_in_para(
         paras[123],
-        "Fig. 7 Perturbation method concordance, Telea inpainting versus matched texture fill:",
-        "Fig. 7 Perturbation method concordance, Telea inpainting versus matched texture fill (labelled as Figure 6 in embedded panel artwork):"
+        " (labelled as Figure 6 in embedded panel artwork):",
+        ":"
     )
-    print("  [OK] P116 & P123: Documented Fig 6 & 7 panel artwork numbering discrepancy")
+    print("  [OK] P116 & P123: Synchronized Fig 6 & 7 clean captions (Option B)")
 
     # -------------------------------------------------------------
     # 16. P117 - LME interaction wording & British spelling

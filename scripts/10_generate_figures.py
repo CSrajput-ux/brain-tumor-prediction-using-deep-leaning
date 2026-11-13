@@ -15,6 +15,7 @@ Complies strictly with Part 15:
 from __future__ import annotations
 
 import argparse
+import shutil
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -62,10 +63,7 @@ def plot_fig1_study_design(out_path: Path) -> None:
     ax.annotate("", xy=(0.52, 0.45), xytext=(0.48, 0.45), arrowprops=arrow_props)
     ax.annotate("", xy=(0.78, 0.45), xytext=(0.77, 0.45), arrowprops=arrow_props)
 
-    ax.set_title(
-        "Figure 1: Study Design & Sham-Controlled Counterfactual Intervention Pipeline",
-        fontsize=13, fontweight="bold", pad=20,
-    )
+    # Main title omitted per journal guidelines
     plt.tight_layout()
     plt.savefig(out_path, bbox_inches="tight")
     plt.close()
@@ -81,7 +79,7 @@ def plot_fig2_preprocessing(out_path: Path) -> None:
         fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
         ax.imshow(img)
         ax.axis("off")
-        ax.set_title("Figure 2: Preprocessing Pipeline & Mask Geometric Alignment Verification", fontsize=12, fontweight="bold", pad=12)
+        # Main title omitted per journal guidelines
         plt.tight_layout()
         plt.savefig(out_path, bbox_inches="tight")
         plt.close()
@@ -151,7 +149,7 @@ def plot_fig4_intervention_effects(out_path: Path, df: pd.DataFrame) -> None:
 
     ax.axhline(0, color="black", lw=0.8)
     ax.set_ylabel("Sham-Corrected Sensitivity (τ_r)", fontsize=11, fontweight="bold")
-    ax.set_title("Figure 4: Regional Evidence Sensitivity Across Architectures (Method A: Inpainting)", fontsize=12, fontweight="bold")
+    # Main title omitted per journal guidelines
     ax.set_xticks(x)
     ax.set_xticklabels(reg_labels, fontsize=10)
     ax.legend(loc="upper right", fontsize=10)
@@ -196,7 +194,7 @@ def plot_fig5_architecture_comparison(out_path: Path, df: pd.DataFrame) -> None:
     bars = ax.bar(x, diffs, 0.45, yerr=errs, capsize=4, color=colors, alpha=0.85)
     ax.axhline(0, color="black", lw=1.0)
     ax.set_ylabel("Sensitivity Difference (DeiT-Small - ResNet-50)", fontsize=10, fontweight="bold")
-    ax.set_title("Figure 5: Architectural Inductive Bias: ViT vs CNN Regional Sensitivity Profile (Method A)", fontsize=11, fontweight="bold")
+    # Main title omitted per journal guidelines
     ax.set_xticks(x)
     ax.set_xticklabels(reg_labels, fontsize=10)
     ax.grid(True, axis="y", linestyle=":", alpha=0.6)
@@ -239,7 +237,7 @@ def plot_fig6_method_robustness(out_path: Path, df: pd.DataFrame) -> None:
         axes[idx].legend(fontsize=8.5)
         axes[idx].grid(True, axis="y", linestyle=":", alpha=0.6)
 
-    fig.suptitle("Figure 6: Perturbation Method Concordance: Telea Inpaint vs Matched Texture Fill", fontsize=11, fontweight="bold", y=1.02)
+    # Main title omitted per journal guidelines
     plt.tight_layout()
     plt.savefig(out_path, bbox_inches="tight")
     plt.close()
@@ -270,7 +268,7 @@ def plot_fig7_plane_stratification(out_path: Path, df: pd.DataFrame) -> None:
     ax.bar(x + width, tau_outer, width, label="Outer Margin (τ_outer)", color="#FFEB3B")
 
     ax.set_ylabel("Sham-Corrected Sensitivity (τ_r)", fontsize=10, fontweight="bold")
-    ax.set_title("Figure 7: Imaging Plane Stratification of Regional Evidence (BRISC)", fontsize=11, fontweight="bold")
+    # Main title omitted per journal guidelines
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=10)
     ax.legend(fontsize=9)
@@ -304,7 +302,7 @@ def plot_fig8_class_heterogeneity(out_path: Path, df: pd.DataFrame) -> None:
     max_val = max(max(core_sens), max(margin_sens)) if core_sens else 0.15
     ax.set_ylim(0, max_val * 1.45)
     ax.set_ylabel("Sham-Corrected Sensitivity (τ)", fontsize=10, fontweight="bold")
-    ax.set_title("Figure 8: Class Heterogeneity in Peritumoral vs Core Evidence", fontsize=11, fontweight="bold", pad=18)
+    # Main title omitted per journal guidelines
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=10)
     ax.legend(fontsize=9, loc="upper right")
@@ -365,7 +363,7 @@ def plot_fig9_brisc_leakage(out_path: Path) -> None:
         diff = resnet_clean[i] - resnet_official[i]
         ax1.text(x[i], max(resnet_clean[i], resnet_official[i]) + 0.02, f"Δ = {diff:+.3f}", ha="center", fontsize=8.5, fontweight="bold", color="#2E7D32" if diff >= 0 else "#C62828")
 
-    fig.suptitle("Figure 9: Impact of Train-Test Duplicate Leakage on Benchmark Evaluation (BRISC)", fontsize=12, fontweight="bold", y=1.02)
+    # Main title omitted per journal guidelines
     plt.tight_layout()
     plt.savefig(out_path, bbox_inches="tight")
     plt.close()
@@ -381,7 +379,7 @@ def plot_fig10_intervention_gallery(out_path: Path) -> None:
         fig, ax = plt.subplots(figsize=(14, 7), dpi=300)
         ax.imshow(rep_img)
         ax.axis("off")
-        ax.set_title("Figure 10: Counterfactual Intervention & Residual Montage Gallery (Method A & B)", fontsize=12, fontweight="bold", pad=12)
+        # Main title omitted per journal guidelines
         plt.tight_layout()
         plt.savefig(out_path, bbox_inches="tight")
         plt.close()
@@ -432,6 +430,8 @@ def generate_all_figures() -> None:
 
     print("Generating Figure 10: Intervention gallery...")
     plot_fig10_intervention_gallery(FIGURES_DIR / "fig10_intervention_gallery.png")
+    if (FIGURES_DIR / "fig4_intervention_gallery.png").exists():
+        shutil.copy2(FIGURES_DIR / "fig10_intervention_gallery.png", FIGURES_DIR / "fig4_intervention_gallery.png")
 
     print(f"\nAll 10 publication-ready figures successfully generated in {FIGURES_DIR}")
 
